@@ -1,0 +1,53 @@
+From 424fe2d12e46eecbcb7893d88945d282ac91891d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Sun, 5 May 2024 00:35:25 +0200
+Subject: [PATCH 67/80] mainboard/pcengines: Update GPIO configuration and
+ remove unused macros
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit updates the GPIO configuration for apu3, apu4, and apu7
+boards. It also removes unused macros for SIO_PORT and SERIAL_DEV.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/romstage.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 5b9f9f7aa6c3..7329896fb14a 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -27,6 +27,8 @@ void board_BeforeAgesa(struct sysinfo *cb)
+ {
+ 	u32 val;
+ 
++	pm_write8(FCH_PMIOA_REGC5, 0);
++
+ 	early_lpc_init();
+ 
+ 	/* Disable SVI2 controller to wait for command completion */
+@@ -57,7 +59,7 @@ const struct soc_amd_gpio gpio_apu2[] = {
+ 	PAD_GPI(GPIO_32, PULL_NONE),
+ };
+ 
+-const struct soc_amd_gpio gpio_apu34[] = {
++const struct soc_amd_gpio gpio_apu347[] = {
+ 	PAD_GPI(GPIO_32, PULL_NONE),
+ 	PAD_GPO(GPIO_33, LOW),
+ };
+@@ -75,8 +77,8 @@ static void early_lpc_init(void)
+ 	if (CONFIG(BOARD_PCENGINES_APU2))
+ 		gpio_configure_pads(gpio_apu2, ARRAY_SIZE(gpio_apu2));
+ 
+-	if (CONFIG(BOARD_PCENGINES_APU3) || CONFIG(BOARD_PCENGINES_APU4))
+-		gpio_configure_pads(gpio_apu34, ARRAY_SIZE(gpio_apu34));
++	if (CONFIG(BOARD_PCENGINES_APU3) || CONFIG(BOARD_PCENGINES_APU4) || CONFIG(BOARD_PCENGINES_APU7))
++		gpio_configure_pads(gpio_apu347, ARRAY_SIZE(gpio_apu347));
+ 
+ 	if (CONFIG(BOARD_PCENGINES_APU5))
+ 		gpio_configure_pads(gpio_apu5, ARRAY_SIZE(gpio_apu5));
+-- 
+2.39.2
+

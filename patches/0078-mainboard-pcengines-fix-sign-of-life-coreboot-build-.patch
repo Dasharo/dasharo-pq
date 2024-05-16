@@ -1,0 +1,36 @@
+From a80c0e940afee2fa80f6ff9e24292cd55e016104 Mon Sep 17 00:00:00 2001
+From: Mark Mentovai <mark@mentovai.com>
+Date: Sun, 5 Jun 2022 09:25:24 -0400
+Subject: [PATCH 78/80] mainboard/pcengines: fix sign-of-life coreboot build
+ date
+
+The coreboot build date shown by print_sign_of_life at early boot was
+incorrectly presented in yyyyddmm format, when it should have been
+yyyymmdd.
+
+https://github.com/pcengines/coreboot/pull/517 contains a complete
+explanation of the history of this date string.
+
+Signed-off-by: Mark Mentovai <mark@mentovai.com>
+---
+ src/mainboard/pcengines/apu2/romstage.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 7329896fb14a..0e8105a0f1c9 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -96,8 +96,8 @@ static void print_sign_of_life(void)
+ {
+ 	char tmp[9];
+ 	strncpy(tmp,   coreboot_dmi_date+6, 4);
+-	strncpy(tmp+4, coreboot_dmi_date+3, 2);
+-	strncpy(tmp+6, coreboot_dmi_date,   2);
++	strncpy(tmp+4, coreboot_dmi_date,   2);
++	strncpy(tmp+6, coreboot_dmi_date+3, 2);
+ 	tmp[8] = '\0';
+ 	printk(BIOS_ALERT, CONFIG_MAINBOARD_VENDOR " "
+ 	                   CONFIG_MAINBOARD_PART_NUMBER "\n");
+-- 
+2.39.2
+

@@ -1,0 +1,39 @@
+From 693ce7cb9cf9c8a847a9f0f697c1807e4802bc5c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
+Date: Tue, 21 Jun 2022 15:24:01 +0200
+Subject: [PATCH 46/80] mb/pcengines/apu2: Avoid pragma pack on the rest of the
+ file
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+AGESA.h has a '#pragma pack' nested somewhere. The pack pragma packs all
+structs which is not what is expected in the structs inside the headers
+included below AGESA.h.
+
+Adapted from https://review.coreboot.org/c/coreboot/+/64382
+
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+Change-Id: I2ee658c0d2db9a4dffe2dd8dbf5f4a3a905eb75d
+---
+ src/mainboard/pcengines/apu2/BiosCallOuts.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/BiosCallOuts.c b/src/mainboard/pcengines/apu2/BiosCallOuts.c
+index 5962392dc3eb..1fb452903f56 100644
+--- a/src/mainboard/pcengines/apu2/BiosCallOuts.c
++++ b/src/mainboard/pcengines/apu2/BiosCallOuts.c
+@@ -1,6 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ 
++#pragma pack(push)
+ #include <AGESA.h>
++#pragma pack(pop)
++
++#include <cbfs.h>
+ #include <console/console.h>
+ #include <spd_bin.h>
+ #include <northbridge/amd/agesa/BiosCallOuts.h>
+-- 
+2.39.2
+

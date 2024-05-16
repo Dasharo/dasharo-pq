@@ -1,0 +1,166 @@
+From f8db781582384a04f4a45c58020df7ce22c51970 Mon Sep 17 00:00:00 2001
+From: Krystian Hebel <krystian.hebel@3mdeb.com>
+Date: Tue, 31 Dec 2019 20:30:21 +0100
+Subject: [PATCH 51/80] mainboard/apu2: fix watchdog issues
+
+Platform hanged without setting RstToCpuPwrGdEn.
+
+Code for enabling watchdog is now in board_BeforeInitEarly, as hardware
+is not enabled before InitReset. It didn't work on first boot after
+power cycle.
+
+Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/OemCustomize.c | 34 +++++++++++
+ src/mainboard/pcengines/apu2/romstage.c     | 68 +++++++++++++++++++++
+ 2 files changed, 102 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
+index 0a2b68529f4b..2f837fd9d832 100644
+--- a/src/mainboard/pcengines/apu2/OemCustomize.c
++++ b/src/mainboard/pcengines/apu2/OemCustomize.c
+@@ -3,6 +3,9 @@
+ #include <AGESA.h>
+ #include <northbridge/amd/agesa/state_machine.h>
+ #include "bios_knobs.h"
++#include <smp/node.h>
++#include <Fch/Fch.h>
++#include <amdblocks/acpimmio.h>
+ 
+ #include "gpio_ftns.h"
+ 
+@@ -82,6 +85,37 @@ void board_BeforeInitEarly(struct sysinfo *cb, AMD_EARLY_PARAMS *InitEarly)
+ 		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
+ 		InitEarly->PlatformConfig.CpbMode = CpbModeAuto;
+ 	}
++
++	if (boot_cpu()) {
++		volatile u32 *ptr = (u32 *)(ACPI_MMIO_BASE + WATCHDOG_BASE);
++
++		/*
++		 * Set PMxBE[RstToCpuPwrGdEn] = 1: FCH toggles CpuPwrGd on every reset.
++		 * Without it, after watchdog causes a restart, D18F5x84[CmpCap]
++		 * (number of cores on the node) sometimes reads as 0. Because of that
++		 * AGESA hangs in subsequent InitReset calls, until next cold reset.
++		 */
++		pm_write8(FCH_PMIOA_REGBE, pm_read8(FCH_PMIOA_REGBE) | 0x80);
++
++		u16 watchdog_timeout = get_watchdog_timeout();
++
++		if (watchdog_timeout == 0) {
++			// watchdog disabled - default state
++			printk(BIOS_WARNING, "Watchdog is disabled\n");
++		} else {
++			// bit 1 (WatchdogFired) is write-1-to-clear, needs to be preserved
++			u32 val = *ptr & ~(1 << 1);
++			// enable
++			*ptr = val | (1 << 0);
++			// configure timeout
++			*(ptr + 1) = (u16) watchdog_timeout;
++			// trigger
++			val = *ptr & ~(1 << 1);
++			*ptr = val | (1 << 7);
++
++			printk(BIOS_WARNING, "Watchdog is enabled, state = 0x%x, time = %d\n", *ptr, *(ptr + 1));
++		}
++	}
+ }
+ 
+ void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 2509031f3e5f..e075983798da 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ 
+ #include <stdint.h>
++#include <string.h>
+ #include <amdblocks/acpimmio.h>
+ #include <amdblocks/gpio.h>
+ #include <amdblocks/gpio_defs.h>
+@@ -8,10 +9,16 @@
+ #include <device/pci_ops.h>
+ #include <gpio.h>
+ #include <northbridge/amd/agesa/state_machine.h>
++#include <Fch/Fch.h>
++#include <smp/node.h>
+ 
++#include "bios_knobs.h"
+ #include "gpio_ftns.h"
+ 
+ static void early_lpc_init(void);
++static void print_sign_of_life(void);
++extern char coreboot_dmi_date[];
++extern char coreboot_version[];
+ 
+ void board_BeforeAgesa(struct sysinfo *cb)
+ {
+@@ -71,3 +78,64 @@ static void early_lpc_init(void)
+ 	if (CONFIG(BOARD_PCENGINES_APU5))
+ 		gpio_configure_pads(gpio_apu5, ARRAY_SIZE(gpio_apu5));
+ }
++
++static const char *mainboard_bios_version(void)
++{
++	if (strlen(CONFIG_LOCALVERSION))
++		return CONFIG_LOCALVERSION;
++	else
++		return coreboot_version;
++}
++
++static void print_sign_of_life(void)
++{
++	char tmp[9];
++	strncpy(tmp,   coreboot_dmi_date+6, 4);
++	strncpy(tmp+4, coreboot_dmi_date+3, 2);
++	strncpy(tmp+6, coreboot_dmi_date,   2);
++	tmp[8] = '\0';
++	printk(BIOS_ALERT, CONFIG_MAINBOARD_VENDOR " "
++	                   CONFIG_MAINBOARD_PART_NUMBER "\n");
++	printk(BIOS_ALERT, "coreboot build %s\n", tmp);
++	printk(BIOS_ALERT, "BIOS version %s\n", mainboard_bios_version());
++}
++
++void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
++{
++	u32 val, data;
++
++	if (boot_cpu()) {
++		pm_write8(FCH_PMIOA_REGC5, 0);
++
++		/* Check if cold boot was requested */
++		val = pci_read_config32(PCI_DEV(0, 0x18, 0), 0x6C);
++		if (val & (1 << 4)) {
++			printk(BIOS_ALERT, "Forcing cold boot path\n");
++			val &= ~(0x630); // ColdRstDet[4], BiosRstDet[10:9, 5]
++			pci_write_config32(PCI_DEV(0, 0x18, 0), 0x6C, val);
++
++			pm_write32(0xc0, 0x3fff003f); // Write-1-to-clear resets
++
++			/* FullRst, SysRst, RstCmd */
++			pm_write8(FCH_PMIOA_REGC5, 0xe);
++			printk(BIOS_ALERT, "Did not reset (yet)\n");
++		}
++
++		// do not print SOL if reset will take place in FchInit
++		if (check_console() &&
++		    !(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status))
++			print_sign_of_life();
++
++		if ((check_mpcie2_clk() || CONFIG(FORCE_MPCIE2_CLK)) &&
++		     CONFIG(BOARD_PCENGINES_APU2)) {
++			// make GFXCLK to ignore CLKREQ# input
++			// force it to be always on
++			data = misc_read32(FCH_MISC_REG04);
++			data &= 0xFFFFFF0F;
++			data |= 0xF << (1 * 4); // CLKREQ GFX to GFXCLK
++			misc_write32(FCH_MISC_REG04, data);
++			printk(BIOS_DEBUG, "force mPCIe clock enabled\n");
++		}
++	}
++}
++
+-- 
+2.39.2
+

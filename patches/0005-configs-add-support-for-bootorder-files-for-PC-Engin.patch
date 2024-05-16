@@ -1,0 +1,41 @@
+From f9e09922ac5cd58758e84683161c1cda0bbcb704 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 01:36:08 +0200
+Subject: [PATCH 05/80] configs: add support for bootorder files for PC Engines
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_apu2 | 1 +
+ configs/config.pcengines_apu4 | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
+index 9ab14bfb7b60..9befb0718c62 100644
+--- a/configs/config.pcengines_apu2
++++ b/configs/config.pcengines_apu2
+@@ -14,6 +14,7 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
+index 4711a7e0bd32..d32ecaaf1314 100644
+--- a/configs/config.pcengines_apu4
++++ b/configs/config.pcengines_apu4
+@@ -15,6 +15,7 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+-- 
+2.39.2
+

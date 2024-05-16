@@ -1,0 +1,97 @@
+From b46b7135e525bdf2f0e7cb641bc75c2a931cb11d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 8 May 2024 13:40:23 +0200
+Subject: [PATCH 02/80] payloads/seabios: use PC Engines repository
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_apu2      |  2 ++
+ configs/config.pcengines_apu3      | 12 ------------
+ configs/config.pcengines_apu4      |  2 ++
+ configs/config.pcengines_apu5      | 12 ------------
+ payloads/external/SeaBIOS/Makefile |  2 +-
+ 5 files changed, 5 insertions(+), 25 deletions(-)
+ delete mode 100644 configs/config.pcengines_apu3
+ delete mode 100644 configs/config.pcengines_apu5
+
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
+index 514261b7f4c5..9ab14bfb7b60 100644
+--- a/configs/config.pcengines_apu2
++++ b/configs/config.pcengines_apu2
+@@ -15,6 +15,8 @@ CONFIG_PXE=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,157b"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SORTBOOTORDER_REVISION=y
+ CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
+diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
+deleted file mode 100644
+index 7acf014c258a..000000000000
+--- a/configs/config.pcengines_apu3
++++ /dev/null
+@@ -1,12 +0,0 @@
+-# CONFIG_COLLECT_TIMESTAMPS is not set
+-CONFIG_VENDOR_PCENGINES=y
+-CONFIG_BOARD_PCENGINES_APU3=y
+-CONFIG_APU2_PINMUX_UART_C=y
+-CONFIG_APU2_PINMUX_UART_D=y
+-CONFIG_NO_GFX_INIT=y
+-CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
+-CONFIG_PXE=y
+-CONFIG_BUILD_IPXE=y
+-CONFIG_PXE_ROM_ID="8086,1539"
+-# CONFIG_PXE_SERIAL_CONSOLE is not set
+-CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
+index d552dd3d8685..4711a7e0bd32 100644
+--- a/configs/config.pcengines_apu4
++++ b/configs/config.pcengines_apu4
+@@ -16,6 +16,8 @@ CONFIG_PXE=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SORTBOOTORDER_REVISION=y
+ CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
+diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
+deleted file mode 100644
+index e5ddcee36167..000000000000
+--- a/configs/config.pcengines_apu5
++++ /dev/null
+@@ -1,12 +0,0 @@
+-# CONFIG_COLLECT_TIMESTAMPS is not set
+-CONFIG_VENDOR_PCENGINES=y
+-CONFIG_BOARD_PCENGINES_APU5=y
+-CONFIG_APU2_PINMUX_UART_C=y
+-CONFIG_APU2_PINMUX_UART_D=y
+-CONFIG_NO_GFX_INIT=y
+-CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
+-CONFIG_PXE=y
+-CONFIG_BUILD_IPXE=y
+-CONFIG_PXE_ROM_ID="8086,1539"
+-# CONFIG_PXE_SERIAL_CONSOLE is not set
+-CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/payloads/external/SeaBIOS/Makefile b/payloads/external/SeaBIOS/Makefile
+index 225a42896c0c..19e028cdcf78 100644
+--- a/payloads/external/SeaBIOS/Makefile
++++ b/payloads/external/SeaBIOS/Makefile
+@@ -2,7 +2,7 @@ TAG-$(CONFIG_SEABIOS_MASTER)=origin/master
+ TAG-$(CONFIG_SEABIOS_STABLE)=3208b098f51a9ef96d0dfa71d5ec3a3eaec88f0a
+ TAG-$(CONFIG_SEABIOS_REVISION)=$(CONFIG_SEABIOS_REVISION_ID)
+ 
+-project_git_repo=https://review.coreboot.org/seabios.git
++project_git_repo=https://github.com/pcengines/seabios.git
+ project_dir=seabios
+ 
+ unexport KCONFIG_AUTOHEADER
+-- 
+2.39.2
+

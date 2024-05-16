@@ -1,0 +1,52 @@
+From 53d3ae5b58bf8935f326fa4d7c44300a05a6b8ea Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Thu, 2 May 2024 23:25:08 +0200
+Subject: [PATCH 48/80] mainboard/pcengines: add FMAP descriptor files
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/vboot-rw-ab.fmd | 29 ++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
+
+diff --git a/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd b/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
+new file mode 100644
+index 000000000000..c17402e6160e
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
+@@ -0,0 +1,29 @@
++FLASH 8M {
++	SI_BIOS@0x0 0x800000 {
++		MISC_RW@0x0 0xa0000 {
++			RW_UNUSED@0x0 0x1c000
++			RW_VPD@0x1c000 0x4000
++			PSPDIR@0x20000 0x80000
++		}
++		RW_SECTION_A@0xa0000 0x230000 {
++			VBLOCK_A@0x0 0x10000
++			FW_MAIN_A(CBFS)@0x10000 0x21ffc0
++			RW_FWID_A@0x22ffc0 0x40
++		}
++		RW_SECTION_B@0x2d0000 0x230000 {
++			VBLOCK_B@0x0 0x10000
++			FW_MAIN_B(CBFS)@0x10000 0x21ffc0
++			RW_FWID_B@0x22ffc0 0x40
++		}
++		WP_RO@0x500000 0x300000{
++			RO_VPD@0x0 0x4000
++			RO_SECTION@0x4000 0x2fc000{
++				FMAP@0x0 0x800
++				RO_FRID@0x800 0x40
++				RO_FRID_PAD@0x840 0x7c0
++				GBB@0x1000 0xef000
++				COREBOOT(CBFS)@0xf0000 0x20c000
++			}
++		}
++	}
++}
+-- 
+2.39.2
+

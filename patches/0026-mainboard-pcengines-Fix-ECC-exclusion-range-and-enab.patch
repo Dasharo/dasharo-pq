@@ -1,0 +1,78 @@
+From cef8b521e98e6ee98db088c2d62b9597ff36a66a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 13 May 2024 23:18:13 +0200
+Subject: [PATCH 26/80] mainboard/pcengines: Fix ECC exclusion range and enable
+ ECC scrubbing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit addresses an issue where ECC was not functioning correctly
+due to all memory being marked as excluded from ECC checking and error
+reporting. This was caused by an incorrect setting in systems without
+UMA (no integrated graphics).
+
+The fix involves temporarily disabling DRAM ECC scrubbing, clearing
+reserved bits in register D18F3xB8, disabling the ECC exclusion range,
+and then re-enabling DRAM ECC scrubbing. This ensures that ECC functions
+as expected and improves system stability.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c | 40 ++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 28023190ca8c..0cfbc697111c 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -381,6 +381,46 @@ static void mainboard_enable(struct device *dev)
+ 
+ static void mainboard_final(void *chip_info)
+ {
++	/* ECC was not working because all memory was marked
++	 * as excluded from ECC checking and error reporting.
++	 * Normally one contiguous range is excluded to cover
++	 * framebuffer region in systems with internal GPUs.
++	 * AGESA set bit 0, EccExclEn, in register D18F5x240 as 1.
++	 * Range was incorrectly enabled to cover all memory
++	 * for cases without UMA (no integrated graphics).
++	 *
++	 * In order to clear EccExclEn DRAM scrubber needs to be
++	 * disabled temporarily by setting D18F3x88[DisDramScrub]
++	 */
++	u32 val;
++	struct device *D18F3 = dev_find_device(0x1022, 0x1583, NULL);
++	struct device *D18F5 = dev_find_device(0x1022, 0x1585, NULL);
++
++	/* Disable DRAM ECC scrubbing */
++	val = pci_read_config32(D18F3, 0x88);
++	val |= (1 << 27);
++	pci_write_config32(D18F3, 0x88, val);
++
++	/* Clear reserved bits in register D18F3xB8
++	 *
++	 * D18F3xB8 NB Array Address has reserved bits [27:10]
++	 * Multiple experiments showed that ECC injection
++	 * doesn't work when these bits are set.
++	 */
++	val = pci_read_config32(D18F3, 0xB8);
++	val &= 0xF000003F;
++	pci_write_config32(D18F3, 0xB8, val);
++
++	/* Disable ECC exclusion range */
++	val = pci_read_config32(D18F5, 0x240);
++	val &= ~1;
++	pci_write_config32(D18F5, 0x240, val);
++
++	/*  Re-enable DRAM ECC scrubbing */
++	val = pci_read_config32(D18F3, 0x88);
++	val &= ~(1 << 27);
++	pci_write_config32(D18F3, 0x88, val);
++
+ 	//
+ 	// Turn off LED 2 and LED 3
+ 	//
+-- 
+2.39.2
+

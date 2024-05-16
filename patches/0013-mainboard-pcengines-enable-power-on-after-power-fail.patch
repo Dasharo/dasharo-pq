@@ -1,0 +1,49 @@
+From b58cadc0f107075e51c0512c4664fa08e4c5d990 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 13 May 2024 15:20:19 +0200
+Subject: [PATCH 13/80] mainboard/pcengines: enable power on after power
+ failure
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit introduces a change in the apu2 mainboard code to enable
+power on after a power failure. A new definition for PM_RTC_SHADOW has
+been added and a bit manipulation operation has been included to set the
+necessary bit for this feature. This change improves the robustness of
+the system in case of unexpected power outages.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index c7617cf564d6..725375de1be0 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -35,8 +35,10 @@
+ #include "bios_knobs.h"
+ 
+ #define SPD_SIZE  128
+-#define PM_RTC_CONTROL	    0x56
+-#define PM_S_STATE_CONTROL  0xBA
++#define PM_RTC_CONTROL		0x56
++#define PM_RTC_SHADOW		0x5B
++#define PM_S_STATE_CONTROL	0xBA
++
+ #define SEC_REG_SERIAL_ADDR	0x1000
+ #define MAX_SERIAL_LEN		10
+ 
+@@ -282,6 +284,8 @@ static void mainboard_enable(struct device *dev)
+ 	//
+ 	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
+ 
++	/* Enable power on after power fail */
++	pm_write8(PM_RTC_SHADOW, pm_read8(PM_RTC_SHADOW) | (1 << 0));
+ 
+ 
+ 
+-- 
+2.39.2
+

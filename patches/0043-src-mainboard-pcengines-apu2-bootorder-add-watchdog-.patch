@@ -1,0 +1,67 @@
+From bda1b9494f45ca6f13eb8687b8e84e67ef0a01b0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 4 Jun 2019 14:21:15 +0200
+Subject: [PATCH 43/80] src/mainboard/pcengines/apu2/bootorder: add watchdog
+ entries
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu5/bootorder    | Bin 4054 -> 4067 bytes
+ 5 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index 37c4b8436e12..210845d97c1d 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -26,3 +26,4 @@ mpcie2_clk0
+ com2_en0
+ boosten1
+ sd3mode0
++watchdog0000
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index f7d2212919704217c11daeefb5ac33814fe0567a..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 28
+jcmZorXi(UY#Kc{mSdyHPlAms1V6Zu!$&PpOYW`3Fh}H>0
+
+delta 20
+bcmZorXi(UY#I(7P$%=P!0~7z`)%>9VM$ZO_
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index 2c845236b8f865227639b809248715ecea09d7a9..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 33
+ncmZorXi(UYz$C!SRi0RqoRN~BZU6+lT$>A-tavA{;tvA=rhy5u
+
+delta 23
+ecmZorXi(UYz{JGGySb3big$7Y6aVDZ{Gk9(76zXH
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index f7d2212919704217c11daeefb5ac33814fe0567a..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 28
+jcmZorXi(UY#Kc{mSdyHPlAms1V6Zu!$&PpOYW`3Fh}H>0
+
+delta 20
+bcmZorXi(UY#I(7P$%=P!0~7z`)%>9VM$ZO_
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
+index 41643e044d19de2be7d1bd5d5a784829e2981732..e7e7fb6d0f9d4b55de772dab37a7d4fff8324e18 100644
+GIT binary patch
+delta 34
+ocmca6|5$!Q2orC4Vo7pFN`ATl5O8fyWK!gvT)@OTxrsjn0MpM3^Z)<=
+
+delta 12
+TcmaDXe@%Wv2-D_7rY2qhBWeVr
+
+-- 
+2.39.2
+

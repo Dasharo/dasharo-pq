@@ -1,0 +1,88 @@
+From 2be4672add7851c728ed70397a2ede59df9fbda2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 30 Nov 2016 17:55:46 +0100
+Subject: [PATCH 12/80] mainboard/pcengines: add memory configuration and
+ status logging
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit improves the mainboard_enable function in the apu2 mainboard
+code. It includes a check for console availability and logs the total
+available memory. It also reads memory configuration from GPIO 49 and
+50, and reads the SPD data. If ECC is enabled, it logs that information
+as well. This additional logging will assist in debugging and system
+analysis, and ensure that the boot process is compatible with legacy
+systems and meets customer expectations.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/lib/Makefile.inc                     |  1 +
+ src/mainboard/pcengines/apu2/mainboard.c | 29 ++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/src/lib/Makefile.inc b/src/lib/Makefile.inc
+index c83004a86695..4b19e27465f4 100644
+--- a/src/lib/Makefile.inc
++++ b/src/lib/Makefile.inc
+@@ -374,6 +374,7 @@ $(foreach stage,$(libhwbase-stages), \
+ endif # CONFIG_ROMSTAGE_LIBHWBASE || CONFIG_RAMSTAGE_LIBHWBASE
+ 
+ romstage-y += spd_bin.c
++ramstage-y += spd_bin.c
+ 
+ ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
+ LIB_SPD_BIN = $(obj)/spd.bin
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 2cb689d4c358..c7617cf564d6 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -244,9 +244,34 @@ static void mainboard_enable(struct device *dev)
+ {
+ 	/* Maintain this text unchanged for manufacture process. */
+ 	printk(BIOS_INFO, "Mainboard " CONFIG_MAINBOARD_PART_NUMBER " Enable.\n");
++	bool scon = check_console();
+ 
+ 	config_gpio_mux();
+ 
++	u32 total_mem = amd_topmem() / (1024 * 1024);
++	if (amd_topmem2() > 0)
++		total_mem += (amd_topmem2() / (1024 * 1024)) - 4 * 1024;
++
++	if(scon) {
++		printk(BIOS_ALERT, "%d MB", total_mem);
++	}
++
++	//
++	// Read memory configuration from GPIO 49 and 50
++	//
++	u8 spd_index = get_spd_offset();
++	u8 spd_buffer[CONFIG_DIMM_SPD_SIZE];
++
++	if (read_ddr3_spd_from_cbfs(spd_buffer, spd_index) < 0)
++		die("No SPD data\n");
++
++	if (scon) {
++		if (spd_buffer[3] == 8)
++			printk(BIOS_ALERT, " ECC");
++
++		printk(BIOS_ALERT, " DRAM\n\n");
++	}
++
+ 	//
+ 	// Enable the RTC output
+ 	//
+@@ -257,6 +282,10 @@ static void mainboard_enable(struct device *dev)
+ 	//
+ 	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
+ 
++
++
++
++
+ 	/* Initialize the PIRQ data structures for consumption */
+ 	pirq_setup();
+ #if CONFIG(GENERATE_SMBIOS_TABLES)
+-- 
+2.39.2
+

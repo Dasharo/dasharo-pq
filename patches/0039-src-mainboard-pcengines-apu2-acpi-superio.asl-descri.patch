@@ -1,0 +1,104 @@
+From 320b320e0d3911bc8ced1c93d8ebbaf781554152 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 24 May 2019 15:24:04 +0200
+Subject: [PATCH 39/80] src/mainboard/pcengines/apu2/acpi/superio.asl: describe
+ serial ports
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/acpi/superio.asl | 65 +++++++++++++++++++
+ src/mainboard/pcengines/apu2/dsdt.asl         |  3 +
+ 2 files changed, 68 insertions(+)
+ create mode 100644 src/mainboard/pcengines/apu2/acpi/superio.asl
+
+diff --git a/src/mainboard/pcengines/apu2/acpi/superio.asl b/src/mainboard/pcengines/apu2/acpi/superio.asl
+new file mode 100644
+index 000000000000..c61e3d758158
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/acpi/superio.asl
+@@ -0,0 +1,65 @@
++/*
++ * This file is part of the coreboot project.
++ *
++ * Copyright (C) 2019 PC Engines Gmbh
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++Scope (\_SB.PCI0.LIBR) {
++
++	Device (COM1) {
++		Name (_HID, EISAID ("PNP0501"))
++		Name (_UID, 1)
++
++		Method (_STA, 0, NotSerialized) {
++			Return (0x0F)
++		}
++
++		Name (_CRS, ResourceTemplate ()
++		{
++			IO (Decode16, 0x03F8, 0x3F8, 0x08, 0x08)
++			IRQNoFlags () {4}
++		})
++
++		Name (_PRS, ResourceTemplate ()
++		{
++			StartDependentFn (0, 0) {
++				IO (Decode16, 0x03F8, 0x3F8, 0x08, 0x08)
++				IRQNoFlags () {4}
++			}
++			EndDependentFn ()
++		})
++	}
++
++	Device (COM2) {
++		Name (_HID, EISAID ("PNP0501"))
++		Name (_UID, 2)
++
++		Method (_STA, 0, NotSerialized) {
++			Return (0x0F)
++		}
++
++		Name (_CRS, ResourceTemplate ()
++		{
++			IO (Decode16, 0x02F8, 0x2F8, 0x08, 0x08)
++			IRQNoFlags () {3}
++		})
++
++		Name (_PRS, ResourceTemplate ()
++		{
++			StartDependentFn (0, 0) {
++				IO (Decode16, 0x02F8, 0x2F8, 0x08, 0x08)
++				IRQNoFlags () {3}
++			}
++			EndDependentFn ()
++		})
++	}
++}
+\ No newline at end of file
+diff --git a/src/mainboard/pcengines/apu2/dsdt.asl b/src/mainboard/pcengines/apu2/dsdt.asl
+index 61edb104854a..6564ccc2709a 100644
+--- a/src/mainboard/pcengines/apu2/dsdt.asl
++++ b/src/mainboard/pcengines/apu2/dsdt.asl
+@@ -57,5 +57,8 @@ DefinitionBlock (
+ 
+ 	/* Define the General Purpose Events for the platform */
+ 	#include "acpi/gpe.asl"
++
++	/* Super IO devices (COM ports) */
++	#include "acpi/superio.asl"
+ }
+ /* End of ASL file */
+-- 
+2.39.2
+

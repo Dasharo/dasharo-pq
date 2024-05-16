@@ -1,0 +1,70 @@
+From 64a4ffe3f6fcaf8b3bac59c7d44dbca56e9c8b20 Mon Sep 17 00:00:00 2001
+From: Krystian Hebel <krystian.hebel@3mdeb.com>
+Date: Fri, 28 Dec 2018 16:54:40 +0100
+Subject: [PATCH 34/80] payloads/iPXE: option for reproducible building
+
+Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
+---
+ payloads/external/Makefile.inc  | 2 +-
+ payloads/external/iPXE/Kconfig  | 7 +++++++
+ payloads/external/iPXE/Makefile | 6 +++++-
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
+index febc922d11ee..08f3f3674138 100644
+--- a/payloads/external/Makefile.inc
++++ b/payloads/external/Makefile.inc
+@@ -411,7 +411,7 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(PXE_CONFIG_SCRIPT)
+ 	IPXE_UART=$(IPXE_UART) \
+ 	CONFIG_TTYS0_BAUD=$(CONFIG_TTYS0_BAUD) \
+ 	CONFIG_PXE_CUSTOM_GENERAL_H=$(CONFIG_PXE_CUSTOM_GENERAL_H) \
+-	CONFIG_PXE_CUSTOM_BOOTMENU_FILE=$(CONFIG_PXE_CUSTOM_BOOTMENU_FILE) \
++	CONFIG_PXE_CUSTOM_BUILD_ID=$(CONFIG_PXE_CUSTOM_BUILD_ID) \
+ 	CONFIG_SCRIPT=$(PXE_CONFIG_SCRIPT) \
+ 	CONFIG_HAS_SCRIPT=$(CONFIG_PXE_ADD_SCRIPT) \
+ 	CONFIG_PXE_NO_PROMPT=$(CONFIG_PXE_NO_PROMPT) \
+diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
+index 750560de1a97..f956a032f2ff 100644
+--- a/payloads/external/iPXE/Kconfig
++++ b/payloads/external/iPXE/Kconfig
+@@ -82,6 +82,13 @@ config PXE_SERIAL_CONSOLE
+ 
+ 	  Unselect to let only SeaBIOS handle printing output.
+ 
++config PXE_CUSTOM_BUILD_ID
++	string "iPXE custom build_id variable"
++	default ""
++	help
++	  This option allows user to customize build_id for reproducible builds.
++	  It is 32-bit hexadecimal number without "0x" prefix.
++
+ config PXE_NO_PROMPT
+ 	bool "Do not show prompt to boot from PXE"
+ 	default n
+diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
+index 9393b69c9135..56f477608c87 100644
+--- a/payloads/external/iPXE/Makefile
++++ b/payloads/external/iPXE/Makefile
+@@ -18,6 +18,10 @@ unexport KCONFIG_SPLITCONFIG
+ unexport KCONFIG_TRISTATE
+ unexport KCONFIG_NEGATIVES
+ 
++ifneq ($(CONFIG_PXE_CUSTOM_BUILD_ID),)
++PXE_MAKE_OPTS := BUILD_ID_CMD="echo 0x$(CONFIG_PXE_CUSTOM_BUILD_ID)"
++endif
++
+ all: build
+ 
+ $(project_dir):
+@@ -75,7 +79,7 @@ endif
+ build: config $(CONFIG_SCRIPT)
+ ifeq ($(CONFIG_HAS_SCRIPT),y)
+ 	echo "    MAKE       $(project_name) $(TAG-y) EMBED=$(CONFIG_SCRIPT)"
+-	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom EMBED=$(CONFIG_SCRIPT)
++	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom EMBED=$(CONFIG_SCRIPT) $(PXE_MAKE_OPTS)
+ else
+ 	echo "    MAKE       $(project_name) $(TAG-y)"
+ 	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom $(PXE_MAKE_OPTS)
+-- 
+2.39.2
+

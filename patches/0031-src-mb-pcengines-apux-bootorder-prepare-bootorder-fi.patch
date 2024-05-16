@@ -1,0 +1,46 @@
+From 13fe2bef25689319bd185ebdb8e106ea3bd16767 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 27 Nov 2018 14:31:17 +0100
+Subject: [PATCH 31/80] src/mb/pcengines/apux/bootorder: prepare bootorder
+ files for COM2 runtime configuration
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 3 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index a27bc92a0e8c..a314740bde97 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -15,3 +15,4 @@ uartc1
+ uartd1
+ ehcien0
+ mpcie2_clk0
++com2_en0
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index 51b0fea1741238d986b4b47ac678fb344312d04b..2a0dfb2f39bf14f8fd195a7a9744a9ef1e1b51cc 100644
+GIT binary patch
+delta 26
+hcmZorXi(UY%gC9WpKFwwXTZg~xscJ6Z}MvXPylXc2mJs5
+
+delta 20
+bcmZorXi(UY%ec9bQHyW#1V)j`tNB9#NCyU{
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index 2d8efc15d84d9efb9751835a7b3e64a20de2412b..e94b77210661cd7789f90fa4897272994fba86d5 100644
+GIT binary patch
+delta 26
+hcmZorXi(Tt%E+0VpKFwwXTZg~xsg$eZ}JNM2mo(K2nqlI
+
+delta 20
+bcmZorXi(Tt%DB0aQHyW#1V*08tNB9#NLL1?
+
+-- 
+2.39.2
+

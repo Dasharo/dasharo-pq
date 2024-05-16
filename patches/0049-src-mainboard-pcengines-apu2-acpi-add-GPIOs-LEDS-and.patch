@@ -1,0 +1,251 @@
+From 229aa3461d0bc54b82d7afa7af70868d183e3d16 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 23 Jul 2019 15:52:35 +0200
+Subject: [PATCH 49/80] src/mainboard/pcengines/apu2/acpi: add GPIOs, LEDS and
+ S1 button
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/acpi/buttons.asl | 60 +++++++++++++++
+ src/mainboard/pcengines/apu2/acpi/gpio.asl    | 34 +++++++++
+ src/mainboard/pcengines/apu2/acpi/leds.asl    | 75 +++++++++++++++++++
+ src/mainboard/pcengines/apu2/dsdt.asl         | 17 +++++
+ 4 files changed, 186 insertions(+)
+ create mode 100644 src/mainboard/pcengines/apu2/acpi/buttons.asl
+ create mode 100644 src/mainboard/pcengines/apu2/acpi/gpio.asl
+ create mode 100644 src/mainboard/pcengines/apu2/acpi/leds.asl
+
+diff --git a/src/mainboard/pcengines/apu2/acpi/buttons.asl b/src/mainboard/pcengines/apu2/acpi/buttons.asl
+new file mode 100644
+index 000000000000..4448e9aeac4f
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/acpi/buttons.asl
+@@ -0,0 +1,60 @@
++/*
++ * This file is part of the coreboot project.
++ *
++ * Based on the example of Mika Westerberg: https://lwn.net/Articles/612062/
++ *
++ * Copyright (C) 2015 Tobias Diedrich, Mika Westerberg
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++Scope (\_SB.PCI0)
++{
++	Device (BTNS)
++	{
++		Name (_HID, "PRP0001")
++
++		Name (_CRS, ResourceTemplate () {
++			GpioInt (Edge, ActiveLow, Shared, PullUp, ,
++				 "\\_SB.PCI0.GPIO") {
++			#if CONFIG(BOARD_PCENGINES_APU5)
++				9
++			#else
++				89
++			#endif
++			}
++		})
++
++		Name (_DSD, Package () {
++			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++			Package () {
++				Package () {"compatible", "gpio-keys"},
++				Package () {"autorepeat", 1}
++			}
++		})
++
++		Device (BTN1)
++		{
++			Name (_HID, "PRP0001")
++			Name (_DSD, Package () {
++				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++				Package () {
++					Package () {"linux,code", 257},
++					Package () {"linux,input-type", 1},
++					Package () {"debounce-interval", 100},
++					Package () {"label", "switch1"},
++					Package () {"interrupts", 7},
++					Package () {"gpios", Package ()
++							{^^BTNS, 0, 0, 1}}
++				}
++			})
++		}
++	}
++}
+diff --git a/src/mainboard/pcengines/apu2/acpi/gpio.asl b/src/mainboard/pcengines/apu2/acpi/gpio.asl
+new file mode 100644
+index 000000000000..8a05cdf539de
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/acpi/gpio.asl
+@@ -0,0 +1,34 @@
++/*
++ * This file is part of the coreboot project.
++ *
++ * Copyright (C) 2015 Advanced Micro Devices, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++Scope (\_SB.PCI0)
++{
++	Device (GPIO) {
++		Name (_HID, "AMD0030")
++		Name (_CID, "AMD0030")
++		Name (_UID, 0)
++		Name (_DDN, "GPIO Controller")
++
++		Name (_CRS, ResourceTemplate () {
++			Interrupt(ResourceConsumer, Level, ActiveLow,
++				  Shared, , , ) {7}
++			Memory32Fixed(ReadWrite, 0xFED81500, 0x300)
++		})
++
++		Method (_STA, 0x0, NotSerialized) {
++			Return (0x0F)
++		}
++	}
++}
+diff --git a/src/mainboard/pcengines/apu2/acpi/leds.asl b/src/mainboard/pcengines/apu2/acpi/leds.asl
+new file mode 100644
+index 000000000000..38fe2c3ff1d7
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/acpi/leds.asl
+@@ -0,0 +1,75 @@
++/*
++ * This file is part of the coreboot project.
++ *
++ * Based on the example of Mika Westerberg: https://lwn.net/Articles/612062/
++ *
++ * Copyright (C) 2015 Tobias Diedrich, Mika Westerberg
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++Scope (\_SB.PCI0)
++{
++	Device (LEDS)
++	{
++		Name (_HID, "PRP0001")
++
++		Name (_CRS, ResourceTemplate () {
++			GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PCI0.GPIO", 0, ResourceConsumer) { 68, 69, 70 }
++		})
++
++		Name (_DSD, Package () {
++			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++			Package () {
++				Package () {"compatible","gpio-leds"}
++			}
++		})
++
++		Device (LED1)
++		{
++			Name (_HID, "PRP0001")
++			Name (_DSD, Package () {
++				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++				Package () {
++					Package () {"label", DEVICE_NAME:green:led1"},
++					Package () {"gpios", Package () {^^LEDS, 0, 0, 1 }},
++					Package () {"default-state", "on"}
++				}
++				
++			})
++		}
++
++		Device (LED2)
++		{
++			Name (_HID, "PRP0001")
++			Name (_DSD, Package () {
++				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++				Package () {
++					Package () {"label", DEVICE_NAME:green:led2"},
++					Package () {"gpios", Package () {^^LEDS, 0, 1, 1 }},
++					Package () {"default-state", "off"}
++				}
++			})
++		}
++
++		Device (LED3)
++		{
++			Name (_HID, "PRP0001")
++			Name (_DSD, Package () {
++				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++				Package () {
++					Package () {"label", DEVICE_NAME:green:led3"},
++					Package () {"gpios", Package () {^^LEDS, 0, 2, 1 }},
++					Package () {"linux,default-trigger", "heartbeat"}
++				}
++			})
++		}
++	}
++}
+diff --git a/src/mainboard/pcengines/apu2/dsdt.asl b/src/mainboard/pcengines/apu2/dsdt.asl
+index 6564ccc2709a..c0188ee3a671 100644
+--- a/src/mainboard/pcengines/apu2/dsdt.asl
++++ b/src/mainboard/pcengines/apu2/dsdt.asl
+@@ -1,6 +1,17 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ 
+ /* DefinitionBlock Statement */
++
++#if CONFIG(BOARD_PCENGINES_APU2)
++#define DEVICE_NAME "apu2
++#elif CONFIG(BOARD_PCENGINES_APU3)
++#define DEVICE_NAME "apu3
++#elif CONFIG(BOARD_PCENGINES_APU4)
++#define DEVICE_NAME "apu4
++#elif CONFIG(BOARD_PCENGINES_APU5)
++#define DEVICE_NAME "apu5
++#endif
++
+ #include <acpi/acpi.h>
+ DefinitionBlock (
+ 	"dsdt.aml",
+@@ -50,6 +61,8 @@ DefinitionBlock (
+ 		/* Describe PCI INT[A-H] for the Southbridge */
+ 		#include <southbridge/amd/pi/hudson/acpi/pci_int.asl>
+ 
++		/* Describe the GPIO controller in southbridge */
++		#include "acpi/gpio.asl"
+ 	} /* End \_SB scope */
+ 
+ 	/* Describe SMBUS for the Southbridge */
+@@ -60,5 +73,9 @@ DefinitionBlock (
+ 
+ 	/* Super IO devices (COM ports) */
+ 	#include "acpi/superio.asl"
++
++	/* GPIO buttons and leds */
++	#include "acpi/buttons.asl"
++	#include "acpi/leds.asl"
+ }
+ /* End of ASL file */
+-- 
+2.39.2
+

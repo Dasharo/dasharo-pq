@@ -1,0 +1,41 @@
+From f3ad13bee65873ea1199da544ac7ded9b160e58f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sun, 28 Jun 2020 19:21:45 +0200
+Subject: [PATCH 60/80] coreboot_table: include DRTM TPM log in coreboot tables
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/commonlib/include/commonlib/coreboot_tables.h | 1 +
+ src/lib/coreboot_table.c                          | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/commonlib/include/commonlib/coreboot_tables.h b/src/commonlib/include/commonlib/coreboot_tables.h
+index 86bf5438b7ca..04c6ea603d03 100644
+--- a/src/commonlib/include/commonlib/coreboot_tables.h
++++ b/src/commonlib/include/commonlib/coreboot_tables.h
+@@ -87,6 +87,7 @@ enum {
+ 	LB_TAG_TYPE_C_INFO		= 0x0042,
+ 	LB_TAG_ACPI_RSDP                = 0x0043,
+ 	LB_TAG_PCIE			= 0x0044,
++	LB_TAG_DRTM_LOG			= 0x0045,
+ 	/* The following options are CMOS-related */
+ 	LB_TAG_CMOS_OPTION_TABLE	= 0x00c8,
+ 	LB_TAG_OPTION			= 0x00c9,
+diff --git a/src/lib/coreboot_table.c b/src/lib/coreboot_table.c
+index 0707fd3eca5e..15dbe8794d96 100644
+--- a/src/lib/coreboot_table.c
++++ b/src/lib/coreboot_table.c
+@@ -268,6 +268,7 @@ static void add_cbmem_pointers(struct lb_header *header)
+ 		{CBMEM_ID_VPD, LB_TAG_VPD},
+ 		{CBMEM_ID_WIFI_CALIBRATION, LB_TAG_WIFI_CALIBRATION},
+ 		{CBMEM_ID_TPM_CB_LOG, LB_TAG_TPM_CB_LOG},
++		{CBMEM_ID_DRTM_LOG, LB_TAG_DRTM_LOG},
+ 		{CBMEM_ID_FMAP, LB_TAG_FMAP},
+ 		{CBMEM_ID_VBOOT_WORKBUF, LB_TAG_VBOOT_WORKBUF},
+ 		{CBMEM_ID_TYPE_C_INFO, LB_TAG_TYPE_C_INFO},
+-- 
+2.39.2
+

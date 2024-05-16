@@ -1,0 +1,60 @@
+From 6fd6923aa0f78f92346b300b3d5eda0bf1cc9c67 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 30 May 2019 15:49:17 +0200
+Subject: [PATCH 41/80] src/mainboard/pcengines/apu2/bootorder: update
+ bootorder with SD 3.0 mode knob
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu5/bootorder    | Bin 4096 -> 4096 bytes
+ 4 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index 2ff65ad42601..bfbe2fa7fd74 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -17,3 +17,4 @@ ehcien0
+ mpcie2_clk0
+ com2_en0
+ boosten1
++sd3mode0
+\ No newline at end of file
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index 42e870d321980e78b9bc2891846b12d717a3d10f..9de0201c66ee7e08e8ede7317cebc6e3855b4192 100644
+GIT binary patch
+delta 27
+icmZorXi(VDz{pjcVw{_wl4`)qwYiZ|k#F*9{!jpVKL~gL
+
+delta 20
+ccmZorXi(VDz_@uLqZHrd1&o4|SM!Gg07<0=#sB~S
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index 42e870d321980e78b9bc2891846b12d717a3d10f..9de0201c66ee7e08e8ede7317cebc6e3855b4192 100644
+GIT binary patch
+delta 27
+icmZorXi(VDz{pjcVw{_wl4`)qwYiZ|k#F*9{!jpVKL~gL
+
+delta 20
+ccmZorXi(VDz_@uLqZHrd1&o4|SM!Gg07<0=#sB~S
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
+index b60c6d827dcbc8dc0f7632d44c3f8fa093a971a7..ba72627431ca32a0815ac195f1176a7f8d81a3e9 100644
+GIT binary patch
+delta 195
+zcmZorXi%6?&Q@BS<X~ttQBaD}Xrhjkxsg6lKv&Dbn3qexAUV?^(;zv`0we}h1eG$u
+zlrjeCHwNmrHO8$UCWS@6k$y%g(1wYEq7%E`Dio&}=jNxR8t`&u=I7>?0_pO^lH`n(
+U{B#2#;N{xf$f(CVc{P7107Hg2?EnA(
+
+delta 31
+ncmZorXi%6?&ZgyHXrg02Ihpa-=0+wh-pv!3xELp|<_`q`ogxX)
+
+-- 
+2.39.2
+
