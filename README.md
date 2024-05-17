@@ -20,24 +20,38 @@ git clone https://review.coreboot.org/coreboot
 cd coreboot
 ```
 
+Checkout branch on tag on which you would like to apply patchqueue:
+
 ```bash
-git branch patchqueue
+git checkout 4.19 -b my-branch
 ```
 
-Clone this repo into upstream's .git/patches
+Initialize guilt:
 
 ```bash
-git clone git@github.com:Dasharo/dasharo-pq.git .git/patches
+guilt init
 ```
 
-Point the patchqueue branch at the patches inside patches/
+Leave coreboot directory:
 
 ```bash
-ln -s patches .git/patches/patchqueue
+cd ..
+```
+
+Clone this repo:
+
+```bash
+git clone git@github.com:Dasharo/dasharo-pq.git
+```
+
+Enter dasharo-pq patches directory
+
+```bash
+cd dasharo-pq/patches
 ```
 
 ```bash
-touch .git/patches/patchqueue/status
+touch .git/patches/my-branch/status
 ```
 
 Push the patchqueue
