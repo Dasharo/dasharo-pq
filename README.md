@@ -10,6 +10,9 @@ information on contributing to the Dasharo project.
 
 ## Usage
 
+Following procedure was created while testing PC Engines v4.19.0.1. It should
+be generalized after gaining better understanding of the process.
+
 Clone upstream coreboot, create a branch called patchqueue:
 
 ```bash
@@ -23,19 +26,19 @@ cd coreboot
 Checkout branch on tag on which you would like to apply patchqueue:
 
 ```bash
-git checkout 4.19 -b my-branch
+git checkout 4.19 -b patchqueue
 ```
 
 Clone this repo:
 
 ```bash
-git clone git@github.com:Dasharo/dasharo-pq.git .git/patches
+git clone -b pcengines-seabios-25.05.00.01 git@github.com:Dasharo/dasharo-pq.git .git/patches
 ```
 
 Point the `patchqueue` Branch at the Patches Inside `.git/patches`:
 
 ```bash
-ln -s .git/patches/patches .git/patches/patchqueue
+ln -s patches .git/patches/patchqueue
 ```
 
 ```bash
