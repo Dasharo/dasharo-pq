@@ -8,7 +8,7 @@ Refer to [Dasharo
 Contribution](https://docs.dasharo.com/newcomers/#dasharo-contribution) for
 information on contributing to the Dasharo project.
 
-This repo a guilt patchqueue. To set up for use with guilt:
+## Usage
 
 Clone upstream coreboot, create a branch called patchqueue:
 
@@ -26,61 +26,38 @@ Checkout branch on tag on which you would like to apply patchqueue:
 git checkout 4.19 -b my-branch
 ```
 
+Clone this repo:
+
+```bash
+git clone git@github.com:Dasharo/dasharo-pq.git .git/patches
+```
+
+Point the `patchqueue` Branch at the Patches Inside `.git/patches`:
+
+```bash
+ln -s .git/patches/patches .git/patches/patchqueue
+```
+
+```bash
+touch .git/patches/patchqueue/status
+```
+
 Initialize guilt:
 
 ```bash
 guilt init
 ```
 
-Leave coreboot directory:
-
-```bash
-cd ..
-```
-
-Clone this repo:
-
-```bash
-git clone git@github.com:Dasharo/dasharo-pq.git
-```
-
-Enter dasharo-pq patches directory
-
-```bash
-cd dasharo-pq/patches
-```
-
-```bash
-touch .git/patches/my-branch/status
-```
-
-Push the patchqueue
+Push All Patches Using Guilt:
 
 ```bash
 guilt push -a
 ```
 
-As development progresses, the base of the patchqueue moves. Refer to
-dasharo.spec for the appropriate base to use. To update the base when it moves:
-
-Pop the patches
+Check if patchqueue was applied:
 
 ```bash
-guilt pop -a
+guilt applied
 ```
-
-Move the patchqueue branch to the new base
-
-```bash
-git reset --hard $NEW_BASE
-```
-
-Push the patchqueue at its new base
-
-```bash
-guilt push -a
-```
-
-Refer to the specfile for dependencies and build instructions.
 
 ## Getting started with new repository
