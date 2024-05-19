@@ -7,13 +7,24 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ configs/config.pcengines_apu6                 |  32 +++++++
+ src/mainboard/pcengines/apu2/Kconfig          |   8 +-
+ src/mainboard/pcengines/apu2/Kconfig.name     |   3 +
+ src/mainboard/pcengines/apu2/dsdt.asl         |   2 +
+ .../pcengines/apu2/variants/apu6/bootorder    | Bin 0 -> 4096 bytes
+ .../apu2/variants/apu6/devicetree.cb          |  83 ++++++++++++++++++
+ 6 files changed, 125 insertions(+), 3 deletions(-)
+ create mode 100644 configs/config.pcengines_apu6
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu6/bootorder
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
+
 diff --git a/configs/config.pcengines_apu6 b/configs/config.pcengines_apu6
 new file mode 100644
-index 000000000000..e8fb80a75c88
+index 000000000000..0cee4afcecdb
 --- /dev/null
 +++ b/configs/config.pcengines_apu6
-@@ -0,0 +1,33 @@
-+# CONFIG_PXE_SERIAL_CONSOLE is not set
+@@ -0,0 +1,32 @@
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU6=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -221,3 +232,6 @@ index 000000000000..f99975d8fe6d
 +
 +	end #domain
 +end #northbridge/amd/pi/00730F01/root_complex
+-- 
+2.39.2
+
