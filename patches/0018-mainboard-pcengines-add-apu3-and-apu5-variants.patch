@@ -7,30 +7,13 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_apu3                 |  29 +++++++++++++++++
- configs/config.pcengines_apu5                 |  29 +++++++++++++++++
- .../pcengines/apu2/bootorder_def_apu5         |  30 ++++++++++++++++++
- .../pcengines/apu2/bootorder_map_apu5         |  18 +++++++++++
- src/mainboard/pcengines/apu2/mainboard.c      |  13 ++++++++
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 0 -> 4096 bytes
- .../apu2/variants/apu3/devicetree.cb          |   2 +-
- .../pcengines/apu2/variants/apu5/bootorder    | Bin 0 -> 4096 bytes
- .../apu2/variants/apu5/devicetree.cb          |   2 +-
- 9 files changed, 121 insertions(+), 2 deletions(-)
- create mode 100644 configs/config.pcengines_apu3
- create mode 100644 configs/config.pcengines_apu5
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_def_apu5
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_map_apu5
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu3/bootorder
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu5/bootorder
-
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
 new file mode 100644
-index 000000000000..c892ac090160
+index 000000000000..8b1f30316482
 --- /dev/null
 +++ b/configs/config.pcengines_apu3
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
++# CONFIG_PXE_SERIAL_CONSOLE is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU3=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -62,10 +45,11 @@ index 000000000000..c892ac090160
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
 new file mode 100644
-index 000000000000..343729c73fc2
+index 000000000000..d4489dc98d84
 --- /dev/null
 +++ b/configs/config.pcengines_apu5
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
++# CONFIG_PXE_SERIAL_CONSOLE is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU5=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -240,6 +224,3 @@ index c69401be1e22..865bb4e17e0d 100644
  					device pnp 2e.607 off end
  				end # SIO NCT5104D
  				chip drivers/pc80/tpm
--- 
-2.39.2
-
