@@ -7,13 +7,6 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_apu1 | 10 ----------
- configs/config.pcengines_apu2 | 31 ++++++++++++++++++++++---------
- configs/config.pcengines_apu4 | 30 ++++++++++++++++++++++--------
- 3 files changed, 44 insertions(+), 27 deletions(-)
- delete mode 100644 configs/config.pcengines_apu1
-
 diff --git a/configs/config.pcengines_apu1 b/configs/config.pcengines_apu1
 deleted file mode 100644
 index e511d65e27bc..000000000000
@@ -31,15 +24,16 @@ index e511d65e27bc..000000000000
 -# CONFIG_PXE_SERIAL_CONSOLE is not set
 -CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index 08d4d4ea263f..514261b7f4c5 100644
+index 08d4d4ea263f..aeefb34871f4 100644
 --- a/configs/config.pcengines_apu2
 +++ b/configs/config.pcengines_apu2
-@@ -1,12 +1,25 @@
+@@ -1,12 +1,26 @@
 -# CONFIG_COLLECT_TIMESTAMPS is not set
 -CONFIG_VENDOR_PCENGINES=y
 -CONFIG_BOARD_PCENGINES_APU2=y
 -CONFIG_APU2_PINMUX_UART_C=y
 -CONFIG_APU2_PINMUX_UART_D=y
++# CONFIG_PXE_SERIAL_CONSOLE is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
 +CONFIG_BUILD_IPXE=y
@@ -108,8 +102,3 @@ index 9e7ca5a9113d..d552dd3d8685 100644
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
-
-base-commit: 4d661eebe95b06acae7d99777ed36ba56a560112
--- 
-2.39.2
-
