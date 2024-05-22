@@ -67,12 +67,18 @@ guilt applied
 
 ## Background
 
-### Motivation
-
-The `dasharo-pq` repository was started as a proof of concept to resolve issues
+The `dasharo-pq` repository was created as a proof of concept to address issues
 mentioned in [#310](https://github.com/Dasharo/dasharo-issues/issues/310)
-related to the current strategies in managing the downstream distribution of
-coreboot firmware. The main points of concern include:
+regarding the current strategies for managing the downstream distribution of
+coreboot firmware.
+
+It is important to acknowledge that our understanding of patch management
+systems, such as `guilt`, is still limited. Therefore, the following benefits
+are more of a hypothesis to be tested and a starting point for discussion, but
+are based on logical consequences of using patch-based systems. These arguments
+may need improvement in the future.
+
+### Motivation
 
 1. **Branching Model Complexity**: The current approach of maintaining separate
    per-platform branches is becoming increasingly burdensome as the number of
@@ -80,9 +86,13 @@ coreboot firmware. The main points of concern include:
 1. **Synchronization Issues**: Ensuring that features and fixes are
    synchronized across multiple branches often requires additional effort and
    can lead to inconsistencies.
-1. **Single Branch Problem**: Despite switching to a single branch for releases
+1. **Mono-branch Problem**: Despite switching to a mono-branch for releases
    (`dasharo` branch), rebasing will become increasingly painful as the number
-   of changes grows.
+   of changes grows. With a mono-branch, you have accumulated bug fixes, features,
+   and configurations for multiple platforms. While merging this branch with
+   upstream periodically is an option, it loses the separation between upstream
+   and local changes. Rebasing the branch increases the risk of errors, and
+   force-pushing breaks collaboration.
 1. **Upstream Merging Difficulties**: Incorporating changes from the upstream
    coreboot repository into downstream forks is becoming progressively
    difficult, with a high risk of missing important updates or fixes. Complexity
@@ -96,74 +106,54 @@ by providing a structured and systematic approach to managing changes.
 #### Applying Lessons from Other Projects
 
 Structured patch management is used by maintainers of large projects like
-Debian, Linux, and XenServer, as well as smaller projects like TrenchBoot.
-Patch management appears to be foundational for downstream distribution
-maintenance and was recommended as a potential solution for issues mentioned in
-[#310](https://github.com/Dasharo/dasharo-issues/issues/310).
+Debian, Linux, Qubes OS and XenServer, as well as smaller projects like
+TrenchBoot. Patch management appears to be foundational for downstream
+distribution maintenance and was recommended as a potential solution for issues
+mentioned in [#310](https://github.com/Dasharo/dasharo-issues/issues/310).
 
 ## FAQ
 
 ### Why Track Patches in Git Instead of Just Using Branches?
 
-**Disclaimer**: Our current understanding of patch management systems, such as
-guilt, is still at a low level. Therefore, the following benefits are more of a
-hypothesis to be proven and a basis for discussion, but were built on top of
-logical consequences of using patch-based systems. We may want to improve the
-following arguments in the future.
+> Follwing list of arguments was heavily influenced by discussion in
+> [#5](https://github.com/Dasharo/dasharo-pq/pull/5). Kudos to:
+> [@krystian-hebel](https://github.com/krystian-hebel),
+> [@andyhhp](https://github.com/andyhhp),
+> [@SergiiDmytruk](https://github.com/SergiiDmytruk).
 
-#### **Handling Upstream Requests for Patch Changes**
+Each method (mono-branch and patchqueue) discussed has its own advantages and
+disadvantages, and the preference may vary depending on the team's familiarity
+and comfort with each approach.
 
-**Scenario:** An upstream project requests changes to a patch that was/is/will
-be included in release before accepting it. Managing this scenario downstream
-using branches can be complex and error-prone.
+1. **Version-Controlled Patch Representation:** Using a patchqueue (e.g., with
+   `guilt`), the canonical representation of the mono-branch is in patch form,
+   which is version-controlled. This avoids rewriting history and allows large
+   "rebases" to be done in steps, each verified for correctness.
+1. **Intermediate Solution:** While a properly done rebase keeps history clean,
+   not all developers are proficient enough to avoid creating a mess. A patches
+   repository can serve as a middle ground until reeducation is complete.
+1. **Enforcing Best Practices and Early Upstreaming:** Forcing developers to
+   use patches from the beginning ensures adherence to best practices and
+   encourages upstreaming more code early. This reduces the downstream maintenance
+   burden and the risk of creating a difficult-to-manage history. Once code is
+   merged upstream, both upstream and downstream can address fixes in parallel,
+   minimizing duplicated efforts and conflict resolution time.
+1. **Effective Branch Management:** Grouping patches similarly to how Qubes
+   does it (e.g., using a `guilt` series file) can help manage multiple
+   branches effectively and systematically.
+1. **Simplified Build Testing:** Testing if a set of patches builds with the
+   current coreboot can be simpler and less intimidating than rebasing a
+   branch. It is also easier to automate, providing immediate feedback on upstream
+   changes that might fix the same issues or potentially break existing work.
+1. **Balanced Approach:** This proposal aims to balance maintaining history
+   integrity and encouraging upstream contributions.
+1. **Reduced Overall Effort:** Although patchqueues require regular
+   maintenance, they can ultimately reduce the overall effort needed to manage
+   changes.
 
-**Benefit of Patch Management:**
-
-- **Ease of Modification:** Patch management tools like `guilt` make it
-  straightforward to modify individual patches without disrupting other changes.
-  You can edit the specific patch, refresh it, and reapply the patch queue.
-- **Minimal Disruption:** This approach avoids the complications of merging or
-  rebasing entire branches, which can introduce conflicts and disrupt other
-  ongoing work.
-
-#### **Creating Multiple Releases with Different Patch Combinations**
-
-**Scenario:** A maintainer needs to create multiple different releases using
-various combinations of patches. Some features may be included or excluded
-based on specific requirements.
-
-**Benefit of Patch Management:**
-
-- **Selective Application:** Patches can be selectively applied or excluded
-  based on the requirements of each release. This flexibility allows maintainers
-  to create customized versions without duplicating the entire codebase. Patch
-  management systems help track what was applied where.
-- **Reduced Overhead:** By managing features as patches, maintainers can
-  include or exclude features without maintaining separate branches for each
-  combination, reducing overhead and complexity.
-
-#### **Managing Legacy and Customer-Specific Patches**
-
-**Scenario:** Some patches may be legacy or specific to certain customers who
-do not require frequent updates.
-
-**Benefit of Patch Management:**
-
-- **Legacy Support:** Patches can be maintained and applied independently,
-  allowing legacy or customer-specific modifications to be preserved without
-  merging them into the main branch.
-- **Customization:** This approach enables maintainers to provide customized
-  builds for different customers, each with its own set of patches.
-
-#### **Reproducible Builds**
-
-**Scenario:** Ensuring that specific builds can be reproduced consistently is
-crucial for debugging, testing, and compliance.
-
-**Benefit of Patch Management:**
-
-- **Consistency:** Patch management ensures that the same set of patches can be
-  applied in the same order, resulting in identical builds every time.
-- **Auditability:** Detailed patch logs provide a clear history of what changes
-  were made, when, and by whom, making it easier to audit and reproduce specific
-  builds.
+By trying both approaches simultaneously, ideally in an automated manner, we
+can determine the best method without fully committing to one approach
+initially. This flexibility allows us to evaluate the effectiveness and
+practicality of using patch queues in our development workflow. Testing this
+approach in a hackathon or through parallel workflows may help determine its
+viability.
