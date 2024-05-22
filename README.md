@@ -69,11 +69,9 @@ guilt applied
 
 ### Motivation
 
-### Motivation
-
-`dasharo-pq` repository was started as proof of concept to resolve issues
+The `dasharo-pq` repository was started as a proof of concept to resolve issues
 mentioned in [#310](https://github.com/Dasharo/dasharo-issues/issues/310)
-related to currently used strategies in managing the downstream distribution of
+related to the current strategies in managing the downstream distribution of
 coreboot firmware. The main points of concern include:
 
 1. **Branching Model Complexity**: The current approach of maintaining separate
@@ -82,13 +80,13 @@ coreboot firmware. The main points of concern include:
 1. **Synchronization Issues**: Ensuring that features and fixes are
    synchronized across multiple branches often requires additional effort and
    can lead to inconsistencies.
-1. **Single branch problem**: Despite switching to single branch for releases
-   (`dasharo` branch) rebasing will be more and more painful as number of
-   changes will grow.
+1. **Single Branch Problem**: Despite switching to a single branch for releases
+   (`dasharo` branch), rebasing will become increasingly painful as the number
+   of changes grows.
 1. **Upstream Merging Difficulties**: Incorporating changes from the upstream
-   coreboot repository into the downstream forks is becoming progressively
+   coreboot repository into downstream forks is becoming progressively
    difficult, with a high risk of missing important updates or fixes. Complexity
-   may grow even more if we will face changes which cannot be upstreamed.
+   may grow even more if changes cannot be upstreamed.
 
 #### The Role of Patch Management
 
@@ -97,10 +95,10 @@ by providing a structured and systematic approach to managing changes.
 
 #### Applying Lessons from Other Projects
 
-Structured patch management is used by maintainers of big projects like Debian,
-Linux, Xen and smaller like TrenchBoot. Patch management seem to be foundation
-for downstream distribution maintenance and it was recommended as a potential
-solution for issues mentioned in
+Structured patch management is used by maintainers of large projects like
+Debian, Linux, and XenServer, as well as smaller projects like TrenchBoot.
+Patch management appears to be foundational for downstream distribution
+maintenance and was recommended as a potential solution for issues mentioned in
 [#310](https://github.com/Dasharo/dasharo-issues/issues/310).
 
 ## FAQ
@@ -109,19 +107,19 @@ solution for issues mentioned in
 
 **Disclaimer**: Our current understanding of patch management systems, such as
 guilt, is still at a low level. Therefore, the following benefits are more of a
-hypothesis, to be proven and a basis for discussion, but were built on top of
-logical consequences of using patch based systems. We may want to improve the
+hypothesis to be proven and a basis for discussion, but were built on top of
+logical consequences of using patch-based systems. We may want to improve the
 following arguments in the future.
 
 #### **Handling Upstream Requests for Patch Changes**
 
-**Scenario:** An upstream project requests changes to a patch, that was/is/will
-be included in release, before accepting it. Managing this scenario downstream
+**Scenario:** An upstream project requests changes to a patch that was/is/will
+be included in release before accepting it. Managing this scenario downstream
 using branches can be complex and error-prone.
 
 **Benefit of Patch Management:**
 
-- **Ease of Modification:** Patch management tools like Guilt make it
+- **Ease of Modification:** Patch management tools like `guilt` make it
   straightforward to modify individual patches without disrupting other changes.
   You can edit the specific patch, refresh it, and reapply the patch queue.
 - **Minimal Disruption:** This approach avoids the complications of merging or
@@ -139,7 +137,7 @@ based on specific requirements.
 - **Selective Application:** Patches can be selectively applied or excluded
   based on the requirements of each release. This flexibility allows maintainers
   to create customized versions without duplicating the entire codebase. Patch
-  management system help to track what was applied where.
+  management systems help track what was applied where.
 - **Reduced Overhead:** By managing features as patches, maintainers can
   include or exclude features without maintaining separate branches for each
   combination, reducing overhead and complexity.
