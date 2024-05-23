@@ -100,3 +100,16 @@ guilt applied
 - commit changes to this repository
 
 Read `man guilt-pop` for efficient popping.
+
+### How to avoid coreboot version issues?
+
+coreboot version is built using output from `git describe`. After applying out
+changes we will have `git describe` output similar to `4.19-80-g3812d71fa7`. To
+avoid such issue before building you have to add annotated tag on top of
+patchqueue:
+
+```bash
+git tag -a v4.19.0.1 -m "This is just testing if patchque really works"
+```
+
+After that operation produced coreboot binary will have `v4.19.0.1` as version.
