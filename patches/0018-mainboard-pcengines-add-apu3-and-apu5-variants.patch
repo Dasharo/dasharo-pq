@@ -9,11 +9,13 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
 new file mode 100644
-index 000000000000..8b1f30316482
+index 000000000000..124f425b8886
 --- /dev/null
 +++ b/configs/config.pcengines_apu3
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,32 @@
 +# CONFIG_PXE_SERIAL_CONSOLE is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU3=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -45,11 +47,13 @@ index 000000000000..8b1f30316482
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
 new file mode 100644
-index 000000000000..d4489dc98d84
+index 000000000000..ae8abcc4460f
 --- /dev/null
 +++ b/configs/config.pcengines_apu5
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,32 @@
 +# CONFIG_PXE_SERIAL_CONSOLE is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU5=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000

@@ -12,24 +12,14 @@ For now, it doesn't support iPXE network booting.
 
 Change-Id: I495879f1527643b217f9facb07dace5d70175a3e
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
----
- configs/config.pcengines_apu7                 |  28 ++++++
- src/mainboard/pcengines/apu2/Kconfig          |  12 ++-
- src/mainboard/pcengines/apu2/Kconfig.name     |   3 +
- src/mainboard/pcengines/apu2/dsdt.asl         |   2 +
- .../pcengines/apu2/variants/apu7/bootorder    | Bin 0 -> 4096 bytes
- .../apu2/variants/apu7/devicetree.cb          |  83 ++++++++++++++++++
- 6 files changed, 121 insertions(+), 7 deletions(-)
- create mode 100644 configs/config.pcengines_apu7
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu7/bootorder
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu7/devicetree.cb
-
 diff --git a/configs/config.pcengines_apu7 b/configs/config.pcengines_apu7
 new file mode 100644
-index 000000000000..2b0834520dd5
+index 000000000000..fefa66fd4399
 --- /dev/null
 +++ b/configs/config.pcengines_apu7
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,30 @@
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU7=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -237,6 +227,3 @@ index 000000000000..e73758c36996
 +
 +	end #domain
 +end #northbridge/amd/pi/00730F01/root_complex
--- 
-2.39.2
-
