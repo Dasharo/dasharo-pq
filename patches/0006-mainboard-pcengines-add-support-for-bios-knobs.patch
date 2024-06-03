@@ -7,18 +7,10 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Makefile.inc |   4 +
- src/mainboard/pcengines/apu2/bios_knobs.c | 360 ++++++++++++++++++++++
- src/mainboard/pcengines/apu2/bios_knobs.h |  34 ++
- 3 files changed, 398 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/bios_knobs.c
- create mode 100644 src/mainboard/pcengines/apu2/bios_knobs.h
-
-diff --git a/src/mainboard/pcengines/apu2/Makefile.inc b/src/mainboard/pcengines/apu2/Makefile.inc
+diff --git a/src/mainboard/pcengines/apu2/Makefile.mk b/src/mainboard/pcengines/apu2/Makefile.mk
 index 93df43d17dd8..37ac356e332a 100644
---- a/src/mainboard/pcengines/apu2/Makefile.inc
-+++ b/src/mainboard/pcengines/apu2/Makefile.inc
+--- a/src/mainboard/pcengines/apu2/Makefile.mk
++++ b/src/mainboard/pcengines/apu2/Makefile.mk
 @@ -2,10 +2,14 @@
  
  bootblock-y += bootblock.c
@@ -440,6 +432,3 @@ index 000000000000..b61167553605
 +char *get_bootorder(void);
 +
 +#endif
--- 
-2.39.2
-
