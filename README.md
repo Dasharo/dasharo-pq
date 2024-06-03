@@ -113,3 +113,24 @@ git tag -a v4.19.0.1 -m "This is just testing if patchque really works"
 ```
 
 After that operation produced coreboot binary will have `v4.19.0.1` as version.
+
+### How to prepare new release of Dasharo (coreboot+SeaBIOS) for PC Engines?
+
+#### Applying patches
+
+Start with standard procedure described above, if `guilt push -a` does not
+apply given patch cleanly force patch application (`guilt push -f`) and fix
+manually auto-generated `.rej` files may be helpful in resolving patch
+application issues. After resolving issues for given patch use `git add` to
+stage required changes and `guilt refresh` to update patch, so it reflects
+cleanly applicable change.
+
+At this point you may need to check if code still compiles at this point, that
+why [pce-fw-builder update](#pce-fw-builder-update) may be useful.
+
+#### pce-fw-builder update
+
+To understood what changes may be needed to
+[pce-fw-builder](https://github.com/pcengines/pce-fw-builder) when updating to
+new coreboot version, please check [this
+MR](https://github.com/pcengines/pce-fw-builder/pull/66).
