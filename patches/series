@@ -1,3 +1,4 @@
+0001-payloads-ipxe-fix-compilation-issues-with-corebood-s.patch
 0001-configs-remove-apu1-and-add-apu2-4.patch
 0002-payloads-seabios-use-PC-Engines-repository.patch
 0003-payloads-add-support-for-sortbootorder.patch
