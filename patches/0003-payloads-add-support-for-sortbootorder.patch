@@ -7,85 +7,11 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- .gitignore                                    | 45 +++++++++++++++-
- payloads/Kconfig                              |  8 +++
- payloads/Makefile.inc                         |  1 +
- payloads/external/Makefile.inc                | 16 ++++++
- .../external/sortbootorder/Kconfig.secondary  | 36 +++++++++++++
- payloads/external/sortbootorder/Makefile      | 53 +++++++++++++++++++
- 6 files changed, 157 insertions(+), 2 deletions(-)
- create mode 100644 payloads/external/sortbootorder/Kconfig.secondary
- create mode 100644 payloads/external/sortbootorder/Makefile
-
-diff --git a/.gitignore b/.gitignore
-index 126cae665d8d..5ae8b30cb027 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -8,8 +8,47 @@ defconfig
- .ccwrap
- build/
- coreboot-builds/
--coreboot-builds*/
--
-+payloads/coreinfo/lpbuild/
-+payloads/coreinfo/lp.config*
-+payloads/external/depthcharge/depthcharge/
-+payloads/external/FILO/filo/
-+payloads/external/GRUB2/grub2/
-+payloads/external/LinuxBoot/linuxboot/
-+payloads/external/SeaBIOS/seabios/
-+payloads/external/tianocore/tianocore/
-+payloads/external/tint/tint/
-+payloads/external/U-Boot/u-boot/
-+payloads/external/Memtest86Plus/memtest86plus/
-+payloads/external/iPXE/ipxe/
-+payloads/external/sortbootorder/sortbootorder
-+util/crossgcc/acpica-unix-*/
-+util/crossgcc/binutils-*/
-+util/crossgcc/build-*BINUTILS/
-+util/crossgcc/build-*EXPAT/
-+util/crossgcc/build-*GCC/
-+util/crossgcc/build-*GDB/
-+util/crossgcc/build-*GMP/
-+util/crossgcc/build-*LIBELF/
-+util/crossgcc/build-*MPC/
-+util/crossgcc/build-*MPFR/
-+util/crossgcc/build-*PYTHON/
-+util/crossgcc/build-*LVM/
-+util/crossgcc/build-*IASL/
-+util/crossgcc/expat-*/
-+util/crossgcc/gcc-*/
-+util/crossgcc/gdb-*/
-+util/crossgcc/gmp-*/
-+util/crossgcc/libelf-*/
-+util/crossgcc/mingwrt-*/
-+util/crossgcc/mpc-*/
-+util/crossgcc/mpfr-*/
-+util/crossgcc/Python-*/
-+util/crossgcc/*.src/
-+util/crossgcc/tarballs/
-+util/crossgcc/w32api-*/
-+util/crossgcc/xgcc/
-+util/crossgcc/xgcc-*/
-+util/crossgcc/xgcc
- site-local
- 
- *.\#
-@@ -31,6 +70,8 @@ site-local
- # Development friendly files
- tags
- .clang_complete
-+.tags
-+.tags_sorted_by_file
- .cache
- compile_commands.json
- .vscode/
 diff --git a/payloads/Kconfig b/payloads/Kconfig
-index 2a2773a2188f..82776c03a43d 100644
+index ec1d40c99207..65e5e894dc30 100644
 --- a/payloads/Kconfig
 +++ b/payloads/Kconfig
-@@ -163,6 +163,14 @@ config TINT_SECONDARY_PAYLOAD
+@@ -175,6 +175,14 @@ config TINT_SECONDARY_PAYLOAD
  	  tint can be loaded as a secondary payload under SeaBIOS, GRUB,
  	  or any other payload that can load additional payloads.
  
@@ -100,10 +26,10 @@ index 2a2773a2188f..82776c03a43d 100644
  config COREDOOM_SECONDARY_PAYLOAD
  	bool "Load coreDOOM as a secondary payload"
  	default n
-diff --git a/payloads/Makefile.inc b/payloads/Makefile.inc
-index 41e3f9fca3df..47eb3856c306 100644
---- a/payloads/Makefile.inc
-+++ b/payloads/Makefile.inc
+diff --git a/payloads/Makefile.mk b/payloads/Makefile.mk
+index a2336aa876a7..d31283957624 100644
+--- a/payloads/Makefile.mk
++++ b/payloads/Makefile.mk
 @@ -24,6 +24,7 @@ payloads/external/U-Boot \
  payloads/external/Memtest86Plus \
  payloads/external/iPXE \
@@ -112,11 +38,11 @@ index 41e3f9fca3df..47eb3856c306 100644
  payloads/external/edk2 \
  payloads/external/GRUB2 \
  payloads/external/LinuxBoot \
-diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
-index a2d2f505e238..890a7ab476ae 100644
---- a/payloads/external/Makefile.inc
-+++ b/payloads/external/Makefile.inc
-@@ -320,6 +320,22 @@ payloads/external/Memtest86Plus/memtest86plus/memtest: $(DOTCONFIG)
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index c227402ee5db..56be9b598c8e 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -341,6 +341,22 @@ payloads/external/Memtest86Plus/$(memtest_dir)/memtest: $(DOTCONFIG)
  		$(MEMTEST_SERIAL_OPTIONS) \
  		MFLAGS= MAKEFLAGS=
  
@@ -240,6 +166,3 @@ index 000000000000..dd922d7020e6
 +	echo "$(project_git_repo) $(project_dir)"
 +
 +.PHONY: checkout build clean distclean fetch sortbootorder print-repo-info
--- 
-2.39.2
-
