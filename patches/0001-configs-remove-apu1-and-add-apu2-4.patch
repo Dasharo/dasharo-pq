@@ -68,7 +68,7 @@ index fe0a9d7ba431..5157ec1194e5 100644
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 17db794bcf92..183b0b3ada08 100644
+index 17db794bcf92..ae119658be3e 100644
 --- a/configs/config.pcengines_apu4
 +++ b/configs/config.pcengines_apu4
 @@ -1,12 +1,25 @@
@@ -88,8 +88,8 @@ index 17db794bcf92..183b0b3ada08 100644
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
 +CONFIG_IPXE_ADD_SCRIPT=y
-+CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
 -CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
