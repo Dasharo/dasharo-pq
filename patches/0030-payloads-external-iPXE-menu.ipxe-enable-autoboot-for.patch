@@ -9,61 +9,53 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index 4cf8467b3997..32415365709b 100644
+index 4cf8467b3997..f0164569d263 100644
 --- a/configs/config.pcengines_apu2
 +++ b/configs/config.pcengines_apu2
-@@ -16,7 +16,9 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_ROM_ID="8086,157b"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 91e3cb3d10e4..aae30959c114 100644
+index 91e3cb3d10e4..195edbbdd264 100644
 --- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_apu3
-@@ -17,7 +17,9 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index a393e27a8f7b..223e0e0a14aa 100644
+index a393e27a8f7b..18de4b0f34e8 100644
 --- a/configs/config.pcengines_apu4
 +++ b/configs/config.pcengines_apu4
-@@ -17,7 +17,9 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 6169e26cbbbd..25723e63cdbb 100644
+index 6169e26cbbbd..b155e00bd810 100644
 --- a/configs/config.pcengines_apu5
 +++ b/configs/config.pcengines_apu5
-@@ -17,7 +17,9 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/payloads/external/iPXE/menu.ipxe b/payloads/external/iPXE/menu.ipxe
 new file mode 100644
 index 000000000000..1b5719588273
