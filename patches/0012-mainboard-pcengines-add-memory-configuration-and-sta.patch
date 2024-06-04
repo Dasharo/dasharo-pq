@@ -29,10 +29,19 @@ index e22fd087238f..bb466820beb5 100644
  ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
  LIB_SPD_BIN = $(obj)/spd.bin
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 586f697a80d5..99be43c2bd70 100644
+index 586f697a80d5..92a0c7b72ba1 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -238,10 +238,34 @@ static int mainboard_smbios_data(struct device *dev, int *handle,
+@@ -22,6 +22,8 @@
+ #include <smbios.h>
+ #include <string.h>
+ 
++#include <cpu/amd/mtrr.h>
++#include <spd_bin.h>
+ #include <spi_flash.h>
+ 
+ #include "gpio_ftns.h"
+@@ -238,10 +240,34 @@ static int mainboard_smbios_data(struct device *dev, int *handle,
  static void mainboard_enable(struct device *dev)
  {
  	/* Maintain this text unchanged for manufacture process. */
@@ -42,9 +51,9 @@ index 586f697a80d5..99be43c2bd70 100644
  
  	config_gpio_mux();
  
-+	u32 total_mem = amd_topmem() / (1024 * 1024);
-+	if (amd_topmem2() > 0)
-+		total_mem += (amd_topmem2() / (1024 * 1024)) - 4 * 1024;
++	u32 total_mem = get_top_of_mem_below_4gb() / (1024 * 1024);
++	if (get_top_of_mem_above_4gb() > 0)
++		total_mem += (get_top_of_mem_above_4gb() / (1024 * 1024)) - 4 * 1024;
 +
 +	if(scon) {
 +		printk(BIOS_ALERT, "%d MB", total_mem);
@@ -68,7 +77,7 @@ index 586f697a80d5..99be43c2bd70 100644
  	//
  	// Enable the RTC output
  	//
-@@ -252,6 +276,10 @@ static void mainboard_enable(struct device *dev)
+@@ -252,6 +278,10 @@ static void mainboard_enable(struct device *dev)
  	//
  	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
  
