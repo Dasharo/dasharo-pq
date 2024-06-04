@@ -8,15 +8,11 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- Makefile.inc | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Makefile.inc b/Makefile.inc
-index 2b5d742a2cb8..039db5b91ef0 100644
---- a/Makefile.inc
-+++ b/Makefile.inc
-@@ -1151,6 +1151,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
+diff --git a/Makefile.mk b/Makefile.mk
+index e642ac7a6edf..65b827fe3eaf 100644
+--- a/Makefile.mk
++++ b/Makefile.mk
+@@ -1255,6 +1255,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
  	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
  endif # CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK
  endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
@@ -26,6 +22,3 @@ index 2b5d742a2cb8..039db5b91ef0 100644
  	mv $@.tmp $@
  	@printf "    CBFSLAYOUT  $(subst $(obj)/,,$(@))\n\n"
  	$(CBFSTOOL) $@ layout
--- 
-2.39.2
-
