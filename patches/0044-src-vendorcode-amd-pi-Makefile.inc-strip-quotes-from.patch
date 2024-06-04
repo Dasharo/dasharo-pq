@@ -8,15 +8,11 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/vendorcode/amd/pi/Makefile.inc | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/src/vendorcode/amd/pi/Makefile.inc b/src/vendorcode/amd/pi/Makefile.inc
-index d36671a06f9e..0938b48b0eba 100644
---- a/src/vendorcode/amd/pi/Makefile.inc
-+++ b/src/vendorcode/amd/pi/Makefile.inc
-@@ -135,9 +135,11 @@ ramstage-libs += $(agesa_output_path)/libagesa.a
+diff --git a/src/vendorcode/amd/pi/Makefile.mk b/src/vendorcode/amd/pi/Makefile.mk
+index 446e9d477940..f99d901b9a1b 100644
+--- a/src/vendorcode/amd/pi/Makefile.mk
++++ b/src/vendorcode/amd/pi/Makefile.mk
+@@ -165,9 +165,11 @@ ramstage-libs += $(agesa_output_path)/libagesa.a
  
  #######################################################################
  
@@ -32,6 +28,3 @@ index d36671a06f9e..0938b48b0eba 100644
 +$(agesa_binary)-position := $(CONFIG_AGESA_BINARY_PI_LOCATION)
  
  endif
--- 
-2.39.2
-
