@@ -8,81 +8,98 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-new file mode 100644
-index 000000000000..124f425b8886
---- /dev/null
+index 0604bb39f83a..a0ad052ff6a9 100644
+--- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_apu3
-@@ -0,0 +1,32 @@
-+# CONFIG_PXE_SERIAL_CONSOLE is not set
-+# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+@@ -1,15 +1,28 @@
+-# CONFIG_COLLECT_TIMESTAMPS is not set
 +# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_IPXE_SERIAL_CONSOLE is not set
+-CONFIG_APU2_PINMUX_UART_C=y
+-CONFIG_APU2_PINMUX_UART_D=y
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
-+CONFIG_BOARD_PCENGINES_APU3=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
-+CONFIG_BUILD_IPXE=y
+ CONFIG_BOARD_PCENGINES_APU3=y
+ CONFIG_BUILD_IPXE=y
 +CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x20000
 +CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
-+CONFIG_LOCALVERSION="v4.19.0.1"
-+CONFIG_MEMTEST_REVISION=y
-+CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
-+CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
-+CONFIG_NO_GFX_INIT=y
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+ CONFIG_NO_GFX_INIT=y
 +CONFIG_POST_IO_PORT=0x80
-+CONFIG_PXE=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
-+CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
+-CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
-+CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
-+CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
-+CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 +CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
-+CONFIG_VENDOR_PCENGINES=y
+ CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-new file mode 100644
-index 000000000000..ae8abcc4460f
---- /dev/null
+index 3ad06d2cfbd5..e978edd2541e 100644
+--- a/configs/config.pcengines_apu5
 +++ b/configs/config.pcengines_apu5
-@@ -0,0 +1,32 @@
-+# CONFIG_PXE_SERIAL_CONSOLE is not set
-+# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+@@ -1,15 +1,28 @@
+-# CONFIG_COLLECT_TIMESTAMPS is not set
 +# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_IPXE_SERIAL_CONSOLE is not set
+-CONFIG_APU2_PINMUX_UART_C=y
+-CONFIG_APU2_PINMUX_UART_D=y
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
-+CONFIG_BOARD_PCENGINES_APU5=y
+ CONFIG_BOARD_PCENGINES_APU5=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
-+CONFIG_BUILD_IPXE=y
+ CONFIG_BUILD_IPXE=y
 +CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x20000
 +CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
-+CONFIG_LOCALVERSION="v4.19.0.1"
-+CONFIG_MEMTEST_REVISION=y
-+CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
-+CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
-+CONFIG_NO_GFX_INIT=y
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+ CONFIG_NO_GFX_INIT=y
 +CONFIG_POST_IO_PORT=0x80
-+CONFIG_PXE=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
-+CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
+-CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
-+CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
-+CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
-+CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 +CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
-+CONFIG_VENDOR_PCENGINES=y
+ CONFIG_VENDOR_PCENGINES=y
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index d676934dbaae..3a343fefab92 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -111,12 +111,14 @@ config SEABIOS_BOOTORDER_FILE
+ 
+ config SEABIOS_BOOTORDER_MAP_FILE
+ 	string "SeaBIOS bootorder_map file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map_apu5" if BOARD_PCENGINES_APU5
+ 	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map"
+ 	help
+ 	  TBD
+ 
+ config SEABIOS_BOOTORDER_DEF_FILE
+ 	string "SeaBIOS bootorder_def file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def_apu5" if BOARD_PCENGINES_APU5
+ 	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def"
+ 	help
+ 	  TBD
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def_apu5 b/src/mainboard/pcengines/apu2/bootorder_def_apu5
 new file mode 100644
 index 000000000000..5f562f2468ab
@@ -144,10 +161,10 @@ index 000000000000..f5d47e4ee46c
 +e mPCIe1 SATA1 and SATA2
 +f iPXE
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index c18d5c0f5fe1..ed5c2b2f90c9 100644
+index 79bbf8c3d9da..dc1ab76eeeeb 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -33,6 +33,7 @@
+@@ -28,6 +28,7 @@
  
  #include "gpio_ftns.h"
  #include "bios_knobs.h"
@@ -155,7 +172,7 @@ index c18d5c0f5fe1..ed5c2b2f90c9 100644
  
  #define SPD_SIZE  128
  #define PM_RTC_CONTROL		0x56
-@@ -305,6 +306,18 @@ static void mainboard_final(void *chip_info)
+@@ -301,6 +302,18 @@ static void mainboard_final(void *chip_info)
  	//
  	gpio_set(GPIO_58, 1);
  	gpio_set(GPIO_59, 1);
@@ -189,18 +206,18 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
-index 8273a9604c13..02f6a7842720 100644
+index 5c169208b9cf..eb0777b489ce 100644
 --- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
 +++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
-@@ -12,7 +12,7 @@ chip northbridge/amd/pi/00730F01/root_complex
- 
- 		chip northbridge/amd/pi/00730F01
- 			device pci 0.0 on  end # Root Complex
--			device pci 0.2 on end # IOMMU
-+			device pci 0.2 off  end # IOMMU
- 			device pci 1.0 off  end # Internal Graphics P2P bridge 0x9804
- 			device pci 1.1 off  end # Internal Multimedia
- 			device pci 2.0 on  end # PCIe Host Bridge
+@@ -3,7 +3,7 @@
+ chip northbridge/amd/pi/00730F01
+ 	device domain 0 on
+ 		subsystemid 0x1022 0x1410 inherit
+-		device ref iommu		on end
++		device ref iommu		off end
+ 		device ref gpp_bridge_0		on end	# mPCIe slot 2 (on GFX lane)
+ 		device ref gpp_bridge_1		on end	# LAN3
+ 		device ref gpp_bridge_2		on end	# LAN2
 diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
 new file mode 100644
 index 0000000000000000000000000000000000000000..29c163d69ebbf7f0ac2a8c7bf2c7edcb2293dbc0
@@ -216,10 +233,10 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
-index c69401be1e22..865bb4e17e0d 100644
+index 75cc446e463f..85dcf4a343a8 100644
 --- a/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
 +++ b/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
-@@ -56,7 +56,7 @@ chip northbridge/amd/pi/00730F01/root_complex
+@@ -41,7 +41,7 @@ chip northbridge/amd/pi/00730F01
  					device pnp 2e.108 off end
  					device pnp 2e.f off end
  					device pnp 2e.007 off end
