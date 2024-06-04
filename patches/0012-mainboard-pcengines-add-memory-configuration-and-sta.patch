@@ -16,16 +16,11 @@ analysis, and ensure that the boot process is compatible with legacy
 systems and meets customer expectations.
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/lib/Makefile.inc                     |  1 +
- src/mainboard/pcengines/apu2/mainboard.c | 29 ++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
-
-diff --git a/src/lib/Makefile.inc b/src/lib/Makefile.inc
-index c83004a86695..4b19e27465f4 100644
---- a/src/lib/Makefile.inc
-+++ b/src/lib/Makefile.inc
-@@ -374,6 +374,7 @@ $(foreach stage,$(libhwbase-stages), \
+diff --git a/src/lib/Makefile.mk b/src/lib/Makefile.mk
+index e22fd087238f..bb466820beb5 100644
+--- a/src/lib/Makefile.mk
++++ b/src/lib/Makefile.mk
+@@ -360,6 +360,7 @@ $(foreach stage,$(libhwbase-stages), \
  endif # CONFIG_ROMSTAGE_LIBHWBASE || CONFIG_RAMSTAGE_LIBHWBASE
  
  romstage-y += spd_bin.c
@@ -34,13 +29,15 @@ index c83004a86695..4b19e27465f4 100644
  ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
  LIB_SPD_BIN = $(obj)/spd.bin
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 2cb689d4c358..c7617cf564d6 100644
+index 586f697a80d5..99be43c2bd70 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -244,9 +244,34 @@ static void mainboard_enable(struct device *dev)
+@@ -238,10 +238,34 @@ static int mainboard_smbios_data(struct device *dev, int *handle,
+ static void mainboard_enable(struct device *dev)
  {
  	/* Maintain this text unchanged for manufacture process. */
- 	printk(BIOS_INFO, "Mainboard " CONFIG_MAINBOARD_PART_NUMBER " Enable.\n");
+-	printk(BIOS_INFO, "Mainboard %s Enable.\n", mainboard_part_number);
++	printk(BIOS_INFO, "Mainboard " CONFIG_MAINBOARD_PART_NUMBER " Enable.\n");
 +	bool scon = check_console();
  
  	config_gpio_mux();
@@ -52,7 +49,6 @@ index 2cb689d4c358..c7617cf564d6 100644
 +	if(scon) {
 +		printk(BIOS_ALERT, "%d MB", total_mem);
 +	}
-+
 +	//
 +	// Read memory configuration from GPIO 49 and 50
 +	//
@@ -72,7 +68,7 @@ index 2cb689d4c358..c7617cf564d6 100644
  	//
  	// Enable the RTC output
  	//
-@@ -257,6 +282,10 @@ static void mainboard_enable(struct device *dev)
+@@ -252,6 +276,10 @@ static void mainboard_enable(struct device *dev)
  	//
  	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
  
@@ -83,6 +79,3 @@ index 2cb689d4c358..c7617cf564d6 100644
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
  #if CONFIG(GENERATE_SMBIOS_TABLES)
--- 
-2.39.2
-
