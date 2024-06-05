@@ -11,20 +11,15 @@ pcengines mainboard. The sercon-port file is added to the cbfs-files
 if the CONFIG_SEABIOS_SERCON_PORT_FILE is set.
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.inc           |   6 ++++++
- src/mainboard/pcengines/apu2/sercon-port | Bin 0 -> 8 bytes
- 2 files changed, 6 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/sercon-port
-
-diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
-index b019fb6bb9fe..eace202211da 100644
---- a/payloads/external/Makefile.inc
-+++ b/payloads/external/Makefile.inc
-@@ -142,6 +142,12 @@ cbfs-files-y += etc/boot-menu-message
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index 4f2d51015a5d..f3e561cacf33 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -151,7 +151,12 @@ cbfs-files-y += etc/boot-menu-message
  etc/boot-menu-message-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE))
  etc/boot-menu-message-type := raw
  endif
+-
 +# add a SeaBIOS sercon-port file
 +ifneq ($(strip $(CONFIG_SEABIOS_SERCON_PORT_FILE)),)
 +cbfs-files-y += etc/sercon-port
@@ -43,7 +38,4 @@ Lcmeyt%m4-e2i*Yt
 
 literal 0
 HcmV?d00001
-
--- 
-2.39.2
 
