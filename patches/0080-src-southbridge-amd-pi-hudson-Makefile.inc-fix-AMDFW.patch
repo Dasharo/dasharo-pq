@@ -18,23 +18,15 @@ CONFIG_AMDFW_OUTSIDE_CBFS and build PC Engines apu2 board
 
 Change-Id: Ib4b03f971b88acbc3392b66e084babe738659ea6
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/southbridge/amd/pi/hudson/Makefile.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/src/southbridge/amd/pi/hudson/Makefile.inc b/src/southbridge/amd/pi/hudson/Makefile.inc
-index d3d9322a14d1..87cf5ff8c1eb 100644
---- a/src/southbridge/amd/pi/hudson/Makefile.inc
-+++ b/src/southbridge/amd/pi/hudson/Makefile.inc
-@@ -144,7 +144,7 @@ $(obj)/amdfw.rom:	$(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE)) \
- 		$(OPT_2SMUFIRMWARE2_FN_FILE) \
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index e7ec1b73ec5a..5a4f88baeca3 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -126,6 +126,7 @@ $(obj)/amdfw.rom:	$(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE)) \
  		$(OPT_2SMUSCS_FILE) \
  		--flashsize $(CONFIG_ROM_SIZE) \
--		--location $(HUDSON_FWM_POSITION) \
+ 		--location $(HUDSON_FWM_POSITION) \
 +		--location $(shell printf "0x%x" $(HUDSON_FWM_POSITION)) \
  		--config $(CONFIG_AMDFW_CONFIG_FILE) \
  		--output	$@
  
--- 
-2.39.2
-
