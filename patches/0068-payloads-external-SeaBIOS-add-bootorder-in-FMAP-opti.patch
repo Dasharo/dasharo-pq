@@ -8,15 +8,10 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.inc    | 12 ++++++++++++
- payloads/external/SeaBIOS/Kconfig |  6 ++++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
-index 08f3f3674138..b019fb6bb9fe 100644
---- a/payloads/external/Makefile.inc
-+++ b/payloads/external/Makefile.inc
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index a4698e749ad8..4f2d51015a5d 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
 @@ -99,12 +99,14 @@ img/seabios-type := payload
  img/seabios-compression := $(CBFS_SECONDARY_PAYLOAD_COMPRESS_FLAG)
  
@@ -32,11 +27,10 @@ index 08f3f3674138..b019fb6bb9fe 100644
  
  # add a SeaBIOS bootorder_map file
  ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE)),)
-@@ -162,6 +164,16 @@ $(call add_intermediate, seabios_thread_optionroms, $(CBFSTOOL))
- 	$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< remove -n etc/threads 2>/dev/null)
- 	$(CBFSTOOL) $< add-int -i 2 -n etc/threads
+@@ -113,6 +115,15 @@ bootorder_map-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE))
+ bootorder_map-type := raw
  endif
-+
+ 
 +ifeq ($(CONFIG_SEABIOS_BOOTORDER_IN_FMAP),y)
 +ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
 +$(call add_intermediate, seabios_bootorder_fmap, $(CBFSTOOL))
@@ -46,14 +40,14 @@ index 08f3f3674138..b019fb6bb9fe 100644
 +endif
 +endif
 +
- ifeq ($(CONFIG_PAYLOAD_SEAGRUB),y)
- ifneq ($(CONFIG_SEAGRUB_ALLOW_SEABIOS_BOOTMENU),y)
- $(call add_intermediate, seabios_bootmenu, $(CBFSTOOL))
+ # add a SeaBIOS bootorder_def file
+ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE)),)
+ cbfs-files-y += bootorder_def
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index 5ffb01a747bd..220342322a1f 100644
+index 20b65495f437..13d69f6c077d 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
-@@ -91,6 +91,12 @@ config PAYLOAD_CONFIGFILE
+@@ -93,6 +93,12 @@ config PAYLOAD_CONFIGFILE
  	  SeaBIOS payload.  In general, if the option is used, the default
  	  would be "$(top)/src/mainboard/$(MAINBOARDDIR)/config_seabios"
  
@@ -66,6 +60,3 @@ index 5ffb01a747bd..220342322a1f 100644
  config SEABIOS_BOOTORDER_FILE
  	string "SeaBIOS bootorder file"
  	default ""
--- 
-2.39.2
-
