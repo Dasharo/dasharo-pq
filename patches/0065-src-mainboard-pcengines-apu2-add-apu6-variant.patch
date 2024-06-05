@@ -9,13 +9,13 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_apu6 b/configs/config.pcengines_apu6
 new file mode 100644
-index 000000000000..69f9d2d87c3b
+index 000000000000..b86c800df6d6
 --- /dev/null
 +++ b/configs/config.pcengines_apu6
-@@ -0,0 +1,35 @@
-+# CONFIG_PXE_SERIAL_CONSOLE is not set
-+# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+@@ -0,0 +1,30 @@
 +# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_IPXE_SERIAL_CONSOLE is not set
 +CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
 +CONFIG_BOARD_PCENGINES_APU6=y
 +CONFIG_BOTTOMIO_POSITION=0xD0000000
@@ -24,32 +24,27 @@ index 000000000000..69f9d2d87c3b
 +CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
-+CONFIG_LOCALVERSION="v4.19.0.1"
-+CONFIG_MEMTEST_REVISION=y
-+CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_NO_GFX_INIT=y
 +CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
 +CONFIG_POST_IO_PORT=0x80
 +CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
 +CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
 +CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
-+CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
-+CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 +CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 415918b388e4..66424e3ca995 100644
+index 823bbf11c410..fbf29a452d8f 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -1,7 +1,7 @@
@@ -61,7 +56,7 @@ index 415918b388e4..66424e3ca995 100644
  
  config BOARD_SPECIFIC_OPTIONS
  	def_bool y
-@@ -29,6 +29,7 @@ config VARIANT_DIR
+@@ -30,6 +30,7 @@ config VARIANT_DIR
  	default "apu3" if BOARD_PCENGINES_APU3
  	default "apu4" if BOARD_PCENGINES_APU4
  	default "apu5" if BOARD_PCENGINES_APU5
@@ -69,7 +64,7 @@ index 415918b388e4..66424e3ca995 100644
  
  config DEVICETREE
  	default "variants/\$(CONFIG_VARIANT_DIR)/devicetree.cb"
-@@ -38,6 +39,7 @@ config MAINBOARD_PART_NUMBER
+@@ -39,6 +40,7 @@ config MAINBOARD_PART_NUMBER
  	default "apu3" if BOARD_PCENGINES_APU3
  	default "apu4" if BOARD_PCENGINES_APU4
  	default "apu5" if BOARD_PCENGINES_APU5
@@ -77,7 +72,7 @@ index 415918b388e4..66424e3ca995 100644
  
  config DEFAULT_CONSOLE_LOGLEVEL
  	int
-@@ -73,7 +75,7 @@ config APU2_PINMUX_OFF_C
+@@ -70,7 +72,7 @@ config APU2_PINMUX_OFF_C
  config APU2_PINMUX_GPIO0
  	bool "GPIO"
  	depends on BOARD_PCENGINES_APU2 || BOARD_PCENGINES_APU3 || \
@@ -86,7 +81,7 @@ index 415918b388e4..66424e3ca995 100644
  
  config APU2_PINMUX_UART_C
  	bool "UART 0x3e8"
-@@ -90,7 +92,7 @@ config APU2_PINMUX_OFF_D
+@@ -87,7 +89,7 @@ config APU2_PINMUX_OFF_D
  config APU2_PINMUX_GPIO1
  	bool "GPIO"
  	depends on BOARD_PCENGINES_APU2 || BOARD_PCENGINES_APU3 || \
@@ -96,10 +91,10 @@ index 415918b388e4..66424e3ca995 100644
  config APU2_PINMUX_UART_D
  	bool "UART 0x2e8"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig.name b/src/mainboard/pcengines/apu2/Kconfig.name
-index 45ec16fde8c6..c5de40a1c46b 100644
+index 170080396ce5..8ee55dbe6057 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig.name
 +++ b/src/mainboard/pcengines/apu2/Kconfig.name
-@@ -9,3 +9,6 @@ config BOARD_PCENGINES_APU4
+@@ -11,3 +11,6 @@ config BOARD_PCENGINES_APU4
  
  config BOARD_PCENGINES_APU5
  	bool "APU5"
@@ -107,7 +102,7 @@ index 45ec16fde8c6..c5de40a1c46b 100644
 +config BOARD_PCENGINES_APU6
 +	bool "APU6"
 diff --git a/src/mainboard/pcengines/apu2/dsdt.asl b/src/mainboard/pcengines/apu2/dsdt.asl
-index c0188ee3a671..476ff4c799d8 100644
+index af979a9bcb21..0a91feec580e 100644
 --- a/src/mainboard/pcengines/apu2/dsdt.asl
 +++ b/src/mainboard/pcengines/apu2/dsdt.asl
 @@ -10,6 +10,8 @@
@@ -136,43 +131,28 @@ HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
 new file mode 100644
-index 000000000000..f99975d8fe6d
+index 000000000000..911df5af962e
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,60 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +
-+chip northbridge/amd/pi/00730F01/root_complex
-+	device cpu_cluster 0 on
-+		chip cpu/amd/pi/00730F01
-+			device lapic 0 on  end
-+		end
-+	end
-+
++chip northbridge/amd/pi/00730F01
 +	device domain 0 on
 +		subsystemid 0x1022 0x1410 inherit
-+
-+		chip northbridge/amd/pi/00730F01
-+			device pci 0.0 on  end # Root Complex
-+			device pci 0.2 on end # IOMMU
-+			device pci 1.0 off  end # Internal Graphics P2P bridge 0x9804
-+			device pci 1.1 off  end # Internal Multimedia
-+			device pci 2.0 on  end # PCIe Host Bridge
-+			device pci 2.1 on  end # LAN1
-+			device pci 2.2 on  end # LAN2
-+			device pci 2.3 on  end # LAN3
-+			device pci 2.4 on  end # LAN4
-+			device pci 2.5 on  end # mPCIe slot 1
-+			device pci 8.0 on  end # Platform Security Processor
-+		end	#chip northbridge/amd/pi/00730F01
++		device ref iommu		on end
++		device ref gpp_bridge_0		on end	# LAN1
++		device ref gpp_bridge_1		on end	# LAN2
++		device ref gpp_bridge_2		on end	# LAN3
++		device ref gpp_bridge_3		on end	# LAN4
++		device ref gpp_bridge_4		on end	# mPCIe slot 1
 +
 +		chip southbridge/amd/pi/hudson
-+			device pci 10.0 on  end # XHCI HC0 muxed with EHCI 2
-+			device pci 11.0 on  end # SATA
-+			device pci 12.0 on  end # USB EHCI0 usb[0:3] is connected
-+			device pci 13.0 on  end # USB EHCI1 usb[4:7]
-+			device pci 14.0 on  end # SM
-+			device pci 14.3 on      # LPC 0x439d
++			device ref xhci		on end	# XHCI HC0 muxed with EHCI 2
++			device ref sata		on end
++			device ref ehci_0	on end	# USB EHCI0 usb[0:3] is connected
++			device ref ehci_1	on end	# USB EHCI1 usb[4:7]
++			device ref lpc_bridge	on
 +				chip superio/nuvoton/nct5104d # SIO NCT5104D
 +					register "irq_trigger_type" = "0"
 +					register "reset_gpios" = "1"
@@ -208,18 +188,10 @@ index 000000000000..f99975d8fe6d
 +				chip drivers/pc80/tpm
 +					device pnp 0c31.0 on end
 +				end # LPC TPM
-+			end # LPC 0x439d
++			end
 +			register "sd_mode" = "3"
-+			device pci 14.7 on  end # SD
-+			device pci 16.0 on  end # USB EHCI2 usb[8:7] - muxed with XHCI
-+		end	#chip southbridge/amd/pi/hudson
-+
-+		device pci 18.0 on  end
-+		device pci 18.1 on  end
-+		device pci 18.2 on  end
-+		device pci 18.3 on  end
-+		device pci 18.4 on  end
-+		device pci 18.5 on  end
-+
-+	end #domain
-+end #northbridge/amd/pi/00730F01/root_complex
++			device ref sdhci	on end
++			device ref ehci_2	on end	# USB EHCI2 usb[8:7] - muxed with XHCI
++		end
++	end
++end
