@@ -4,6 +4,55 @@ Date: Fri, 28 Dec 2018 16:54:40 +0100
 Subject: [PATCH 34/80] payloads/iPXE: option for reproducible building
 
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
+index 4ee2500f1038..5481e166c73f 100644
+--- a/configs/config.pcengines_apu2
++++ b/configs/config.pcengines_apu2
+@@ -17,6 +17,8 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_ADD_SCRIPT=y
++CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,157b"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
+index 68726c243927..32ae1a46721c 100644
+--- a/configs/config.pcengines_apu3
++++ b/configs/config.pcengines_apu3
+@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
+index 364d100a54c8..03bdb3cac44a 100644
+--- a/configs/config.pcengines_apu4
++++ b/configs/config.pcengines_apu4
+@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
+index f80ae077474c..7d46a91135d3 100644
+--- a/configs/config.pcengines_apu5
++++ b/configs/config.pcengines_apu5
+@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
 index b4e9567321ad..a4698e749ad8 100644
 --- a/payloads/external/Makefile.mk

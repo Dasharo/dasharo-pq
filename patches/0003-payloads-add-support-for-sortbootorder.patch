@@ -8,7 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index f8e362fa5e34..008fdadaa18e 100644
+index f8e362fa5e34..b61ba90dd916 100644
 --- a/configs/config.pcengines_apu2
 +++ b/configs/config.pcengines_apu2
 @@ -20,6 +20,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
@@ -16,13 +16,13 @@ index f8e362fa5e34..008fdadaa18e 100644
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
++CONFIG_SORTBOOTORDER_REVISION_ID="1e4848a40637e0d378c1680f590873b94433c630"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 0604bb39f83a..83bdb6f5a8ad 100644
+index 0604bb39f83a..7633a44d11af 100644
 --- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_apu3
 @@ -12,4 +12,7 @@ CONFIG_PXE_ROM_ID="8086,1539"
@@ -30,11 +30,11 @@ index 0604bb39f83a..83bdb6f5a8ad 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
++CONFIG_SORTBOOTORDER_REVISION_ID="1e4848a40637e0d378c1680f590873b94433c630"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 7548f07e5573..ef5d94ed0d31 100644
+index 7548f07e5573..a809a6dc6a4b 100644
 --- a/configs/config.pcengines_apu4
 +++ b/configs/config.pcengines_apu4
 @@ -21,6 +21,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
@@ -42,13 +42,13 @@ index 7548f07e5573..ef5d94ed0d31 100644
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
++CONFIG_SORTBOOTORDER_REVISION_ID="1e4848a40637e0d378c1680f590873b94433c630"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 3ad06d2cfbd5..d2af470fb09f 100644
+index 3ad06d2cfbd5..456c465f42ce 100644
 --- a/configs/config.pcengines_apu5
 +++ b/configs/config.pcengines_apu5
 @@ -12,4 +12,7 @@ CONFIG_PXE_ROM_ID="8086,1539"
@@ -56,7 +56,7 @@ index 3ad06d2cfbd5..d2af470fb09f 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v4.6.24"
++CONFIG_SORTBOOTORDER_REVISION_ID="1e4848a40637e0d378c1680f590873b94433c630"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_VENDOR_PCENGINES=y
 diff --git a/payloads/Kconfig b/payloads/Kconfig
