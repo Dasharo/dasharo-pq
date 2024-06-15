@@ -5,63 +5,62 @@ Subject: [PATCH 34/80] payloads/iPXE: option for reproducible building
 
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index 4ee2500f1038..5481e166c73f 100644
+index feb2b864d6bc..d6acb129de7c 100644
 --- a/configs/config.pcengines_apu2
 +++ b/configs/config.pcengines_apu2
-@@ -17,6 +17,8 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,157b"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
+@@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 68726c243927..32ae1a46721c 100644
+index 8d77c74a63e1..754ceb47acf5 100644
 --- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_apu3
-@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 364d100a54c8..03bdb3cac44a 100644
+index 8ff97305edaf..3f3acd2aa6a6 100644
 --- a/configs/config.pcengines_apu4
 +++ b/configs/config.pcengines_apu4
-@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index f80ae077474c..7d46a91135d3 100644
+index 9fa280cd752c..cb51d2e43cb0 100644
 --- a/configs/config.pcengines_apu5
 +++ b/configs/config.pcengines_apu5
-@@ -18,6 +18,7 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index b4e9567321ad..a4698e749ad8 100644
+index b4e9567321ad..89b4cd41f44d 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -431,6 +431,7 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
  	CONFIG_TTYS0_BAUD=$(CONFIG_TTYS0_BAUD) \
  	CONFIG_PXE_CUSTOM_GENERAL_H=$(CONFIG_PXE_CUSTOM_GENERAL_H) \
  	CONFIG_PXE_CUSTOM_BOOTMENU_FILE=$(CONFIG_PXE_CUSTOM_BOOTMENU_FILE) \
-+	CONFIG_PXE_CUSTOM_BUILD_ID=$(CONFIG_PXE_CUSTOM_BUILD_ID) \
++	CONFIG_IPXE_CUSTOM_BUILD_ID=$(CONFIG_IPXE_CUSTOM_BUILD_ID) \
  	CONFIG_SCRIPT=$(IPXE_CONFIG_SCRIPT) \
  	CONFIG_HAS_SCRIPT=$(CONFIG_IPXE_ADD_SCRIPT) \
  	CONFIG_IPXE_NO_PROMPT=$(CONFIG_IPXE_NO_PROMPT) \
@@ -84,15 +83,15 @@ index 23171630f058..d734bb688e11 100644
  	bool "Do not show prompt to boot from PXE"
  	default n
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index dc28d87662f4..6aa2ee43cbd5 100644
+index dc28d87662f4..908b8cf10c67 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -18,6 +18,10 @@ unexport KCONFIG_SPLITCONFIG
  unexport KCONFIG_TRISTATE
  unexport KCONFIG_NEGATIVES
  
-+ifneq ($(CONFIG_PXE_CUSTOM_BUILD_ID),)
-+PXE_MAKE_OPTS := BUILD_ID_CMD="echo 0x$(CONFIG_PXE_CUSTOM_BUILD_ID)"
++ifneq ($(CONFIG_IPXE_CUSTOM_BUILD_ID),)
++PXE_MAKE_OPTS := BUILD_ID_CMD="echo 0x$(CONFIG_IPXE_CUSTOM_BUILD_ID)"
 +endif
 +
  all: build
