@@ -81,3 +81,4 @@ add-memtestv5-to-apu3-and-apu5-configs.patch
 0078-mainboard-pcengines-fix-sign-of-life-coreboot-build-.patch
 0079-mainboard-pcengines-make-HUDSON_LEGACY_FREE-n-by-def.patch
 0080-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
+0001-configs-move-apu-2-3-4-6-configs-to-seabios_apu-2-3-.patch
