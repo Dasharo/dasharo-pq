@@ -83,3 +83,4 @@ add-memtestv5-to-apu3-and-apu5-configs.patch
 0080-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
 0001-configs-move-apu-2-3-4-6-configs-to-seabios_apu-2-3-.patch
 makefile.mk-if-in-git-repository-use-git-describe-for-kernelversion.patch
+gitignore-add-memstest86plus_v5-and-sortbootorder-payloads.patch
