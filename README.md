@@ -10,8 +10,11 @@ information on contributing to the Dasharo project.
 
 ## Usage
 
-Following procedure was created while testing PC Engines v4.19.0.1. It should
-be generalized after gaining better understanding of the process.
+Following procedure was created while testing PC Engines v24.05.00.01. It
+should be generalized after gaining better understanding of the Dasharo
+Patchqueue Initiative.
+
+### Prepare code base
 
 Clone upstream coreboot, create a branch called patchqueue:
 
@@ -26,13 +29,31 @@ cd coreboot
 Checkout branch on tag on which you would like to apply patchqueue:
 
 ```bash
-git checkout 4.19 -b patchqueue
+git checkout 24.05 -b patchqueue
 ```
 
 Clone this repo:
 
 ```bash
-git clone -b pcengines-seabios-25.05.00.01 git@github.com:Dasharo/dasharo-pq.git .git/patches
+git clone https://github.com/Dasharo/dasharo-pq.git .git/patches
+```
+
+Go to `.git/patches` and checkout correct patchqueue version:
+
+```bash
+cd .git/patches
+```
+
+In this case we plan to build Dasahro (coreboot+SeaBIOS) v24.05.00.01 for PC Engines:
+
+```bash
+git checkout v25.05.00.01
+```
+
+Get back to coreboot main directory:
+
+```bash
+cd -
 ```
 
 Point the `patchqueue` Branch at the Patches Inside `.git/patches`:
@@ -70,7 +91,7 @@ Patch applied.
 
 This is how git tree should look like:
 
-````bash
+```bash
 * 4ea630bd33cb (HEAD -> guilt/patchqueue) From 3812d71fa7cbb096b4af310ed4910ecb8b723fd7 Mon Sep 17 00:00:00 2001 [PATCH 80/80] src/southbridge/amd/pi/hudson/Makefile.inc: fix AMDFW
 * 6bc070131370 From e231b58275e9f177abd13cf60fafa29b83c6349d Mon Sep 17 00:00:00 2001 [PATCH 79/80] mainboard/pcengines: make HUDSON_LEGACY_FREE n by
 * 0dd87c9fb3c3 From a80c0e940afee2fa80f6ff9e24292cd55e016104 Mon Sep 17 00:00:00 2001 [PATCH 78/80] mainboard/pcengines: fix sign-of-life coreboot build
@@ -87,7 +108,11 @@ Check if patchqueue was applied:
 
 ```bash
 guilt applied
-````
+```
+
+### Compile
+
+To compile created code base please use [pce-fw-builder](https://github.com/pcengines/pce-fw-builder).
 
 ## Development
 
