@@ -7,16 +7,11 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/acpi/acpi.c         |  4 +++-
- src/include/acpi/acpi.h | 45 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
-
 diff --git a/src/acpi/acpi.c b/src/acpi/acpi.c
-index 04a59b176746..f66a34bc03c4 100644
+index 39eadc3a7f27..b04f5f759ad8 100644
 --- a/src/acpi/acpi.c
 +++ b/src/acpi/acpi.c
-@@ -2099,7 +2099,9 @@ int get_acpi_table_revision(enum acpi_tables table)
+@@ -1774,7 +1774,9 @@ int get_acpi_table_revision(enum acpi_tables table)
  		return 2;
  	case DMAR:
  		return 1;
@@ -28,18 +23,18 @@ index 04a59b176746..f66a34bc03c4 100644
  	case SPMI: /* IMPI 2.0 */
  		return 5;
 diff --git a/src/include/acpi/acpi.h b/src/include/acpi/acpi.h
-index b92c77e5d532..7a7b1051b723 100644
+index d6c30c1b5f63..0857c71562ab 100644
 --- a/src/include/acpi/acpi.h
 +++ b/src/include/acpi/acpi.h
-@@ -75,6 +75,7 @@ enum acpi_tables {
- 	/* Tables defined by ACPI and used by coreboot */
- 	BERT, CEDT, DBG2, DMAR, DSDT, EINJ, FACS, FADT, HEST, HMAT, HPET, IVRS,
- 	MADT, MCFG, RSDP, RSDT, SLIT, SRAT, SSDT, TCPA, TPM2, XSDT, ECDT, LPIT,
-+	DRTM,
+@@ -104,6 +104,7 @@ enum acpi_tables {
+ 	TPM2,   /* Trusted Platform Module 2.0 Table */
+ 	WDAT,   /* Watchdog Action Table */
+ 	XSDT,   /* Extended System Description Table */
++	DRTM,   /* Dynamic Root of Trust for Measurement Table */
  	/* Additional proprietary tables used by coreboot */
- 	VFCT, NHLT, SPMI, CRAT
- };
-@@ -893,6 +894,50 @@ typedef struct acpi_fadt {
+ 	CRAT,   /* Component Resource Attribute Table */
+ 	IORT,   /* Input Output Remapping Table */
+@@ -1034,6 +1035,50 @@ typedef struct acpi_fadt {
  #define ACPI_FADT_ARM_PSCI_USE_HVC	(1 << 1)
  /* bits 2-16: reserved since ACPI 5.1 */
  
@@ -90,6 +85,3 @@ index b92c77e5d532..7a7b1051b723 100644
  /* FADT Preferred Power Management Profile */
  enum acpi_preferred_pm_profiles {
  	PM_UNSPECIFIED		= 0,
--- 
-2.39.2
-

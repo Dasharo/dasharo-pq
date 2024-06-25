@@ -10,18 +10,10 @@ On apu5 the S1 button is not present. Its GPIO is used as a
 SIMSWAP.
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Makefile.inc |   3 +
- src/mainboard/pcengines/apu2/s1_button.c  | 115 ++++++++++++++++++++++
- src/mainboard/pcengines/apu2/s1_button.h  |  16 +++
- 3 files changed, 134 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/s1_button.c
- create mode 100644 src/mainboard/pcengines/apu2/s1_button.h
-
-diff --git a/src/mainboard/pcengines/apu2/Makefile.inc b/src/mainboard/pcengines/apu2/Makefile.inc
+diff --git a/src/mainboard/pcengines/apu2/Makefile.mk b/src/mainboard/pcengines/apu2/Makefile.mk
 index 37ac356e332a..423726ae10ee 100644
---- a/src/mainboard/pcengines/apu2/Makefile.inc
-+++ b/src/mainboard/pcengines/apu2/Makefile.inc
+--- a/src/mainboard/pcengines/apu2/Makefile.mk
++++ b/src/mainboard/pcengines/apu2/Makefile.mk
 @@ -6,13 +6,16 @@ romstage-y += bios_knobs.c
  romstage-y += BiosCallOuts.c
  romstage-y += OemCustomize.c
@@ -182,6 +174,3 @@ index 000000000000..8ab399416cb5
 + */
 +
 + void enable_console(void);
--- 
-2.39.2
-

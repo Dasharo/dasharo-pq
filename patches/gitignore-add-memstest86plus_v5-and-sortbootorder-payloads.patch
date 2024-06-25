@@ -1,0 +1,19 @@
+gitignore: add memtest86plu_v5 and sortbootorder payloads
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+
+diff --git a/.gitignore b/.gitignore
+index e813493526f3..40f0f7cd78bb 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -29,6 +29,10 @@ site-local
+ .test
+ .dependencies
+ 
++# payloads
++payloads/external/Memtest86Plus/memtest86plus_v5/
++payloads/external/sortbootorder/sortbootorder/
++
+ # Development friendly files
+ tags
+ .clang_complete

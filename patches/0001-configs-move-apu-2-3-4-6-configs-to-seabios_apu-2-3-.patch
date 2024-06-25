@@ -1,0 +1,45 @@
+From b982a2728498d22b098a2a55d4eab0eb5db8d8bf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 19 Jun 2024 00:14:25 +0200
+Subject: [PATCH] configs: move apu{2,3,4,6} configs to seabios_apu{2,3,4,6}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Dasharo Release Toolkit has problems with bash patterns for subset of
+configs to be build, that why given release has to have distinct name
+pattern. Because Dasharo(coreboot+UEFI) for PC Engines use
+pcengines_uefi_apuX, here we use pcengines_seabios_apuX, but only for
+apu{2,3,4,6} which are supported in this builds.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/{config.pcengines_apu2 => config.pcengines_seabios_apu2} | 0
+ configs/{config.pcengines_apu3 => config.pcengines_seabios_apu3} | 0
+ configs/{config.pcengines_apu4 => config.pcengines_seabios_apu4} | 0
+ configs/{config.pcengines_apu6 => config.pcengines_seabios_apu6} | 0
+ 4 files changed, 0 insertions(+), 0 deletions(-)
+ rename configs/{config.pcengines_apu2 => config.pcengines_seabios_apu2} (100%)
+ rename configs/{config.pcengines_apu3 => config.pcengines_seabios_apu3} (100%)
+ rename configs/{config.pcengines_apu4 => config.pcengines_seabios_apu4} (100%)
+ rename configs/{config.pcengines_apu6 => config.pcengines_seabios_apu6} (100%)
+
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_seabios_apu2
+similarity index 100%
+rename from configs/config.pcengines_apu2
+rename to configs/config.pcengines_seabios_apu2
+diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_seabios_apu3
+similarity index 100%
+rename from configs/config.pcengines_apu3
+rename to configs/config.pcengines_seabios_apu3
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_seabios_apu4
+similarity index 100%
+rename from configs/config.pcengines_apu4
+rename to configs/config.pcengines_seabios_apu4
+diff --git a/configs/config.pcengines_apu6 b/configs/config.pcengines_seabios_apu6
+similarity index 100%
+rename from configs/config.pcengines_apu6
+rename to configs/config.pcengines_seabios_apu6
+-- 
+2.39.2
+

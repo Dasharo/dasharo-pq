@@ -19,34 +19,26 @@ unexported to prevent potential conflicts with the iPXE build process.
 
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- payloads/external/Makefile.inc   |   2 +
- payloads/external/iPXE/Kconfig   |   6 ++
- payloads/external/iPXE/Makefile  |  17 ++-
- payloads/external/iPXE/general.h | 178 +++++++++++++++++++++++++++++++
- 4 files changed, 202 insertions(+), 1 deletion(-)
- create mode 100644 payloads/external/iPXE/general.h
-
-diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
-index 3010952739ab..2009b5ba0071 100644
---- a/payloads/external/Makefile.inc
-+++ b/payloads/external/Makefile.inc
-@@ -406,6 +406,8 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(PXE_CONFIG_SCRIPT)
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index 66b140334a41..46a62d2b2b26 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -429,6 +429,8 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
  	CONSOLE_SERIAL=$(IPXE_SERIAL_CONSOLE) \
  	IPXE_UART=$(IPXE_UART) \
  	CONFIG_TTYS0_BAUD=$(CONFIG_TTYS0_BAUD) \
 +	CONFIG_PXE_CUSTOM_GENERAL_H=$(CONFIG_PXE_CUSTOM_GENERAL_H) \
 +	CONFIG_PXE_CUSTOM_BOOTMENU_FILE=$(CONFIG_PXE_CUSTOM_BOOTMENU_FILE) \
- 	CONFIG_SCRIPT=$(PXE_CONFIG_SCRIPT) \
- 	CONFIG_HAS_SCRIPT=$(CONFIG_PXE_ADD_SCRIPT) \
- 	CONFIG_PXE_NO_PROMPT=$(CONFIG_PXE_NO_PROMPT) \
+ 	CONFIG_SCRIPT=$(IPXE_CONFIG_SCRIPT) \
+ 	CONFIG_HAS_SCRIPT=$(CONFIG_IPXE_ADD_SCRIPT) \
+ 	CONFIG_IPXE_NO_PROMPT=$(CONFIG_IPXE_NO_PROMPT) \
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index 645d41b55b6d..750560de1a97 100644
+index 8cf19c3e47c4..23171630f058 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
-@@ -67,6 +67,12 @@ config PXE_ROM_ID
+@@ -68,6 +68,12 @@ config IPXE_MASTER
  
- 	  Under GNU/Linux you can run `lspci -nn` to list the IDs of your PCI devices.
+ endchoice
  
 +config PXE_CUSTOM_GENERAL_H
 +	string "iPXE custom general.h file"
@@ -54,11 +46,11 @@ index 645d41b55b6d..750560de1a97 100644
 +	help
 +	  This option allows user to customize feature set built-in into iPXE ROM.
 +
- config PXE_SERIAL_CONSOLE
+ config IPXE_SERIAL_CONSOLE
  	bool "Enable iPXE serial console"
  	def_bool y
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index b6aa1b63efd0..9393b69c9135 100644
+index c1bd3e4474dc..dc28d87662f4 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -11,6 +11,13 @@ project_name=iPXE
@@ -75,9 +67,9 @@ index b6aa1b63efd0..9393b69c9135 100644
  all: build
  
  $(project_dir):
-@@ -41,6 +48,14 @@ ifeq ($(CONSOLE_SERIAL),yy)
- 	sed 's|#define\s*COMCONSOLE.*|#define COMCONSOLE $(IPXE_UART)|' "$(project_dir)/src/config/serial.h" > "$(project_dir)/src/config/serial.h.tmp"
- 	sed 's|#define\s*COMSPEED.*|#define COMSPEED $(CONFIG_TTYS0_BAUD)|'  "$(project_dir)/src/config/serial.h.tmp" > "$(project_dir)/src/config/serial.h"
+@@ -40,6 +47,14 @@ ifeq ($(CONSOLE_SERIAL),yy)
+ 	sed -i'' 's|#define\s*COMCONSOLE.*|#define COMCONSOLE $(IPXE_UART)|' "$(project_dir)/src/config/serial.h"
+ 	sed -i'' 's|#define\s*COMSPEED.*|#define COMSPEED $(CONFIG_TTYS0_BAUD)|'  "$(project_dir)/src/config/serial.h"
  endif
 +ifneq ($(CONFIG_PXE_CUSTOM_GENERAL_H),)
 +ifneq ("$(wildcard $(CONFIG_PXE_CUSTOM_GENERAL_H))","")
@@ -87,10 +79,10 @@ index b6aa1b63efd0..9393b69c9135 100644
 +	false
 +endif
 +endif
- ifneq ($(filter y,$(CONFIG_HAS_SCRIPT) $(CONFIG_PXE_NO_PROMPT)),)
+ ifneq ($(filter y,$(CONFIG_HAS_SCRIPT) $(CONFIG_IPXE_NO_PROMPT)),)
  	cp "$(project_dir)/src/config/general.h" "$(project_dir)/src/config/general.h.cb"
  endif
-@@ -63,7 +78,7 @@ ifeq ($(CONFIG_HAS_SCRIPT),y)
+@@ -59,7 +74,7 @@ ifeq ($(CONFIG_HAS_SCRIPT),y)
  	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom EMBED=$(CONFIG_SCRIPT)
  else
  	echo "    MAKE       $(project_name) $(TAG-y)"
@@ -283,6 +275,3 @@ index 000000000000..1025247a1450
 +#include LOCAL_NAMED_CONFIG(general.h)
 +
 +#endif /* CONFIG_GENERAL_H */
--- 
-2.39.2
-

@@ -22,12 +22,8 @@ functionality. The obtained information is exposed in SMBIOS tables.
 
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 73 ++++++++++++++++++++----
- 1 file changed, 63 insertions(+), 10 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 9371ee92909c..2cb689d4c358 100644
+index ac5c92871f88..586f697a80d5 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -1,5 +1,9 @@
@@ -40,20 +36,12 @@ index 9371ee92909c..2cb689d4c358 100644
  #include <amdblocks/acpimmio.h>
  #include <device/mmio.h>
  #include <device/pci_ops.h>
-@@ -16,12 +20,25 @@
+@@ -17,12 +21,17 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
  #include <string.h>
 -#include <AGESA.h>
 +
-+#include <cbfs.h>
-+#include <fmap.h>
-+#include <commonlib/region.h>
-+#include <security/tpm/tspi.h>
-+#include <security/tpm/tspi/crtm.h>
-+#include <southbridge/amd/pi/hudson/chip.h>
-+#include <cpu/amd/mtrr.h>
-+#include <spd_bin.h>
 +#include <spi_flash.h>
 +
  #include "gpio_ftns.h"
@@ -67,7 +55,7 @@ index 9371ee92909c..2cb689d4c358 100644
  
  /***********************************************************
   * These arrays set up the FCH PCI_INTR registers 0xC00/0xC01.
-@@ -260,23 +277,21 @@ static void mainboard_final(void *chip_info)
+@@ -263,23 +272,21 @@ static void mainboard_final(void *chip_info)
   * We will stuff a modified version of the first NICs (BDF 1:0.0) MAC address
   * into the smbios serial number location.
   */
@@ -90,14 +78,14 @@ index 9371ee92909c..2cb689d4c358 100644
 -
 -	dev = pcidev_on_root(2, 2);
  	if (dev)
- 		dev = pcidev_path_behind(dev->link_list, PCI_DEVFN(0, 0));
+ 		dev = pcidev_path_behind(dev->downstream, PCI_DEVFN(0, 0));
  	if (!dev)
 -		return serial;
 +		return -1;
  
  	/* Read in the last 3 bytes of NIC's MAC address. */
  	bar10 = pci_read_config32(dev, PCI_BASE_ADDRESS_0);
-@@ -290,7 +305,45 @@ const char *smbios_mainboard_serial_number(void)
+@@ -293,7 +300,45 @@ const char *smbios_mainboard_serial_number(void)
  	mac_addr /= 4;
  	mac_addr -= 64;
  
@@ -144,6 +132,3 @@ index 9371ee92909c..2cb689d4c358 100644
  	return serial;
  }
  
--- 
-2.39.2
-
