@@ -1,0 +1,93 @@
+From 7ff6984f2262d5a1af0abfbd6b8cb2cf294eadcb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 27 Nov 2018 14:33:54 +0100
+Subject: [PATCH 32/80] src/drivers/uart/uart8250io.c: set correct serial port
+ index according to COM2 status
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/drivers/uart/uart8250io.c             | 19 ++++++++++++++-----
+ src/mainboard/pcengines/apu2/Makefile.inc |  1 +
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
+index a7fc3466f37f..1f33a612cdc2 100644
+--- a/src/drivers/uart/uart8250io.c
++++ b/src/drivers/uart/uart8250io.c
+@@ -8,6 +8,8 @@
+ 
+ #include "uart8250reg.h"
+ 
++#include "mainboard/pcengines/apu2/bios_knobs.h"
++
+ /* Should support 8250, 16450, 16550, 16550A type UARTs */
+ 
+ /* Expected character delay at 1200bps is 9ms for a working UART
+@@ -19,6 +21,8 @@
+ #define SINGLE_CHAR_TIMEOUT	(50 * 1000)
+ #define FIFO_TIMEOUT		(16 * SINGLE_CHAR_TIMEOUT)
+ 
++static int port_index;
++
+ static int uart8250_can_tx_byte(unsigned int base_port)
+ {
+ 	return inb(base_port + UART8250_LSR) & UART8250_LSR_THRE;
+@@ -90,29 +94,34 @@ void uart_init(unsigned int idx)
+ 		unsigned int div;
+ 		div = uart_baudrate_divisor(get_uart_baudrate(),
+ 			uart_platform_refclk(), uart_input_clock_divider());
+-		uart8250_init(uart_platform_base(idx), div);
++		if (check_com2())
++			port_index = 1;
++		else
++			port_index = idx;
++
++		uart8250_init(uart_platform_base(port_index), div);
+ 	}
+ }
+ 
+ void uart_tx_byte(unsigned int idx, unsigned char data)
+ {
+-	uart8250_tx_byte(uart_platform_base(idx), data);
++	uart8250_tx_byte(uart_platform_base(port_index), data);
+ }
+ 
+ unsigned char uart_rx_byte(unsigned int idx)
+ {
+-	return uart8250_rx_byte(uart_platform_base(idx));
++	return uart8250_rx_byte(uart_platform_base(port_index));
+ }
+ 
+ void uart_tx_flush(unsigned int idx)
+ {
+-	uart8250_tx_flush(uart_platform_base(idx));
++	uart8250_tx_flush(uart_platform_base(port_index));
+ }
+ 
+ enum cb_err fill_lb_serial(struct lb_serial *serial)
+ {
+ 	serial->type = LB_SERIAL_TYPE_IO_MAPPED;
+-	serial->baseaddr = uart_platform_base(CONFIG_UART_FOR_CONSOLE);
++	serial->baseaddr = uart_platform_base(port_index);
+ 	serial->baud = get_uart_baudrate();
+ 	serial->regwidth = 1;
+ 	serial->input_hertz = uart_platform_refclk();
+diff --git a/src/mainboard/pcengines/apu2/Makefile.inc b/src/mainboard/pcengines/apu2/Makefile.inc
+index 423726ae10ee..e2882d2736c6 100644
+--- a/src/mainboard/pcengines/apu2/Makefile.inc
++++ b/src/mainboard/pcengines/apu2/Makefile.inc
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
+ bootblock-y += bootblock.c
++bootblock-y += bios_knobs.c
+ 
+ romstage-y += bios_knobs.c
+ romstage-y += BiosCallOuts.c
+-- 
+2.39.2
+

@@ -1,0 +1,218 @@
+From 3e8611d43a58c5994c8dcb2b5aabadf654507f4d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 01:35:25 +0200
+Subject: [PATCH 04/80] mainboard/pcengines: Add support for bootorder files to
+ SeaBIOS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ payloads/external/Makefile.inc                |  36 +++++++++++++++++-
+ payloads/external/SeaBIOS/Kconfig             |  32 ++++++++++++++++
+ src/mainboard/pcengines/apu2/boot-menu-key    | Bin 0 -> 8 bytes
+ .../pcengines/apu2/boot-menu-message          |   1 +
+ src/mainboard/pcengines/apu2/boot-menu-wait   | Bin 0 -> 8 bytes
+ src/mainboard/pcengines/apu2/bootorder_def    |  10 +++++
+ src/mainboard/pcengines/apu2/bootorder_map    |  10 +++++
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 0 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 0 -> 4096 bytes
+ 9 files changed, 88 insertions(+), 1 deletion(-)
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-key
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-message
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-wait
+ create mode 100644 src/mainboard/pcengines/apu2/bootorder_def
+ create mode 100644 src/mainboard/pcengines/apu2/bootorder_map
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu2/bootorder
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu4/bootorder
+
+diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
+index 890a7ab476ae..3010952739ab 100644
+--- a/payloads/external/Makefile.inc
++++ b/payloads/external/Makefile.inc
+@@ -103,8 +103,43 @@ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
+ cbfs-files-y += bootorder
+ bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
+ bootorder-type := raw
++bootorder-align := 0x1000
+ endif
+ 
++# add a SeaBIOS bootorder_map file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE)),)
++cbfs-files-y += bootorder_map
++bootorder_map-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE))
++bootorder_map-type := raw
++endif
++
++# add a SeaBIOS bootorder_def file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE)),)
++cbfs-files-y += bootorder_def
++bootorder_def-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE))
++bootorder_def-type := raw
++endif
++
++# add a SeaBIOS boot-menu-key file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_KEY_FILE)),)
++cbfs-files-y += etc/boot-menu-key
++etc/boot-menu-key-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_KEY_FILE))
++etc/boot-menu-key-type := raw
++endif
++
++# add a SeaBIOS boot-menu-wait file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_WAIT_FILE)),)
++cbfs-files-y += etc/boot-menu-wait
++etc/boot-menu-wait-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_WAIT_FILE))
++etc/boot-menu-wait-type := raw
++endif
++
++# add a SeaBIOS boot-menu-message file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE)),)
++cbfs-files-y += etc/boot-menu-message
++etc/boot-menu-message-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE))
++etc/boot-menu-message-type := raw
++endif
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),0)
+ $(call add_intermediate, seabios_ps2_timeout, $(CBFSTOOL))
+@@ -127,7 +162,6 @@ $(call add_intermediate, seabios_thread_optionroms, $(CBFSTOOL))
+ 	$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< remove -n etc/threads 2>/dev/null)
+ 	$(CBFSTOOL) $< add-int -i 2 -n etc/threads
+ endif
+-
+ ifeq ($(CONFIG_PAYLOAD_SEAGRUB),y)
+ ifneq ($(CONFIG_SEAGRUB_ALLOW_SEABIOS_BOOTMENU),y)
+ $(call add_intermediate, seabios_bootmenu, $(CBFSTOOL))
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index 22a4ef70e14c..37f01e92e929 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -107,6 +107,38 @@ config SEABIOS_BOOTORDER_FILE
+ 	  If used, a typical value would be:
+ 	    $(top)/src/mainboard/$(MAINBOARDDIR)/bootorder
+ 
++config SEABIOS_BOOTORDER_MAP_FILE
++	string "SeaBIOS bootorder_map file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map_apu5" if BOARD_PCENGINES_APU5
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map"
++	help
++	  TBD
++
++config SEABIOS_BOOTORDER_DEF_FILE
++	string "SeaBIOS bootorder_def file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def_apu5" if BOARD_PCENGINES_APU5
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_KEY_FILE
++	string "SeaBIOS boot-menu-key file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-key"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_WAIT_FILE
++	string "SeaBIOS boot-menu-wait file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-wait"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_MESSAGE_FILE
++	string "SeaBIOS boot-menu-message file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-message"
++	help
++	  TBD
++
+ config SEABIOS_ADD_SERCON_PORT_FILE
+ 	prompt "Add SeaBIOS sercon-port file to CBFS"
+ 	default n
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-key b/src/mainboard/pcengines/apu2/boot-menu-key
+new file mode 100644
+index 0000000000000000000000000000000000000000..0ddf4f28e385d304edf8c8f82b4b59687420ba14
+GIT binary patch
+literal 8
+KcmZ=^fB*mjC;&wO
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-message b/src/mainboard/pcengines/apu2/boot-menu-message
+new file mode 100644
+index 000000000000..2b61487904a4
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/boot-menu-message
+@@ -0,0 +1 @@
++Press F10 key now for boot menu, N for PXE boot
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-wait b/src/mainboard/pcengines/apu2/boot-menu-wait
+new file mode 100644
+index 0000000000000000000000000000000000000000..b1dea8d7af3241677efd07b78cb866e0825e5291
+GIT binary patch
+literal 8
+LcmXRAX8;2L1StTB
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+new file mode 100644
+index 000000000000..bc27c4834981
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -0,0 +1,10 @@
++/pci@i0cf8/usb@10/usb-*@1
++/pci@i0cf8/usb@10/usb-*@2
++/pci@i0cf8/usb@10/usb-*@3
++/pci@i0cf8/usb@10/usb-*@4
++/pci@i0cf8/*@14,7
++/pci@i0cf8/*@11/drive@0/disk@0
++/pci@i0cf8/*@11/drive@1/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@0/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@1/disk@0
++/rom@genroms/pxe.rom
+diff --git a/src/mainboard/pcengines/apu2/bootorder_map b/src/mainboard/pcengines/apu2/bootorder_map
+new file mode 100644
+index 000000000000..e3e7551e6496
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/bootorder_map
+@@ -0,0 +1,10 @@
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++b SDCARD
++c mSATA
++d SATA
++e mPCIe1 SATA1 and SATA2
++e mPCIe1 SATA1 and SATA2
++f iPXE
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..51b0fea1741238d986b4b47ac678fb344312d04b
+GIT binary patch
+literal 4096
+zcmeH@OK!s;5Qek1<U7ndN(y$}wB2!&Du%H=3IPjf)!e@0tojh@1%}N(!#^*5YPDoY
+z+v!EU=h1X}ljGiWZKEnyU$-9X*6_pP1;gR__gAM}q7O7$Im#EKYd+Wg_4(T4n8?j&
+z`oojjZ&T{is@30Sr+76p29~VWPki8@Z8!*gShg`RBZh@{J*Q%~oYk@7V(DIY<we-P
+zS%2ZCojf5R1cZPP5CTF#2nYcoAOwVf5D)_Y5-1C0n8+gpM3<pN7!d~jdV=v*FoTa_
+h1_}_9!?f8L3MKTnt;<6Pc_o<qIWLgWmY8;J^94$Ai1z>h
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d8efc15d84d9efb9751835a7b3e64a20de2412b
+GIT binary patch
+literal 4096
+zcmeH@OK!v<42EYNDR=OCG*gl^eeJkOm4K62!$1VI>fFAj-Si=DU^c(a@0UKc8`9L7
+z<ypO@S@&I$^HKM0qbk-=x9;oK_{-u2<LT+|SFdcOchsG-lrFlf`CRwk=WEY%B)g&>
+zP7mr>rqriZtAEUn;i^~kEJ^Jjc*jB8aNzl{WP)c#X`QerL;Kb#W>a!j%Zi(!ulg%5
+z#NpMr3pXF+2>~G>1cZPP5CTF#2nYcoAOwVf5U3K!8zorCA$UZaAP1Nc#_r`2=3B-D
+jF8CG5Lx>h*vC(IW=x(LUK@VvsSlpC0NN941hqn0yO>~P*
+
+literal 0
+HcmV?d00001
+
+-- 
+2.39.2
+

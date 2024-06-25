@@ -1,0 +1,105 @@
+From a8d693c7d10ae3f67f224ff821f0dbaf26494294 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 31 Aug 2018 10:37:01 +0200
+Subject: [PATCH 30/80] payloads/external/iPXE/menu.ipxe: enable autoboot for
+ all interfaces
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ configs/config.pcengines_apu2    |  2 ++
+ configs/config.pcengines_apu3    |  2 ++
+ configs/config.pcengines_apu4    |  2 ++
+ configs/config.pcengines_apu5    |  2 ++
+ payloads/external/iPXE/menu.ipxe | 17 +++++++++++++++++
+ 5 files changed, 25 insertions(+)
+ create mode 100644 payloads/external/iPXE/menu.ipxe
+
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
+index 0608270dd7e1..0e97a3d7d780 100644
+--- a/configs/config.pcengines_apu2
++++ b/configs/config.pcengines_apu2
+@@ -13,8 +13,10 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_ADD_SCRIPT=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
+index 8e73c961ec72..7296287d0cab 100644
+--- a/configs/config.pcengines_apu3
++++ b/configs/config.pcengines_apu3
+@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_ADD_SCRIPT=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
+index 58675eb6139a..bd765c2f606c 100644
+--- a/configs/config.pcengines_apu4
++++ b/configs/config.pcengines_apu4
+@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_ADD_SCRIPT=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
+index 687ba8c8bd6c..b1b91846d394 100644
+--- a/configs/config.pcengines_apu5
++++ b/configs/config.pcengines_apu5
+@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
++CONFIG_PXE_ADD_SCRIPT=y
+ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+diff --git a/payloads/external/iPXE/menu.ipxe b/payloads/external/iPXE/menu.ipxe
+new file mode 100644
+index 000000000000..1b5719588273
+--- /dev/null
++++ b/payloads/external/iPXE/menu.ipxe
+@@ -0,0 +1,17 @@
++#!ipxe
++:MENU
++menu
++item --gap -- ---------------- iPXE boot menu ----------------
++item shell          ipxe shell
++item boot           autoboot
++choose --default boot --timeout 3000 target && goto ${target}
++
++:boot
++autoboot
++goto MENU
++
++:shell
++shell ||
++goto MENU
++
++autoboot
+-- 
+2.39.2
+

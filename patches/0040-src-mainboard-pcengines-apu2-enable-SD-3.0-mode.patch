@@ -1,0 +1,70 @@
+From d0ee1b38d03c4690eb9d3c347887e2f5cfe3d719 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 20 May 2019 15:29:32 +0200
+Subject: [PATCH 40/80] src/mainboard/pcengines/apu2: enable SD 3.0 mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/variants/apu2/devicetree.cb | 2 +-
+ src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb | 2 +-
+ src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb | 2 +-
+ src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb | 1 -
+ 4 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu2/devicetree.cb
+index 243a9ba5cae5..47ae1151b43d 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu2/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu2/devicetree.cb
+@@ -67,7 +67,7 @@ chip northbridge/amd/pi/00730F01/root_complex
+ 					device pnp 0c31.0 on end
+ 				end # LPC TPM
+ 			end # LPC 0x439d
+-
++			register "sd_mode" = "3"
+ 			device pci 14.7 on  end # SD
+ 			device pci 16.0 on  end # USB EHCI2 usb[8:7] - muxed with XHCI
+ 		end	#chip southbridge/amd/pi/hudson
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+index 02f6a7842720..ed8f9ef97de1 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+@@ -64,7 +64,7 @@ chip northbridge/amd/pi/00730F01/root_complex
+ 					device pnp 2e.f on end
+ 				end # SIO NCT5104D
+ 			end # LPC 0x439d
+-
++			register "sd_mode" = "3"
+ 			device pci 14.7 on  end # SD
+ 			device pci 16.0 on  end # USB EHCI2 usb[8:7] - muxed with XHCI
+ 		end	#chip southbridge/amd/pi/hudson
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
+index f399d8bef11a..62d3afb53f39 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
+@@ -64,7 +64,7 @@ chip northbridge/amd/pi/00730F01/root_complex
+ 					device pnp 2e.f on end
+ 				end # SIO NCT5104D
+ 			end # LPC 0x439d
+-
++			register "sd_mode" = "3"
+ 			device pci 14.7 on  end # SD
+ 			device pci 16.0 on  end # USB EHCI2 usb[8:7] - muxed with XHCI
+ 		end	#chip southbridge/amd/pi/hudson
+diff --git a/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
+index 865bb4e17e0d..695b58b70a22 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu5/devicetree.cb
+@@ -63,7 +63,6 @@ chip northbridge/amd/pi/00730F01/root_complex
+ 					device pnp 0c31.0 on end
+ 				end # LPC TPM
+ 			end # LPC 0x439d
+-
+ 			device pci 14.7 off  end # SD
+ 			device pci 16.0 on  end # USB EHCI2 usb[8:7] - muxed with XHCI
+ 		end	#chip southbridge/amd/pi/hudson
+-- 
+2.39.2
+

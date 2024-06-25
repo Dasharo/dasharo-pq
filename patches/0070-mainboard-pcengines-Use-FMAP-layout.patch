@@ -1,0 +1,143 @@
+From 9fbeb3229cc84e739cb111ed4b969d1af5c0e7bc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 3 Apr 2020 13:33:39 +0200
+Subject: [PATCH 70/80] mainboard/pcengines: Use FMAP layout
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit removes the condition for the 'board.fmd' path, making it
+the default path regardless of the VBOOT configuration. The changes have
+been applied to the configurations of pcengines_apu2, pcengines_apu3,
+pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
+'board.fmd' has also been added to 'src/mainboard/pcengines/apu2'.
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ configs/config.pcengines_apu2          |  1 +
+ configs/config.pcengines_apu3          |  1 +
+ configs/config.pcengines_apu4          |  1 +
+ configs/config.pcengines_apu5          |  1 +
+ configs/config.pcengines_apu6          |  1 +
+ src/mainboard/pcengines/apu2/Kconfig   |  5 +++--
+ src/mainboard/pcengines/apu2/board.fmd | 18 ++++++++++++++++++
+ 7 files changed, 26 insertions(+), 2 deletions(-)
+ create mode 100644 src/mainboard/pcengines/apu2/board.fmd
+
+diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
+index 0e97a3d7d780..ddcea3688e7e 100644
+--- a/configs/config.pcengines_apu2
++++ b/configs/config.pcengines_apu2
+@@ -18,6 +18,7 @@ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,157b"
+ CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
+index 7296287d0cab..2d6035ba8c02 100644
+--- a/configs/config.pcengines_apu3
++++ b/configs/config.pcengines_apu3
+@@ -19,6 +19,7 @@ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
+index bd765c2f606c..725d823abbfa 100644
+--- a/configs/config.pcengines_apu4
++++ b/configs/config.pcengines_apu4
+@@ -19,6 +19,7 @@ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
+index b1b91846d394..7fc5be58711e 100644
+--- a/configs/config.pcengines_apu5
++++ b/configs/config.pcengines_apu5
+@@ -19,6 +19,7 @@ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/configs/config.pcengines_apu6 b/configs/config.pcengines_apu6
+index 0cee4afcecdb..cdde0474b25a 100644
+--- a/configs/config.pcengines_apu6
++++ b/configs/config.pcengines_apu6
+@@ -19,6 +19,7 @@ CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
+index 66424e3ca995..152e23352196 100644
+--- a/src/mainboard/pcengines/apu2/Kconfig
++++ b/src/mainboard/pcengines/apu2/Kconfig
+@@ -75,7 +75,7 @@ config APU2_PINMUX_OFF_C
+ config APU2_PINMUX_GPIO0
+ 	bool "GPIO"
+ 	depends on BOARD_PCENGINES_APU2 || BOARD_PCENGINES_APU3 || \
+-		BOARD_PCENGINES_APU4 || BOARD_PCENGINES_APU6 
++		BOARD_PCENGINES_APU4 || BOARD_PCENGINES_APU6
+ 
+ config APU2_PINMUX_UART_C
+ 	bool "UART 0x3e8"
+@@ -92,7 +92,7 @@ config APU2_PINMUX_OFF_D
+ config APU2_PINMUX_GPIO1
+ 	bool "GPIO"
+ 	depends on BOARD_PCENGINES_APU2 || BOARD_PCENGINES_APU3 || \
+-		BOARD_PCENGINES_APU4 || BOARD_PCENGINES_APU6 
++		BOARD_PCENGINES_APU4 || BOARD_PCENGINES_APU6
+ 
+ config APU2_PINMUX_UART_D
+ 	bool "UART 0x2e8"
+@@ -111,6 +111,7 @@ config FORCE_MPCIE2_CLK
+ config FMDFILE
+ 	string
+ 	default "src/mainboard/\$(CONFIG_MAINBOARD_DIR)/vboot-rw-ab.fmd" if VBOOT
++	default "src/mainboard/\$(CONFIG_MAINBOARD_DIR)/board.fmd"
+ 
+ config CBFS_SIZE
+ 	hex
+diff --git a/src/mainboard/pcengines/apu2/board.fmd b/src/mainboard/pcengines/apu2/board.fmd
+new file mode 100644
+index 000000000000..0f344e580caa
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/board.fmd
+@@ -0,0 +1,18 @@
++FLASH 8M {
++	SI_BIOS@0x0 0x800000 {
++		BOOTORDER(PRESERVE)@0x0 0x1000
++		RW_VPD(PRESERVE)@0x1000 0x4000
++		SMMSTORE(PRESERVE)@0x5000 0x20000
++		RW_UNUSED@0x25000 0x1db000
++		WP_RO@0x200000 0x600000{
++			RO_VPD(PRESERVE)@0x0 0x4000
++			RO_SECTION@0x4000 0x5fc000{
++				FMAP@0x0 0x800
++				RO_FRID@0x800 0x40
++				RO_FRID_PAD@0x840 0x7c0
++				GBB@0x1000 0x40000
++				COREBOOT(CBFS)@0x41000 0x5bb000
++			}
++		}
++	}
++}
+-- 
+2.39.2
+
