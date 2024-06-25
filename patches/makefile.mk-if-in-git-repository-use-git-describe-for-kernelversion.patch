@@ -1,0 +1,15 @@
+diff --git a/Makefile.mk b/Makefile.mk
+index 65b827fe3eaf..52b7a92d104d 100644
+--- a/Makefile.mk
++++ b/Makefile.mk
+@@ -20,7 +20,9 @@ CONFIG_MEMLAYOUT_LD_FILE:=$(call strip_quotes, $(CONFIG_MEMLAYOUT_LD_FILE))
+ # misleadingly named, this is the coreboot version
+ ifeq ($(KERNELVERSION),)
+ ifeq ($(BUILD_TIMELESS),1)
+-KERNELVERSION := -TIMELESS--LESSTIME-
++KERNELVERSION := $(strip $(if $(GIT),\
++		 $(shell git describe --abbrev=12 --dirty --always || git describe), \
++		 -TIMELESS--LESSTIME-))
+ else
+ KERNELVERSION := $(strip $(if $(GIT),\
+ 	$(shell git describe --abbrev=12 --dirty --always || git describe),\

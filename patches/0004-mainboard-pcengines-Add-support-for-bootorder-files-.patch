@@ -8,36 +8,17 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.inc                |  36 +++++++++++++++++-
- payloads/external/SeaBIOS/Kconfig             |  32 ++++++++++++++++
- src/mainboard/pcengines/apu2/boot-menu-key    | Bin 0 -> 8 bytes
- .../pcengines/apu2/boot-menu-message          |   1 +
- src/mainboard/pcengines/apu2/boot-menu-wait   | Bin 0 -> 8 bytes
- src/mainboard/pcengines/apu2/bootorder_def    |  10 +++++
- src/mainboard/pcengines/apu2/bootorder_map    |  10 +++++
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 0 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 0 -> 4096 bytes
- 9 files changed, 88 insertions(+), 1 deletion(-)
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-key
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-message
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-wait
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_def
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_map
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu2/bootorder
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu4/bootorder
-
-diff --git a/payloads/external/Makefile.inc b/payloads/external/Makefile.inc
-index 890a7ab476ae..3010952739ab 100644
---- a/payloads/external/Makefile.inc
-+++ b/payloads/external/Makefile.inc
-@@ -103,8 +103,43 @@ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index 56be9b598c8e..66b140334a41 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -103,6 +103,42 @@ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
  cbfs-files-y += bootorder
  bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
  bootorder-type := raw
 +bootorder-align := 0x1000
- endif
- 
++endif
++
 +# add a SeaBIOS bootorder_map file
 +ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE)),)
 +cbfs-files-y += bootorder_map
@@ -71,36 +52,25 @@ index 890a7ab476ae..3010952739ab 100644
 +cbfs-files-y += etc/boot-menu-message
 +etc/boot-menu-message-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE))
 +etc/boot-menu-message-type := raw
-+endif
- ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
- ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),0)
- $(call add_intermediate, seabios_ps2_timeout, $(CBFSTOOL))
-@@ -127,7 +162,6 @@ $(call add_intermediate, seabios_thread_optionroms, $(CBFSTOOL))
- 	$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< remove -n etc/threads 2>/dev/null)
- 	$(CBFSTOOL) $< add-int -i 2 -n etc/threads
  endif
--
- ifeq ($(CONFIG_PAYLOAD_SEAGRUB),y)
- ifneq ($(CONFIG_SEAGRUB_ALLOW_SEABIOS_BOOTMENU),y)
- $(call add_intermediate, seabios_bootmenu, $(CBFSTOOL))
+ 
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index 22a4ef70e14c..37f01e92e929 100644
+index b12af46a14a3..d676934dbaae 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
-@@ -107,6 +107,38 @@ config SEABIOS_BOOTORDER_FILE
+@@ -109,6 +109,36 @@ config SEABIOS_BOOTORDER_FILE
  	  If used, a typical value would be:
  	    $(top)/src/mainboard/$(MAINBOARDDIR)/bootorder
  
 +config SEABIOS_BOOTORDER_MAP_FILE
 +	string "SeaBIOS bootorder_map file"
-+	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map_apu5" if BOARD_PCENGINES_APU5
 +	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map"
 +	help
 +	  TBD
 +
 +config SEABIOS_BOOTORDER_DEF_FILE
 +	string "SeaBIOS bootorder_def file"
-+	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def_apu5" if BOARD_PCENGINES_APU5
 +	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def"
 +	help
 +	  TBD
@@ -212,7 +182,4 @@ jF8CG5Lx>h*vC(IW=x(LUK@VvsSlpC0NN941hqn0yO>~P*
 
 literal 0
 HcmV?d00001
-
--- 
-2.39.2
 

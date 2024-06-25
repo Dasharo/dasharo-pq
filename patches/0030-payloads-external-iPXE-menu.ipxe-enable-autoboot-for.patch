@@ -8,75 +8,54 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- configs/config.pcengines_apu2    |  2 ++
- configs/config.pcengines_apu3    |  2 ++
- configs/config.pcengines_apu4    |  2 ++
- configs/config.pcengines_apu5    |  2 ++
- payloads/external/iPXE/menu.ipxe | 17 +++++++++++++++++
- 5 files changed, 25 insertions(+)
- create mode 100644 payloads/external/iPXE/menu.ipxe
-
 diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index 0608270dd7e1..0e97a3d7d780 100644
+index 4cf8467b3997..f0164569d263 100644
 --- a/configs/config.pcengines_apu2
 +++ b/configs/config.pcengines_apu2
-@@ -13,8 +13,10 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,157b"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 8e73c961ec72..7296287d0cab 100644
+index 91e3cb3d10e4..195edbbdd264 100644
 --- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_apu3
-@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 58675eb6139a..bd765c2f606c 100644
+index a393e27a8f7b..18de4b0f34e8 100644
 --- a/configs/config.pcengines_apu4
 +++ b/configs/config.pcengines_apu4
-@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 687ba8c8bd6c..b1b91846d394 100644
+index 6169e26cbbbd..b155e00bd810 100644
 --- a/configs/config.pcengines_apu5
 +++ b/configs/config.pcengines_apu5
-@@ -14,8 +14,10 @@ CONFIG_NO_GFX_INIT=y
- CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
-+CONFIG_PXE_ADD_SCRIPT=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_PXE_ROM_ID="8086,1539"
-+CONFIG_PXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
+ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/payloads/external/iPXE/menu.ipxe b/payloads/external/iPXE/menu.ipxe
 new file mode 100644
 index 000000000000..1b5719588273
@@ -100,6 +79,3 @@ index 000000000000..1b5719588273
 +goto MENU
 +
 +autoboot
--- 
-2.39.2
-
