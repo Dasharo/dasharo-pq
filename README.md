@@ -110,6 +110,15 @@ Check if patchqueue was applied:
 guilt applied
 ```
 
+Tag repository, otherwise hash of the build will not match since coreboot use
+tag during build process:
+
+```sh
+git tag -a v24.05.00.01 -m "Some annotation which conten really doesn't matter"
+```
+
+**NOTE:** It has to be annotated tag, coreboot does not pick others.
+
 ### Compile
 
 To compile created code base please use [pce-fw-builder](https://github.com/pcengines/pce-fw-builder).
