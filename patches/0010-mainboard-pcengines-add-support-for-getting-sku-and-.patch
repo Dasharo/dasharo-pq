@@ -23,7 +23,7 @@ functionality. The obtained information is exposed in SMBIOS tables.
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index ac5c92871f88..586f697a80d5 100644
+index 242ad9d932ed..1c3f80acb891 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -1,5 +1,9 @@
@@ -36,14 +36,12 @@ index ac5c92871f88..586f697a80d5 100644
  #include <amdblocks/acpimmio.h>
  #include <device/mmio.h>
  #include <device/pci_ops.h>
-@@ -17,12 +21,17 @@
+@@ -17,12 +21,15 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
- #include <string.h>
+ #include <stdio.h>
 -#include <AGESA.h>
-+
 +#include <spi_flash.h>
-+
  #include "gpio_ftns.h"
 +#include "bios_knobs.h"
  
@@ -55,7 +53,7 @@ index ac5c92871f88..586f697a80d5 100644
  
  /***********************************************************
   * These arrays set up the FCH PCI_INTR registers 0xC00/0xC01.
-@@ -263,23 +272,21 @@ static void mainboard_final(void *chip_info)
+@@ -263,23 +270,21 @@ static void mainboard_final(void *chip_info)
   * We will stuff a modified version of the first NICs (BDF 1:0.0) MAC address
   * into the smbios serial number location.
   */
@@ -85,7 +83,7 @@ index ac5c92871f88..586f697a80d5 100644
  
  	/* Read in the last 3 bytes of NIC's MAC address. */
  	bar10 = pci_read_config32(dev, PCI_BASE_ADDRESS_0);
-@@ -293,7 +300,45 @@ const char *smbios_mainboard_serial_number(void)
+@@ -293,7 +298,45 @@ const char *smbios_mainboard_serial_number(void)
  	mac_addr /= 4;
  	mac_addr -= 64;
  
