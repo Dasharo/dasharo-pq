@@ -1,6 +1,15 @@
-configs: add memtest v5 as payload for apu3 and apu5 builds
+From c7bd68e169aa12507d7cb59882245730a6f6144a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Tue, 5 Nov 2024 12:57:45 +0100
+Subject: [PATCH] configs: add memtest v5 as payload for apu3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu3 | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
 index 91bad4a4048a..4b2f5bd97d24 100644
@@ -14,3 +23,6 @@ index 91bad4a4048a..4b2f5bd97d24 100644
  CONFIG_LOCALVERSION="v24.05.00.01"
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
+-- 
+2.39.5
+

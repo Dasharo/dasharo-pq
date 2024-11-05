@@ -1,7 +1,6 @@
-0001-payloads-ipxe-bump-iPXE-to-2024.08.patch
 0001-configs-add-pcengines_seabios_apu-2-4.patch
 0001-configs-add-pcengines_seabios_apu3.patch
-add-memtestv5-to-apu3-and-apu5-configs.patch
+0001-configs-add-memtest-v5-as-payload-for-apu3.patch
 0001-build.sh-dummy-patch-from-26ab7d99e984e662f6ed8ba2c0.patch
 0002-build.sh-add-support-for-uefi-seabios-_apuX-builds.patch
 0002-payloads-seabios-use-PC-Engines-repository.patch
