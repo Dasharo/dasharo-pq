@@ -1,0 +1,58 @@
+From 93e308dd57dd9d795f0eb0207e35a67119619c1a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3FPiotr=3D20Kr=3DC3=3DB3l=3F=3D?=
+ <piotr.krol@3mdeb.com>
+Date: Thu, 2 May 2024 23:09:19 +0200
+Subject: [PATCH] mainboard/pcengines: add apu3 variant
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c                 | 9 +++++++++
+ src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 8cff46bb0cd1..4f8d76539c8b 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -26,6 +26,7 @@
+ #include <spi_flash.h>
+ #include "gpio_ftns.h"
+ #include "bios_knobs.h"
++#include "s1_button.h"
+ 
+ #define SPD_SIZE  128
+ #define PM_RTC_CONTROL		0x56
+@@ -299,6 +300,14 @@ static void mainboard_final(void *chip_info)
+ 	//
+ 	gpio_set(GPIO_58, 1);
+ 	gpio_set(GPIO_59, 1);
++
++	if (!check_console()) {
++	/*The console is disabled, check if S1 is pressed and enable if so */
++		if (!gpio_get(GPIO_32)) {
++			printk(BIOS_INFO, "S1 PRESSED\n");
++			enable_console();
++		}
++	}
+ }
+ 
+ /*
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+index 5c169208b9cf..eb0777b489ce 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+@@ -3,7 +3,7 @@
+ chip northbridge/amd/pi/00730F01
+ 	device domain 0 on
+ 		subsystemid 0x1022 0x1410 inherit
+-		device ref iommu		on end
++		device ref iommu		off end
+ 		device ref gpp_bridge_0		on end	# mPCIe slot 2 (on GFX lane)
+ 		device ref gpp_bridge_1		on end	# LAN3
+ 		device ref gpp_bridge_2		on end	# LAN2
+-- 
+2.39.5
+
