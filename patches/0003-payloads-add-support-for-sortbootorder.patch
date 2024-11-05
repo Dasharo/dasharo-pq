@@ -7,58 +7,46 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
-diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index f8e362fa5e34..430e97e9b24a 100644
---- a/configs/config.pcengines_apu2
-+++ b/configs/config.pcengines_apu2
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index eb8735ef36fe..b0a584ebc8e8 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v24.05.00.01"
++CONFIG_SORTBOOTORDER_REVISION_ID="7e9e840ac15b1fe6df9445017b54540c7180c63d"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
-diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 0604bb39f83a..6892148d226b 100644
---- a/configs/config.pcengines_apu3
-+++ b/configs/config.pcengines_apu3
-@@ -12,4 +12,7 @@ CONFIG_PXE_ROM_ID="8086,1539"
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index 2dd335d9ddcb..ba5846740672 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -13,4 +13,7 @@ CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v24.05.00.01"
++CONFIG_SORTBOOTORDER_REVISION_ID="7e9e840ac15b1fe6df9445017b54540c7180c63d"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_VENDOR_PCENGINES=y
-diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 7548f07e5573..29e39103854d 100644
---- a/configs/config.pcengines_apu4
-+++ b/configs/config.pcengines_apu4
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index bcd6e89cc628..102e7e581864 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
+ CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v24.05.00.01"
++CONFIG_SORTBOOTORDER_REVISION_ID="7e9e840ac15b1fe6df9445017b54540c7180c63d"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
-diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 3ad06d2cfbd5..e2d8f4420c83 100644
---- a/configs/config.pcengines_apu5
-+++ b/configs/config.pcengines_apu5
-@@ -12,4 +12,7 @@ CONFIG_PXE_ROM_ID="8086,1539"
- CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
- CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
-+CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="v24.05.00.01"
-+CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
- CONFIG_VENDOR_PCENGINES=y
 diff --git a/payloads/Kconfig b/payloads/Kconfig
 index ec1d40c99207..65e5e894dc30 100644
 --- a/payloads/Kconfig
@@ -79,7 +67,7 @@ index ec1d40c99207..65e5e894dc30 100644
  	bool "Load coreDOOM as a secondary payload"
  	default n
 diff --git a/payloads/Makefile.mk b/payloads/Makefile.mk
-index a2336aa876a7..d31283957624 100644
+index 5f988dac1bbb..537eaf5cd4ba 100644
 --- a/payloads/Makefile.mk
 +++ b/payloads/Makefile.mk
 @@ -24,6 +24,7 @@ payloads/external/U-Boot \
@@ -91,7 +79,7 @@ index a2336aa876a7..d31283957624 100644
  payloads/external/GRUB2 \
  payloads/external/LinuxBoot \
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index c227402ee5db..56be9b598c8e 100644
+index 53693f59174c..e5fad0684521 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -341,6 +341,22 @@ payloads/external/Memtest86Plus/$(memtest_dir)/memtest: $(DOTCONFIG)
