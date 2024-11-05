@@ -18,16 +18,6 @@ pcengines_uefi_apuX, here we use pcengines_seabios_apuX, but only for
 apu{2,3,4} which are supported in this builds.
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_apu5                        | 12 ++++++------
- ....pcengines_apu2 => config.pcengines_seabios_apu2} |  0
- ....pcengines_apu3 => config.pcengines_seabios_apu3} | 12 ++++++------
- ....pcengines_apu4 => config.pcengines_seabios_apu4} |  0
- 4 files changed, 12 insertions(+), 12 deletions(-)
- rename configs/{config.pcengines_apu2 => config.pcengines_seabios_apu2} (100%)
- rename configs/{config.pcengines_apu3 => config.pcengines_seabios_apu3} (100%)
- rename configs/{config.pcengines_apu4 => config.pcengines_seabios_apu4} (100%)
-
 diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
 index b004e89c9103..7f405bc6900b 100644
 --- a/configs/config.pcengines_apu5
@@ -56,13 +46,13 @@ similarity index 100%
 rename from configs/config.pcengines_apu2
 rename to configs/config.pcengines_seabios_apu2
 diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_seabios_apu3
-similarity index 100%
+similarity index 90%
 rename from configs/config.pcengines_apu3
 rename to configs/config.pcengines_seabios_apu3
-index bf377158dfea..e4bc9914a1c7 100644
+index bf377158dfea..91bad4a4048a 100644
 --- a/configs/config.pcengines_apu3
 +++ b/configs/config.pcengines_seabios_apu3
-@@ -1,12 +1,12 @@
+@@ -1,12 +1,13 @@
  # CONFIG_COLLECT_TIMESTAMPS is not set
 -CONFIG_VENDOR_PCENGINES=y
 -CONFIG_BOARD_PCENGINES_APU3=y
@@ -71,6 +61,7 @@ index bf377158dfea..e4bc9914a1c7 100644
  CONFIG_APU2_PINMUX_UART_D=y
 +CONFIG_BOARD_PCENGINES_APU3=y
 +CONFIG_BUILD_IPXE=y
++CONFIG_LOCALVERSION="v24.05.00.01"
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
 -CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
@@ -85,6 +76,3 @@ diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_seabios_ap
 similarity index 100%
 rename from configs/config.pcengines_apu4
 rename to configs/config.pcengines_seabios_apu4
--- 
-2.39.5
-
