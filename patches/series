@@ -2,6 +2,8 @@
 0001-configs-remove-apu1-and-add-apu2-4.patch
 0001-configs-sort-apu5-config-and-move-apu2-3-4-to-seabio.patch
 add-memtestv5-to-apu3-and-apu5-configs.patch
+0001-build.sh-dummy-patch-from-26ab7d99e984e662f6ed8ba2c0.patch
+0002-build.sh-add-support-for-uefi-seabios-_apuX-builds.patch
 0002-payloads-seabios-use-PC-Engines-repository.patch
 0003-payloads-add-support-for-sortbootorder.patch
 0004-mainboard-pcengines-Add-support-for-bootorder-files-.patch

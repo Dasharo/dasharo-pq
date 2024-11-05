@@ -1,0 +1,115 @@
+From cc012c083e1af4f6b9e34642fabd4e0525aa4cac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 4 Nov 2024 23:38:57 +0100
+Subject: [PATCH 2/2] build.sh: add support for {uefi,seabios}_apuX builds
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ build.sh | 48 ++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
+ mode change 100644 => 100755 build.sh
+
+diff --git a/build.sh b/build.sh
+old mode 100644
+new mode 100755
+index 7ceb2613b239..56abbefd8405
+--- a/build.sh
++++ b/build.sh
+@@ -21,12 +21,16 @@ usage() {
+   echo -e "\tapu3           - build Dasharo for PC Engines APU3"
+   echo -e "\tapu4           - build Dasharo for PC Engines APU4"
+   echo -e "\tapu6           - build Dasharo for PC Engines APU6"
++  echo -e "\tseabios_apu2   - build Dasharo(coreboot+SeaBIOS) for PC Engines APU2"
++  echo -e "\tseabios_apu3   - build Dasharo(coreboot+SeaBIOS) for PC Engines APU3"
++  echo -e "\tseabios_apu4   - build Dasharo(coreboot+SeaBIOS) for PC Engines APU4"
++  echo -e "\tseabios_apu6   - build Dasharo(coreboot+SeaBIOS) for PC Engines APU6"
+   echo -e "\toptiplex_9010  - build Dasharo compatible with Dell OptiPlex 7010/9010"
+   echo -e "\tqemu           - build Dasharo for QEMU Q35"
+   echo -e "\tqemu_full      - build Dasharo for QEMU Q35 with all menus available"
+ }
+ 
+-SDKVER="2023-11-24_2731fa619b"
++SDKVER="ghcr.io/dasharo/dasharo-sdk:2024-03-30_cccada28f7"
+ 
+ 
+ function build_optiplex_9010 {
+@@ -155,18 +159,22 @@ function build_v1x10 {
+ 
+ function build_pcengines {
+   VARIANT=$1
+-  DEFCONFIG="configs/config.pcengines_uefi_${VARIANT}"
++  DEFCONFIG="configs/config.pcengines_${VARIANT}"
+   FW_VERSION=$(cat ${DEFCONFIG} | grep CONFIG_LOCALVERSION | cut -d '=' -f 2 | tr -d '"')
+ 
+-  # checkout several submodules needed by these boards (some others are checked
+-  # out by coreboot's Makefile)
+-  git submodule update --init --force --checkout \
+-      3rdparty/dasharo-blobs \
+-      3rdparty/vboot
++  if [[ ${VARIANT} == uefi_* ]]; then
++    # checkout several submodules needed by these boards (some others are checked
++    # out by coreboot's Makefile)
++    git submodule update --init --force --checkout \
++        3rdparty/dasharo-blobs \
++        3rdparty/vboot
++  elif [[ ${VARIANT} == seabios_* ]]; then
++    git submodule update --init --recursive --checkout
++  fi
+ 
+   docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
+     -v $HOME/.ssh:/home/coreboot/.ssh \
+-    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot $SDKVER \
+     /bin/bash -c "make distclean"
+ 
+   cp $DEFCONFIG .config
+@@ -175,8 +183,8 @@ function build_pcengines {
+ 
+   docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
+     -v $HOME/.ssh:/home/coreboot/.ssh \
+-    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
+-    /bin/bash -c "make olddefconfig && make -j$(nproc)"
++    -w /home/coreboot/coreboot $SDKVER \
++    /bin/bash -c "make olddefconfig && make BUILD_TIMELESS=1 -j$(nproc)"
+ 
+   cp build/coreboot.rom pcengines_${VARIANT}_${FW_VERSION}.rom
+   if [ $? -eq 0 ]; then
+@@ -273,16 +281,28 @@ case "$CMD" in
+         build_v1x10 "v1610"
+         ;;
+     "apu2" | "APU2" )
+-        build_pcengines "apu2"
++        build_pcengines "uefi_apu2"
+         ;;
+     "apu3" | "APU3" )
+-        build_pcengines "apu3"
++        build_pcengines "uefi_apu3"
+         ;;
+     "apu4" | "APU4" )
+-        build_pcengines "apu4"
++        build_pcengines "uefi_apu4"
++        ;;
++    "apu6" | "APU6" )
++        build_pcengines "uefi_apu6"
++        ;;
++    "seabios_apu2" )
++        build_pcengines "seabios_apu2"
++        ;;
++    "seabios_apu3" )
++        build_pcengines "seabios_apu3"
++        ;;
++    "seabios_apu4" )
++        build_pcengines "seabios_apu4"
+         ;;
+     "apu6" | "APU6" )
+-        build_pcengines "apu6"
++        build_pcengines "seabios_apu6"
+         ;;
+     "optiplex_9010" | "optiplex_7010" )
+         BOARD=optiplex_9010
+-- 
+2.39.5
+
