@@ -1,0 +1,37 @@
+From 8b817ff3a8cdada62a15f8f55b693c01563bd3bb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3F=3D3D=3D3FUTF-8=3D3Fq=3D3FPiotr=3D3D20Kr?=
+ =?UTF-8?q?=3D3DC3=3D3DB3l=3D3F=3D3D=3F=3D?= <>
+Date: Mon, 3 Jun 2024 16:01:18 +0200
+Subject: [PATCH] configs: add pcengines_seabios_apu3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu3 | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 configs/config.pcengines_seabios_apu3
+
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+new file mode 100644
+index 000000000000..91bad4a4048a
+--- /dev/null
++++ b/configs/config.pcengines_seabios_apu3
+@@ -0,0 +1,13 @@
++# CONFIG_COLLECT_TIMESTAMPS is not set
++# CONFIG_IPXE_SERIAL_CONSOLE is not set
++CONFIG_APU2_PINMUX_UART_C=y
++CONFIG_APU2_PINMUX_UART_D=y
++CONFIG_BOARD_PCENGINES_APU3=y
++CONFIG_BUILD_IPXE=y
++CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
++CONFIG_NO_GFX_INIT=y
++CONFIG_PXE=y
++CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
++CONFIG_VENDOR_PCENGINES=y
+-- 
+2.39.5
+

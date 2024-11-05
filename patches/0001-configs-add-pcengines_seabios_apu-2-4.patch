@@ -1,0 +1,81 @@
+From 19f423fbdfb3afbe7eca532f41a416b5f2bf57ec Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3F=3D3D=3D3FUTF-8=3D3Fq=3D3FPiotr=3D3D20Kr?=
+ =?UTF-8?q?=3D3DC3=3D3DB3l=3D3F=3D3D=3F=3D?= <>
+Date: Wed, 8 May 2024 13:32:17 +0200
+Subject: [PATCH] configs: add pcengines_seabios_apu{2,4}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu2 | 24 ++++++++++++++++++++++++
+ configs/config.pcengines_seabios_apu4 | 25 +++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+ create mode 100644 configs/config.pcengines_seabios_apu2
+ create mode 100644 configs/config.pcengines_seabios_apu4
+
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+new file mode 100644
+index 000000000000..5157ec1194e5
+--- /dev/null
++++ b/configs/config.pcengines_seabios_apu2
+@@ -0,0 +1,24 @@
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_IPXE_SERIAL_CONSOLE is not set
++CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
++CONFIG_BOTTOMIO_POSITION=0xD0000000
++CONFIG_BUILD_IPXE=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x20000
++CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
++CONFIG_HUDSON_SATA_MODE=2
++CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST86PLUS_V5=y
++CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
++CONFIG_NO_GFX_INIT=y
++CONFIG_POST_IO_PORT=0x80
++CONFIG_PXE=y
++CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
++CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
++CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
++CONFIG_TPM2=y
++CONFIG_VENDOR_PCENGINES=y
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+new file mode 100644
+index 000000000000..ae119658be3e
+--- /dev/null
++++ b/configs/config.pcengines_seabios_apu4
+@@ -0,0 +1,25 @@
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_IPXE_SERIAL_CONSOLE is not set
++CONFIG_AGESA_BINARY_PI_LOCATION=0xFFE00000
++CONFIG_BOARD_PCENGINES_APU4=y
++CONFIG_BOTTOMIO_POSITION=0xD0000000
++CONFIG_BUILD_IPXE=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x20000
++CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
++CONFIG_HUDSON_SATA_MODE=2
++CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST86PLUS_V5=y
++CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
++CONFIG_NO_GFX_INIT=y
++CONFIG_POST_IO_PORT=0x80
++CONFIG_PXE=y
++CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
++CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
++CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
++CONFIG_TPM2=y
++CONFIG_VENDOR_PCENGINES=y
+-- 
+2.39.5
+

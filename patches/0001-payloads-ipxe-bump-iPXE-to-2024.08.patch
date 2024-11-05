@@ -1,16 +1,13 @@
-From 7084a1a8bf5d914f953da6b1ffafd96b6572061f Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+From 3758ad5293127f80ce535271b9c93a48d31e3398 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3FPiotr=3D20Kr=3DC3=3DB3l=3F=3D?=
+ <piotr.krol@3mdeb.com>
 Date: Mon, 3 Jun 2024 14:51:03 +0200
-Subject: [PATCH] payloads/ipxe: fix compilation issues with corebood-sdk
- 2024-03-30_cccada28f7
+Subject: [PATCH] payloads/ipxe: bump iPXE to 2024.08
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch updates iPXE to last commit from May 2024 (2024.05). It
-should be updated to support coreboot-sdk 2024-05-20_b4949d3de5, which
-is most recent at this point, but iPXE fails with that SDK and that's
-why previous SDK was used for building.
+This patch updates iPXE to last commit from August 2024 (2024.08).
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
@@ -19,7 +16,7 @@ Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index 2ad39a1a6b30..8cf19c3e47c4 100644
+index ff25d81957f8..19c7abdda98d 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
 @@ -54,7 +54,7 @@ choice
@@ -27,25 +24,25 @@ index 2ad39a1a6b30..8cf19c3e47c4 100644
  
  config IPXE_STABLE
 -	bool "2022.1"
-+	bool "2024.5"
++	bool "2024.8"
  	help
  	  iPXE uses a rolling release with no stable version, for
  	  reproducibility, use the last commit of a given month as the
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index 6f5525bcd6d6..c1bd3e4474dc 100644
+index 7ec8126c977e..684f7b241c06 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -1,8 +1,8 @@
  ## SPDX-License-Identifier: GPL-2.0-only
  
 -# 2022.1 - Last commit of January 2022
-+# 2024.5 - Last commit of May 2024
++# 2024.8 - Last commit of August 2024
  # When updating, change the name both here and in payloads/external/iPXE/Kconfig
 -STABLE_COMMIT_ID=6ba671acd922ee046b257c5119b8a0f64d275473
-+STABLE_COMMIT_ID=e965f179e1654103eca33feed7a9cc4c51d91be6
++STABLE_COMMIT_ID=301644ab480ab9787c617e1a94e19ca5c2774072
  
  TAG-$(CONFIG_IPXE_MASTER)=origin/master
  TAG-$(CONFIG_IPXE_STABLE)=$(STABLE_COMMIT_ID)
 -- 
-2.39.2
+2.39.5
 

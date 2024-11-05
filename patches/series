@@ -1,6 +1,6 @@
-0001-payloads-ipxe-fix-compilation-issues-with-corebood-s.patch
-0001-configs-remove-apu1-and-add-apu2-4.patch
-0001-configs-sort-apu5-config-and-move-apu2-3-4-to-seabio.patch
+0001-payloads-ipxe-bump-iPXE-to-2024.08.patch
+0001-configs-add-pcengines_seabios_apu-2-4.patch
+0001-configs-add-pcengines_seabios_apu3.patch
 add-memtestv5-to-apu3-and-apu5-configs.patch
 0001-build.sh-dummy-patch-from-26ab7d99e984e662f6ed8ba2c0.patch
 0002-build.sh-add-support-for-uefi-seabios-_apuX-builds.patch
