@@ -8,13 +8,6 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2 | 24 ++++++++++++++++++++++++
- configs/config.pcengines_seabios_apu4 | 25 +++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
- create mode 100644 configs/config.pcengines_seabios_apu2
- create mode 100644 configs/config.pcengines_seabios_apu4
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
 new file mode 100644
 index 000000000000..5157ec1194e5
@@ -76,6 +69,3 @@ index 000000000000..ae119658be3e
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
--- 
-2.39.5
-
