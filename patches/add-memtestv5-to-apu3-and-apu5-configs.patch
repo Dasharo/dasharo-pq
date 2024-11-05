@@ -2,27 +2,15 @@ configs: add memtest v5 as payload for apu3 and apu5 builds
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 
-diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index e4bc9914a1c7..89e4d995bd71 100644
---- a/configs/config.pcengines_apu3
-+++ b/configs/config.pcengines_apu3
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index 91bad4a4048a..4b2f5bd97d24 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
 @@ -4,6 +4,7 @@ CONFIG_APU2_PINMUX_UART_C=y
  CONFIG_APU2_PINMUX_UART_D=y
  CONFIG_BOARD_PCENGINES_APU3=y
  CONFIG_BUILD_IPXE=y
 +CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_LOCALVERSION="v24.05.00.01"
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
- CONFIG_PXE=y
-diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 7f405bc6900b..7e7f6558f643 100644
---- a/configs/config.pcengines_apu5
-+++ b/configs/config.pcengines_apu5
-@@ -4,6 +4,7 @@ CONFIG_APU2_PINMUX_UART_C=y
- CONFIG_APU2_PINMUX_UART_D=y
- CONFIG_BOARD_PCENGINES_APU5=y
- CONFIG_BUILD_IPXE=y
-+CONFIG_MEMTEST86PLUS_V5=y
- CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
- CONFIG_NO_GFX_INIT=y
- CONFIG_PXE=y
