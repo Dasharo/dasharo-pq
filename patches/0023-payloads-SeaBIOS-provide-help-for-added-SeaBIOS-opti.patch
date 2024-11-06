@@ -8,17 +8,12 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/SeaBIOS/Kconfig          | 27 ++++++++++++++++++----
- src/mainboard/pcengines/apu2/bootorder_def |  7 ++++++
- 2 files changed, 29 insertions(+), 5 deletions(-)
-
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index 37f01e92e929..5ffb01a747bd 100644
+index d676934dbaae..990923858e0c 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
-@@ -112,32 +112,49 @@ config SEABIOS_BOOTORDER_MAP_FILE
- 	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map_apu5" if BOARD_PCENGINES_APU5
+@@ -113,31 +113,48 @@ config SEABIOS_BOOTORDER_MAP_FILE
+ 	string "SeaBIOS bootorder_map file"
  	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map"
  	help
 -	  TBD
@@ -26,7 +21,6 @@ index 37f01e92e929..5ffb01a747bd 100644
  
  config SEABIOS_BOOTORDER_DEF_FILE
  	string "SeaBIOS bootorder_def file"
- 	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def_apu5" if BOARD_PCENGINES_APU5
  	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def"
  	help
 -	  TBD
@@ -87,6 +81,3 @@ index bc27c4834981..a27bc92a0e8c 100644
 +uartd1
 +ehcien0
 +mpcie2_clk0
--- 
-2.39.2
-
