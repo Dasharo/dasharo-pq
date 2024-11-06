@@ -20,7 +20,6 @@
 0016-payloads-iPXE-Update-Makefile.inc-to-change-PXE-ROM-.patch
 0017-mainboard-pcengines-add-support-for-s1-button.patch
 0001-mainboard-pcengines-add-apu3-variant.patch
-0019-gitmodules-fix-the-URLs-for-stand-alone-build.patch
 0020-mainboard-pcengines-force-GPP3-PCIe-CLK-based-on-Kon.patch
 0021-mainboard-pcengines-use-check_ehci0-in-BiosCallOut.patch
 0022-mainboard-pcengines-use-bios-knobs.patch
