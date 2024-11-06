@@ -10,19 +10,19 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index ce55634db902..249614870fd5 100644
+index 23e3a5c82d2f..c2da3517ab3b 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -22,6 +22,8 @@
+@@ -21,6 +21,8 @@
+ #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
- #include <string.h>
- 
+ #include <stdio.h>
 +#include <fmap.h>
 +#include <security/tpm/tspi.h>
  #include <cpu/amd/mtrr.h>
  #include <spd_bin.h>
  #include <spi_flash.h>
-@@ -39,8 +41,6 @@
+@@ -37,8 +39,6 @@
  #define SEC_REG_SERIAL_ADDR	0x1000
  #define MAX_SERIAL_LEN		10
  
@@ -31,7 +31,7 @@ index ce55634db902..249614870fd5 100644
  /***********************************************************
   * These arrays set up the FCH PCI_INTR registers 0xC00/0xC01.
   * This table is responsible for physically routing the PIC and
-@@ -72,7 +72,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
+@@ -70,7 +70,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
  	[0x48] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
  	[0x50] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
  	[0x58] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -40,7 +40,7 @@ index ce55634db902..249614870fd5 100644
  };
  
  static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
-@@ -95,7 +95,7 @@ static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
+@@ -93,7 +93,7 @@ static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
  	[0x48] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
  	[0x50] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
  	[0x58] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -49,7 +49,7 @@ index ce55634db902..249614870fd5 100644
  };
  
  /*
-@@ -193,6 +193,19 @@ static void config_gpio_mux(void)
+@@ -191,6 +191,19 @@ static void config_gpio_mux(void)
  	}
  }
  
@@ -69,7 +69,7 @@ index ce55634db902..249614870fd5 100644
  /**********************************************
   * enable the dedicated function in mainboard.
   **********************************************/
-@@ -217,6 +230,24 @@ static int mainboard_smbios_type16(DMI_INFO *agesa_dmi, int *handle,
+@@ -215,6 +228,24 @@ static int mainboard_smbios_type16(DMI_INFO *agesa_dmi, int *handle,
  	return len;
  }
  
@@ -94,7 +94,7 @@ index ce55634db902..249614870fd5 100644
  static int mainboard_smbios_type17(DMI_INFO *agesa_dmi, int *handle,
  				 unsigned long *current)
  {
-@@ -236,7 +267,7 @@ static int mainboard_smbios_type17(DMI_INFO *agesa_dmi, int *handle,
+@@ -234,7 +265,7 @@ static int mainboard_smbios_type17(DMI_INFO *agesa_dmi, int *handle,
  				agesa_dmi->T17[0][0][0].BankLocator);
  	t->memory_type = agesa_dmi->T17[0][0][0].MemoryType;
  	t->type_detail = *(u16 *)&agesa_dmi->T17[0][0][0].TypeDetail;
@@ -103,7 +103,7 @@ index ce55634db902..249614870fd5 100644
  	t->manufacturer = agesa_dmi->T17[0][0][0].ManufacturerIdCode;
  	t->serial_number = smbios_add_string(t->eos,
  				agesa_dmi->T17[0][0][0].SerialNumber);
-@@ -244,7 +275,8 @@ static int mainboard_smbios_type17(DMI_INFO *agesa_dmi, int *handle,
+@@ -242,7 +273,8 @@ static int mainboard_smbios_type17(DMI_INFO *agesa_dmi, int *handle,
  				agesa_dmi->T17[0][0][0].PartNumber);
  	t->attributes = agesa_dmi->T17[0][0][0].Attributes;
  	t->extended_size = agesa_dmi->T17[0][0][0].ExtSize;
@@ -113,7 +113,7 @@ index ce55634db902..249614870fd5 100644
  	t->minimum_voltage = 1500; /* From SPD: 1.5V */
  	t->maximum_voltage = 1500;
  
-@@ -308,6 +340,12 @@ static void mainboard_enable(struct device *dev)
+@@ -306,6 +338,12 @@ static void mainboard_enable(struct device *dev)
  	//
  	pm_write16(PM_RTC_CONTROL, pm_read16(PM_RTC_CONTROL) | (1 << 11));
  
@@ -126,7 +126,7 @@ index ce55634db902..249614870fd5 100644
  	//
  	// Enable power on from WAKE#
  	//
-@@ -321,6 +359,17 @@ static void mainboard_enable(struct device *dev)
+@@ -319,6 +357,17 @@ static void mainboard_enable(struct device *dev)
  
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
