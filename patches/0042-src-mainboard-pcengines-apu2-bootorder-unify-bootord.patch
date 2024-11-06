@@ -8,15 +8,6 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |  10 +++++++++-
- src/mainboard/pcengines/apu2/bootorder_map    |  16 ++++++++++++----
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu5/bootorder    | Bin 4096 -> 4054 bytes
- 6 files changed, 21 insertions(+), 5 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
 index bfbe2fa7fd74..37c4b8436e12 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
@@ -97,22 +88,4 @@ ZlrjeCHwNmLF~+Umcw<r_-{jT&p#VH?BIp1B
 
 delta 19
 acmZorXi%6?zS*BKhHr8M(~Zfi`9lFmO$S5(
-
-diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
-index ba72627431ca32a0815ac195f1176a7f8d81a3e9..41643e044d19de2be7d1bd5d5a784829e2981732 100644
-GIT binary patch
-delta 254
-zcmZorxF$bAa$<laqY;QOo){oCaiJumA&4-VxDd=Snas-w6ate*KvD|KGMTtg*gK;%
-z$-z*+v^Ysu%fXOKzaTl&A=4l^%|ai@HPlZj$}CHDFwjrQEY5Z?z#$D(29}<@gi#lW
-zRXJb+lbA#UxC$y#^9;C(lk@Woxq#NBf~drzl4J;#V#t-6k(>z<%>~+>Y80QGlWoA2
-poS$n1(w3B;Ut9u`EKV`b%}+@+;M&~Cq{TaV0u#&R)%?MXTmXz4OUeKM
-
-delta 238
-zcmW-cKMsO06o=C~+2qB+n1~BHI2!rm0i0bO91XOM5QGv7>ZqOo({K_G!sa!+f{%9i
-ze!us%9p2Y{%o~RSYo>$1GVDn=@P0bfN6v_?p(X0B7o9@`OVrr=*JHCIK)@V`i@aL4
-zWQDyY%b~v(sm`_@m>-!Wz{<NUJYbru!UtCCSlWy(74K(EfhiN7+Karz5*+zC!%wkN
-ly0Th}FjqpNOI4oNn763niBKmG53o-}7hp;X<~7>ml7E*jKji=b
-
--- 
-2.39.2
 

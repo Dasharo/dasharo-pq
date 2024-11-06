@@ -7,14 +7,6 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Witwicki <michal.witwicki@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu5/bootorder    | Bin 4067 -> 4074 bytes
- 5 files changed, 1 insertion(+)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
 index 210845d97c1d..26686bea9cee 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
@@ -51,16 +43,4 @@ dcmZorXi(UY#KfAJpPO5{IiAUdck*ifPykm82Z#Uw
 
 delta 20
 bcmZorXi(UY#I!k!$&q*R1SXEjtNB9#M-B#&
-
-diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
-index e7e7fb6d0f9d4b55de772dab37a7d4fff8324e18..5718bbceec04846298ea90b63671a2d354416bea 100644
-GIT binary patch
-delta 18
-ZcmaDX|4M#C2oq~&er|5*<{+ktyZ}ep2IBw#
-
-delta 12
-TcmaDQ|5$!Q2-D_hrhZ-kBtitf
-
--- 
-2.39.2
 

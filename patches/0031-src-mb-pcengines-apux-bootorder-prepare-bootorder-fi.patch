@@ -27,14 +27,11 @@ delta 20
 bcmZorXi(UY%ec9bQHyW#1V)j`tNB9#NCyU{
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
-index 51b0fea1741238d986b4b47ac678fb344312d04b..f2dc50a9717e36e2211eb381ef66ae185d5b37da 100644
+index 51b0fea1741238d986b4b47ac678fb344312d04b..e94b77210661cd7789f90fa4897272994fba86d5 100644
 GIT binary patch
-delta 217
-zcmZorXi%6?&Q@BS<X~ttQBaD}Xrhjkxsg6lKv&Dbn3qexAUV?^(;zv`0we}h1eG$u
-zlrjeCHwNmLF~+Umcw*A;C_`SZT%ftBM)Aox*#^8^$@#fPsd+#~Qht7MNopQYzBt7=
-zH$Np6D3+O@n_CK`K^h8jp^T!`vecqtkaT%sNpeO?e!2k=@N#V~WR&5ZyqZ500K7&(
-ARsaA1
+delta 35
+qcmZorXi(T-&&X1oo|rn>n$d_eIX~AZHP3*HcXJ`5F5l$U{GkB8W(sTo
 
-delta 41
-wcmZorXi%6?KG~n~nScQ=S8hRaW~xzqa!xjovw0$u6z}E*Oe&0%SM!Gg032Ek5dZ)H
+delta 24
+gcmZorXi(T-&p6qgQEzi2qZZ%f35+6>SM!Gg0AAk*fdBvi
 

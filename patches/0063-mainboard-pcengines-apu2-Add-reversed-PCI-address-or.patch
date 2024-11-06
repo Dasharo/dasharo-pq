@@ -5,16 +5,6 @@ Subject: [PATCH 63/80] mainboard/pcengines/apu2/: Add reversed PCI address
  order option
 
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c   | 155 +++++++++++++++++-
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/bootorder_def_apu5         |   1 +
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu5/bootorder    | Bin 4082 -> 4095 bytes
- 7 files changed, 153 insertions(+), 4 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
 index ad23370637af..d868850ff90e 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
@@ -200,16 +190,6 @@ index d7f6d7feef74..88da074dd189 100644
  pciepm0
 +pciereverse0
  watchdog0000
-diff --git a/src/mainboard/pcengines/apu2/bootorder_def_apu5 b/src/mainboard/pcengines/apu2/bootorder_def_apu5
-index a32975687413..7885710c5476 100644
---- a/src/mainboard/pcengines/apu2/bootorder_def_apu5
-+++ b/src/mainboard/pcengines/apu2/bootorder_def_apu5
-@@ -28,4 +28,5 @@ boosten1
- sd3mode0
- iommu0
- pciepm0
-+pciereverse0
- watchdog0000
 diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
 index ebbd6072a13e06e085443bbea036f0d351fdc619..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f 100644
 GIT binary patch
@@ -236,16 +216,4 @@ jcmZorXi(Tt%*0)goS9mbT9#T=oVvMyNtbu>YW`3Fl6MLZ
 
 delta 20
 bcmZorXi(Tt%(S_YNsD*#0w%u6tNB9#NXZ7c
-
-diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
-index 1588e7c12710c5c0ba9df2af00c16783621f0807..dede5fc25b031f767dbd94e6f488bcdcc25e65e1 100644
-GIT binary patch
-delta 24
-fcmew)|6hJXG81<}a%O5#YFTPgaq8worir`&fXxY^
-
-delta 12
-Tcmew_|4DvBGSlV)rhZ-kCXodO
-
--- 
-2.39.2
 

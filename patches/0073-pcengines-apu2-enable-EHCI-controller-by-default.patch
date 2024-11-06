@@ -9,31 +9,10 @@ Content-Transfer-Encoding: 8bit
 on apu3,4,5 and 6
 
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |   2 +-
- .../pcengines/apu2/bootorder_def_apu5         |   2 +-
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu6/bootorder    | Bin 4096 -> 4096 bytes
- 5 files changed, 2 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
 index 88da074dd189..774434f980f8 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
-@@ -21,7 +21,7 @@ scon1
- usben1
- uartc1
- uartd1
--ehcien0
-+ehcien1
- mpcie2_clk0
- com2_en0
- boosten1
-diff --git a/src/mainboard/pcengines/apu2/bootorder_def_apu5 b/src/mainboard/pcengines/apu2/bootorder_def_apu5
-index 7885710c5476..0a00cc00b309 100644
---- a/src/mainboard/pcengines/apu2/bootorder_def_apu5
-+++ b/src/mainboard/pcengines/apu2/bootorder_def_apu5
 @@ -21,7 +21,7 @@ scon1
  usben1
  uartc1
@@ -69,7 +48,4 @@ VcmZorXi(T-%EV~6*^KEFF90A01RMYW
 
 delta 14
 VcmZorXi(T-%EV}}*^KEFF909_1RDSV
-
--- 
-2.39.2
 
