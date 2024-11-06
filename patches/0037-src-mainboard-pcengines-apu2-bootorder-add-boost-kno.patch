@@ -7,13 +7,6 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu5/bootorder    | Bin 4096 -> 4096 bytes
- 4 files changed, 1 insertion(+)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
 index a314740bde97..2ff65ad42601 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
@@ -31,25 +24,4 @@ kcmZorXi(Tt!pOtRm6V@fT#}k+$ji04kx`3p@+$r?0EGz%+5i9m
 
 delta 23
 ecmZorXi(Tt!pOwMySb53i*ND-M()Y0`9lFv;Rd|`
-
-diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
-index e94b77210661cd7789f90fa4897272994fba86d5..42e870d321980e78b9bc2891846b12d717a3d10f 100644
-GIT binary patch
-delta 33
-ocmZorXi(T-&p6qg(UgamD=9y}xFj{tke6$7Bcm4I<W>A(0HciwwEzGB
-
-delta 28
-jcmZorXi(T-&&X1oo|rn>n$ePpi+6J)qZZ%f75otZcTETd
-
-diff --git a/src/mainboard/pcengines/apu2/variants/apu5/bootorder b/src/mainboard/pcengines/apu2/variants/apu5/bootorder
-index 29c163d69ebbf7f0ac2a8c7bf2c7edcb2293dbc0..b60c6d827dcbc8dc0f7632d44c3f8fa093a971a7 100644
-GIT binary patch
-delta 27
-icmZorXi(UY%gB|KpI=;(nrFz%wYiYdgm3a{{!jpYNC>n5
-
-delta 20
-bcmZorXi(UY%ec9bQHyW#1V)j`tNB9#NCyU{
-
--- 
-2.39.2
 

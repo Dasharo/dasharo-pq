@@ -4,10 +4,10 @@ Date: Fri, 28 Dec 2018 16:54:40 +0100
 Subject: [PATCH 34/80] payloads/iPXE: option for reproducible building
 
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
-diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index feb2b864d6bc..d6acb129de7c 100644
---- a/configs/config.pcengines_apu2
-+++ b/configs/config.pcengines_apu2
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index b17af2b2c5a0..8d9e186623f8 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
 @@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
  CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
@@ -16,10 +16,10 @@ index feb2b864d6bc..d6acb129de7c 100644
  CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
  CONFIG_LOCALVERSION="v24.05.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
-diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index 8d77c74a63e1..754ceb47acf5 100644
---- a/configs/config.pcengines_apu3
-+++ b/configs/config.pcengines_apu3
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index d021c93fa08c..3f3ca9b0aa57 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
  CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
@@ -28,22 +28,10 @@ index 8d77c74a63e1..754ceb47acf5 100644
  CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
  CONFIG_LOCALVERSION="v24.05.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
-diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index 8ff97305edaf..3f3acd2aa6a6 100644
---- a/configs/config.pcengines_apu4
-+++ b/configs/config.pcengines_apu4
-@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
- CONFIG_HUDSON_SATA_MODE=2
- CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
- CONFIG_IPXE_ADD_SCRIPT=y
-+CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
- CONFIG_MEMTEST86PLUS_V5=y
-diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 9fa280cd752c..cb51d2e43cb0 100644
---- a/configs/config.pcengines_apu5
-+++ b/configs/config.pcengines_apu5
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index 5bdf4490a909..c1fcf2a157df 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
  CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
@@ -53,7 +41,7 @@ index 9fa280cd752c..cb51d2e43cb0 100644
  CONFIG_LOCALVERSION="v24.05.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index b4e9567321ad..89b4cd41f44d 100644
+index d2961e0fec5b..eb6c014d4684 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -431,6 +431,7 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
@@ -65,7 +53,7 @@ index b4e9567321ad..89b4cd41f44d 100644
  	CONFIG_HAS_SCRIPT=$(CONFIG_IPXE_ADD_SCRIPT) \
  	CONFIG_IPXE_NO_PROMPT=$(CONFIG_IPXE_NO_PROMPT) \
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index 23171630f058..d734bb688e11 100644
+index 3f0107374350..b8c30d6c0307 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
 @@ -83,6 +83,13 @@ config IPXE_SERIAL_CONSOLE
@@ -83,7 +71,7 @@ index 23171630f058..d734bb688e11 100644
  	bool "Do not show prompt to boot from PXE"
  	default n
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index dc28d87662f4..908b8cf10c67 100644
+index 83fa6b911b10..75aab39074b4 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -18,6 +18,10 @@ unexport KCONFIG_SPLITCONFIG
@@ -97,7 +85,7 @@ index dc28d87662f4..908b8cf10c67 100644
  all: build
  
  $(project_dir):
-@@ -71,7 +75,7 @@ endif
+@@ -74,7 +78,7 @@ endif
  build: config $(CONFIG_SCRIPT)
  ifeq ($(CONFIG_HAS_SCRIPT),y)
  	echo "    MAKE       $(project_name) $(TAG-y) EMBED=$(CONFIG_SCRIPT)"

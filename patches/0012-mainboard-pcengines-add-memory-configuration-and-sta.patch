@@ -17,10 +17,10 @@ systems and meets customer expectations.
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/lib/Makefile.mk b/src/lib/Makefile.mk
-index e22fd087238f..bb466820beb5 100644
+index 56d8b1afd57d..a983390b4ed3 100644
 --- a/src/lib/Makefile.mk
 +++ b/src/lib/Makefile.mk
-@@ -360,6 +360,7 @@ $(foreach stage,$(libhwbase-stages), \
+@@ -359,6 +359,7 @@ $(foreach stage,$(libhwbase-stages), \
  endif # CONFIG_ROMSTAGE_LIBHWBASE || CONFIG_RAMSTAGE_LIBHWBASE
  
  romstage-y += spd_bin.c
@@ -29,13 +29,13 @@ index e22fd087238f..bb466820beb5 100644
  ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
  LIB_SPD_BIN = $(obj)/spd.bin
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index e3b968b5fcb2..f143d7e025b8 100644
+index 1c3f80acb891..9f5f53c2632c 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -21,6 +21,8 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
- #include <string.h>
+ #include <stdio.h>
 +#include <cpu/amd/mtrr.h>
 +#include <spd_bin.h>
  #include <spi_flash.h>

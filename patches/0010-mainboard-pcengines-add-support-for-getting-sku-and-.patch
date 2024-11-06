@@ -23,7 +23,7 @@ functionality. The obtained information is exposed in SMBIOS tables.
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index ac5c92871f88..e3b968b5fcb2 100644
+index 242ad9d932ed..1c3f80acb891 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -1,5 +1,9 @@
@@ -39,7 +39,7 @@ index ac5c92871f88..e3b968b5fcb2 100644
 @@ -17,12 +21,15 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
- #include <string.h>
+ #include <stdio.h>
 -#include <AGESA.h>
 +#include <spi_flash.h>
  #include "gpio_ftns.h"
