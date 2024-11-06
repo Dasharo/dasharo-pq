@@ -7,69 +7,47 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- configs/config.pcengines_apu2               | 1 +
- configs/config.pcengines_apu3               | 1 +
- configs/config.pcengines_apu4               | 1 +
- configs/config.pcengines_apu5               | 1 +
- src/mainboard/pcengines/apu2/Kconfig        | 4 ++++
- src/mainboard/pcengines/apu2/seabios_config | 9 +++++++++
- 6 files changed, 17 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/seabios_config
-
-diff --git a/configs/config.pcengines_apu2 b/configs/config.pcengines_apu2
-index 9befb0718c62..0608270dd7e1 100644
---- a/configs/config.pcengines_apu2
-+++ b/configs/config.pcengines_apu2
-@@ -10,6 +10,7 @@ CONFIG_MEMTEST_REVISION=y
- CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index 6f76ada5c6df..5c091dd76d96 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -13,6 +13,7 @@ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
 +CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
  CONFIG_POST_IO_PORT=0x80
  CONFIG_PXE=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
-diff --git a/configs/config.pcengines_apu3 b/configs/config.pcengines_apu3
-index c892ac090160..8e73c961ec72 100644
---- a/configs/config.pcengines_apu3
-+++ b/configs/config.pcengines_apu3
-@@ -11,6 +11,7 @@ CONFIG_MEMTEST_REVISION=y
- CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
+ CONFIG_PXE_ROM_ID="8086,157b"
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index 3ddebc871cde..ae371050a17e 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -14,6 +14,7 @@ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
 +CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
  CONFIG_POST_IO_PORT=0x80
  CONFIG_PXE=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
-diff --git a/configs/config.pcengines_apu4 b/configs/config.pcengines_apu4
-index d32ecaaf1314..58675eb6139a 100644
---- a/configs/config.pcengines_apu4
-+++ b/configs/config.pcengines_apu4
-@@ -11,6 +11,7 @@ CONFIG_MEMTEST_REVISION=y
- CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
+ CONFIG_PXE_ROM_ID="8086,1539"
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index 371353ff2e25..7db3f16b9af2 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -14,6 +14,7 @@ CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
  CONFIG_NO_GFX_INIT=y
 +CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
  CONFIG_POST_IO_PORT=0x80
  CONFIG_PXE=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
-diff --git a/configs/config.pcengines_apu5 b/configs/config.pcengines_apu5
-index 343729c73fc2..687ba8c8bd6c 100644
---- a/configs/config.pcengines_apu5
-+++ b/configs/config.pcengines_apu5
-@@ -11,6 +11,7 @@ CONFIG_MEMTEST_REVISION=y
- CONFIG_MEMTEST_REVISION_ID="0b756257276729c1a12bc1d95e7a1f044894bda2"
- CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
- CONFIG_NO_GFX_INIT=y
-+CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
- CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
- CONFIG_PXE_CUSTOM_BUILD_ID="12345678"
+ CONFIG_PXE_ROM_ID="8086,1539"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index f98fa1451d04..d375f45e1417 100644
+index a0100209bff3..613cff69cb8d 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
-@@ -39,6 +39,10 @@ config MAINBOARD_PART_NUMBER
+@@ -40,6 +40,10 @@ config MAINBOARD_PART_NUMBER
  	default "apu4" if BOARD_PCENGINES_APU4
  	default "apu5" if BOARD_PCENGINES_APU5
  
@@ -95,6 +73,3 @@ index 000000000000..42b3c6bf0389
 +# CONFIG_USB_UHCI is not set
 +# CONFIG_USB_OHCI is not set
 +# CONFIG_LPT is not set
--- 
-2.39.2
-
