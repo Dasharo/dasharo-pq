@@ -1,0 +1,278 @@
+add support for Dasharo(coreboot+SeaBIOS) for QEMU Q35
+
+From: Piotr Król <piotr.krol@3mdeb.com>
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+
+diff --git a/build.sh b/build.sh
+index 56abbefd8405..36ad525fe934 100755
+--- a/build.sh
++++ b/build.sh
+@@ -28,6 +28,7 @@ usage() {
+   echo -e "\toptiplex_9010  - build Dasharo compatible with Dell OptiPlex 7010/9010"
+   echo -e "\tqemu           - build Dasharo for QEMU Q35"
+   echo -e "\tqemu_full      - build Dasharo for QEMU Q35 with all menus available"
++  echo -e "\tqemu_seabios   - build Dasharo(coreboot+SeaBIOS) for QEMU Q35"
+ }
+ 
+ SDKVER="ghcr.io/dasharo/dasharo-sdk:2024-03-30_cccada28f7"
+@@ -197,17 +198,22 @@ function build_pcengines {
+ }
+ 
+ function build_qemu {
+-  DEFCONFIG="configs/config.emulation_qemu_x86_q35_uefi${1:-}"
++  DEFCONFIG="configs/config.emulation_qemu_x86_q35_${1:-}"
+   FW_VERSION=$(cat ${DEFCONFIG} | grep CONFIG_LOCALVERSION | cut -d '=' -f 2 | tr -d '"')
+ 
+-  # checkout several submodules needed by these boards (some others are checked
+-  # out by coreboot's Makefile)
+-  git submodule update --init --force --checkout \
+-      3rdparty/dasharo-blobs
++  if [[ ${DEFCONFIG} == *_seabios ]]; then
++    git submodule update --init --recursive --checkout
++  else
++    # checkout several submodules needed by these boards (some others are checked
++    # out by coreboot's Makefile)
++    git submodule update --init --force --checkout \
++        3rdparty/dasharo-blobs \
++        3rdparty/vboot
++  fi
+ 
+   docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
+     -v $HOME/.ssh:/home/coreboot/.ssh \
+-    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot $SDKVER \
+     /bin/bash -c "make distclean"
+ 
+   cp $DEFCONFIG .config
+@@ -216,8 +222,8 @@ function build_qemu {
+ 
+   docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
+     -v $HOME/.ssh:/home/coreboot/.ssh \
+-    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
+-    /bin/bash -c "make olddefconfig && make -j$(nproc)"
++    -w /home/coreboot/coreboot $SDKVER \
++    /bin/bash -c "make olddefconfig && make"
+ 
+   cp build/coreboot.rom qemu_q35_${FW_VERSION}.rom
+   if [ $? -eq 0 ]; then
+@@ -309,10 +315,13 @@ case "$CMD" in
+         build_optiplex_9010
+         ;;
+     "qemu" | "QEMU" | "q35" | "Q35" )
+-        build_qemu
++        build_qemu "uefi"
+         ;;
+     "qemu_full" | "QEMU_full" | "q35_full" | "Q35_full" )
+-        build_qemu "_all_menus"
++        build_qemu "uefi_all_menus"
++        ;;
++    "qemu_seabios" )
++        build_qemu "smm_tseg_seabios"
+         ;;
+     *)
+         echo "Invalid command: \"$CMD\""
+diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
+new file mode 100644
+index 000000000000..212f1d4ab6a2
+--- /dev/null
++++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
+@@ -0,0 +1,29 @@
++# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
++# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
++# CONFIG_IPXE_SERIAL_CONSOLE is not set
++CONFIG_BOARD_EMULATION_QEMU_X86_Q35=y
++CONFIG_BUILD_IPXE=y
++CONFIG_CPU_QEMU_X86_TSEG_SMM=y
++CONFIG_DEFAULT_CONSOLE_LOGLEVEL_0=y
++CONFIG_IPXE_ADD_SCRIPT=y
++CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
++CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_MEMTEST86PLUS_V5=y
++CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
++CONFIG_OPTION_BACKEND_NONE=y
++CONFIG_FMDFILE="$(top)/src/mainboard/$(CONFIG_MAINBOARD_DIR)/board.fmd"
++CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(CONFIG_MAINBOARD_DIR)/seabios_config"
++CONFIG_PXE=y
++CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(CONFIG_MAINBOARD_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
++CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
++CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
++CONFIG_SORTBOOTORDER_REVISION=y
++CONFIG_SORTBOOTORDER_REVISION_ID="7e9e840ac15b1fe6df9445017b54540c7180c63d"
++CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
++CONFIG_TPM2=y
++CONFIG_VENDOR_EMULATION=y
+diff --git a/src/device/pciexp_device.c b/src/device/pciexp_device.c
+index 885240f8b1df..b973f3d9b368 100644
+--- a/src/device/pciexp_device.c
++++ b/src/device/pciexp_device.c
+@@ -700,7 +700,7 @@ static void pciexp_tune_dev(struct device *dev)
+ 	if (!root_cap)
+ 		return;
+ 
+-	if (check_pciepm()) {
++	if (CONFIG(VENDOR_PCENGINES) && check_pciepm()) {
+ 		/* Check for and enable Common Clock */
+ 		if (CONFIG(PCIEXP_COMMON_CLOCK))
+ 			pciexp_enable_common_clock(root, root_cap, dev, cap);
+diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
+index 1f33a612cdc2..51faeb65fee4 100644
+--- a/src/drivers/uart/uart8250io.c
++++ b/src/drivers/uart/uart8250io.c
+@@ -94,7 +94,7 @@ void uart_init(unsigned int idx)
+ 		unsigned int div;
+ 		div = uart_baudrate_divisor(get_uart_baudrate(),
+ 			uart_platform_refclk(), uart_input_clock_divider());
+-		if (check_com2())
++		if (CONFIG(VENDOR_PCENGINES) && check_com2())
+ 			port_index = 1;
+ 		else
+ 			port_index = idx;
+diff --git a/src/mainboard/emulation/qemu-q35/board.fmd b/src/mainboard/emulation/qemu-q35/board.fmd
+new file mode 100644
+index 000000000000..0f344e580caa
+--- /dev/null
++++ b/src/mainboard/emulation/qemu-q35/board.fmd
+@@ -0,0 +1,18 @@
++FLASH 8M {
++	SI_BIOS@0x0 0x800000 {
++		BOOTORDER(PRESERVE)@0x0 0x1000
++		RW_VPD(PRESERVE)@0x1000 0x4000
++		SMMSTORE(PRESERVE)@0x5000 0x20000
++		RW_UNUSED@0x25000 0x1db000
++		WP_RO@0x200000 0x600000{
++			RO_VPD(PRESERVE)@0x0 0x4000
++			RO_SECTION@0x4000 0x5fc000{
++				FMAP@0x0 0x800
++				RO_FRID@0x800 0x40
++				RO_FRID_PAD@0x840 0x7c0
++				GBB@0x1000 0x40000
++				COREBOOT(CBFS)@0x41000 0x5bb000
++			}
++		}
++	}
++}
+diff --git a/src/mainboard/emulation/qemu-q35/boot-menu-key b/src/mainboard/emulation/qemu-q35/boot-menu-key
+new file mode 100644
+index 0000000000000000000000000000000000000000..0ddf4f28e385d304edf8c8f82b4b59687420ba14
+GIT binary patch
+literal 8
+KcmZ=^fB*mjC;&wO
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/emulation/qemu-q35/boot-menu-message b/src/mainboard/emulation/qemu-q35/boot-menu-message
+new file mode 100644
+index 000000000000..2b61487904a4
+--- /dev/null
++++ b/src/mainboard/emulation/qemu-q35/boot-menu-message
+@@ -0,0 +1 @@
++Press F10 key now for boot menu, N for PXE boot
+diff --git a/src/mainboard/emulation/qemu-q35/boot-menu-wait b/src/mainboard/emulation/qemu-q35/boot-menu-wait
+new file mode 100644
+index 0000000000000000000000000000000000000000..b1dea8d7af3241677efd07b78cb866e0825e5291
+GIT binary patch
+literal 8
+LcmXRAX8;2L1StTB
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/emulation/qemu-q35/bootorder b/src/mainboard/emulation/qemu-q35/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f
+GIT binary patch
+literal 4096
+zcmeH_OK!s;5Qek1<U6pAlHy1D+HsRAhOv!ez+y<++`fZVOO0Y~0Gq*l48Q$hK1(fh
+zCHoJ4#ZJ^!EXTd5%Yr9RlSXYCot{yX&RWq%)`~W=R<x1Trn6SGk+q_YtQ9?Gk+{?0
+z{ozw-spiV-8;FW4jTcd+IPH7pbPLDMYc+sq4zGM4Pf4Ga-2Lxt?~EA0Qb9idzza>v
+zf+m(;45hPl_w*CMQqMlf_)Jw%g;DBdpP?XVzT|YFCh1JGtai>}SQ=5a#wj4EoiSIc
+zv0*lU6Aw4=81eTx$WghWqEQyRJhFjoAREXAvVm+M8^{K-fovcf$Od*{)W~{00kZ%K
+xS#YcacB($#Sa%PAY;tyB+A`-A_=v#<?P0pdu8GwQXU+QQj3Yyk!TDWT`~u=)-O&I5
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/emulation/qemu-q35/bootorder_def b/src/mainboard/emulation/qemu-q35/bootorder_def
+new file mode 100644
+index 000000000000..774434f980f8
+--- /dev/null
++++ b/src/mainboard/emulation/qemu-q35/bootorder_def
+@@ -0,0 +1,32 @@
++/pci@i0cf8/usb@10/usb-*@1
++/pci@i0cf8/usb@10/usb-*@2
++/pci@i0cf8/usb@10/usb-*@3
++/pci@i0cf8/usb@10/usb-*@4
++/pci@i0cf8/usb@12/usb-*@1
++/pci@i0cf8/usb@12/usb-*@2
++/pci@i0cf8/usb@12/usb-*@3
++/pci@i0cf8/usb@12/usb-*@4
++/pci@i0cf8/usb@13/usb-*@1
++/pci@i0cf8/usb@13/usb-*@2
++/pci@i0cf8/usb@13/usb-*@3
++/pci@i0cf8/usb@13/usb-*@4
++/pci@i0cf8/*@14,7
++/pci@i0cf8/*@11/drive@0/disk@0
++/pci@i0cf8/*@11/drive@1/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@0/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@1/disk@0
++/rom@genroms/pxe.rom
++pxen0
++scon1
++usben1
++uartc1
++uartd1
++ehcien1
++mpcie2_clk0
++com2_en0
++boosten1
++sd3mode0
++iommu0
++pciepm0
++pciereverse0
++watchdog0000
+diff --git a/src/mainboard/emulation/qemu-q35/bootorder_map b/src/mainboard/emulation/qemu-q35/bootorder_map
+new file mode 100644
+index 000000000000..f5d47e4ee46c
+--- /dev/null
++++ b/src/mainboard/emulation/qemu-q35/bootorder_map
+@@ -0,0 +1,18 @@
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++a USB
++b SDCARD
++c mSATA
++d SATA
++e mPCIe1 SATA1 and SATA2
++e mPCIe1 SATA1 and SATA2
++f iPXE
+diff --git a/src/mainboard/emulation/qemu-q35/seabios_config b/src/mainboard/emulation/qemu-q35/seabios_config
+new file mode 100644
+index 000000000000..42b3c6bf0389
+--- /dev/null
++++ b/src/mainboard/emulation/qemu-q35/seabios_config
+@@ -0,0 +1,9 @@
++CONFIG_ATA_DMA=y
++CONFIG_ATA_PIO32=y
++# CONFIG_BOOTSPLASH is not set
++# CONFIG_MEGASAS is not set
++# CONFIG_FLOPPY is not set
++# CONFIG_PS2PORT is not set
++# CONFIG_USB_UHCI is not set
++# CONFIG_USB_OHCI is not set
++# CONFIG_LPT is not set

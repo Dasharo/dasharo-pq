@@ -83,3 +83,4 @@
 0080-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
 makefile.mk-if-in-git-repository-use-git-describe-for-kernelversion.patch
 gitignore-add-memstest86plus_v5-and-sortbootorder-payloads.patch
+add_support_for_dasharo(coreboot+seabios)_for_qemu_q35.patch
