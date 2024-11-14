@@ -13,20 +13,8 @@ pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
 'board.fmd' has also been added to 'src/mainboard/pcengines/apu2'.
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
-diff --git a/configs/config.pcengines_apu6 b/configs/config.pcengines_apu6
-index 7f9bf753accd..1de6b227b841 100644
---- a/configs/config.pcengines_apu6
-+++ b/configs/config.pcengines_apu6
-@@ -20,6 +20,7 @@ CONFIG_POST_IO_PORT=0x80
- CONFIG_PXE=y
- CONFIG_PXE_ROM_ID="8086,1539"
- CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
-+CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
- CONFIG_SEABIOS_DEBUG_LEVEL=0
- CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="rel-1.16.0.1"
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 8d9e186623f8..b77632912091 100644
+index c097cc39a55b..0f11793d88f6 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -38,7 +26,7 @@ index 8d9e186623f8..b77632912091 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 3f3ca9b0aa57..037a49224be3 100644
+index 2b6b3e84448a..c39a1998f549 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -50,9 +38,21 @@ index 3f3ca9b0aa57..037a49224be3 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index c1fcf2a157df..ede562fb1089 100644
+index 681018898c54..791db54094f7 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
+@@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
++CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
+index 81fd105965be..fcd611e30ebb 100644
+--- a/configs/config.pcengines_seabios_apu6
++++ b/configs/config.pcengines_seabios_apu6
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
  CONFIG_PXE=y
  CONFIG_PXE_ROM_ID="8086,1539"
