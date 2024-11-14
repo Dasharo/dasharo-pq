@@ -9,7 +9,7 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 5c091dd76d96..b17af2b2c5a0 100644
+index fad295788be7..d82cb70de1ca 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -17,11 +17,11 @@ index 5c091dd76d96..b17af2b2c5a0 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index ae371050a17e..d021c93fa08c 100644
+index bef7bead81f2..bf4451e5864e 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -29,11 +29,11 @@ index ae371050a17e..d021c93fa08c 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 7db3f16b9af2..5bdf4490a909 100644
+index f79aeb191cd7..ffe489b9ec1f 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -41,7 +41,7 @@ index 7db3f16b9af2..5bdf4490a909 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/payloads/external/iPXE/menu.ipxe b/payloads/external/iPXE/menu.ipxe

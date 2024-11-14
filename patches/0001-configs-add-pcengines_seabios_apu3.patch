@@ -10,7 +10,7 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
 new file mode 100644
-index 000000000000..b5c533e7c162
+index 000000000000..91758066ac02
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -0,0 +1,25 @@
@@ -26,7 +26,7 @@ index 000000000000..b5c533e7c162
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
 +CONFIG_IPXE_ADD_SCRIPT=y
-+CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_LOCALVERSION="v24.08.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_NO_GFX_INIT=y

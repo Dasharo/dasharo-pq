@@ -5,7 +5,7 @@ Subject: [PATCH 34/80] payloads/iPXE: option for reproducible building
 
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index b17af2b2c5a0..8d9e186623f8 100644
+index d82cb70de1ca..c097cc39a55b 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -14,10 +14,10 @@ index b17af2b2c5a0..8d9e186623f8 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index d021c93fa08c..3f3ca9b0aa57 100644
+index bf4451e5864e..2b6b3e84448a 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -26,10 +26,10 @@ index d021c93fa08c..3f3ca9b0aa57 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 5bdf4490a909..c1fcf2a157df 100644
+index ffe489b9ec1f..681018898c54 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -38,7 +38,7 @@ index 5bdf4490a909..c1fcf2a157df 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.05.00.01"
+ CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
 index d2961e0fec5b..eb6c014d4684 100644
