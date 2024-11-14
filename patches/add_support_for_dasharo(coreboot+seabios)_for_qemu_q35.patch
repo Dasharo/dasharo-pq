@@ -74,10 +74,10 @@ index 56abbefd8405..36ad525fe934 100755
          echo "Invalid command: \"$CMD\""
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 new file mode 100644
-index 000000000000..212f1d4ab6a2
+index 000000000000..459ad8988152
 --- /dev/null
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
 +# CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
 +# CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
 +# CONFIG_IPXE_SERIAL_CONSOLE is not set
@@ -88,7 +88,7 @@ index 000000000000..212f1d4ab6a2
 +CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 +CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
-+CONFIG_LOCALVERSION="v24.05.00.01"
++CONFIG_LOCALVERSION="v24.08.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_OPTION_BACKEND_NONE=y
@@ -101,6 +101,7 @@ index 000000000000..212f1d4ab6a2
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
 +CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
++CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
 +CONFIG_SORTBOOTORDER_REVISION_ID="7e9e840ac15b1fe6df9445017b54540c7180c63d"
@@ -133,6 +134,19 @@ index 1f33a612cdc2..51faeb65fee4 100644
  			port_index = 1;
  		else
  			port_index = idx;
+diff --git a/src/mainboard/emulation/qemu-q35/Kconfig b/src/mainboard/emulation/qemu-q35/Kconfig
+index 2fb180b7ec51..424375e3afa0 100644
+--- a/src/mainboard/emulation/qemu-q35/Kconfig
++++ b/src/mainboard/emulation/qemu-q35/Kconfig
+@@ -10,7 +10,7 @@ config BOARD_SPECIFIC_OPTIONS
+ 	select HAVE_OPTION_TABLE
+ #	select HAVE_PIRQ_TABLE
+ 	select HAVE_ACPI_TABLES
+-	select BOARD_ROMSIZE_KB_16384
++	select BOARD_ROMSIZE_KB_8192
+ 	select MAINBOARD_HAS_NATIVE_VGA_INIT
+ 	select MAINBOARD_FORCE_NATIVE_VGA_INIT if !CHROMEOS
+ 	select MEMORY_MAPPED_TPM
 diff --git a/src/mainboard/emulation/qemu-q35/board.fmd b/src/mainboard/emulation/qemu-q35/board.fmd
 new file mode 100644
 index 000000000000..0f344e580caa
