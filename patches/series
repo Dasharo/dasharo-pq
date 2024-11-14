@@ -77,7 +77,6 @@
 0074-nb-amd-enable-ProcessorScopeInSb-for-fam14-and-00730.patch
 0075-src-northbridge-amd-pi-00730F01-northbridge.c-enable.patch
 0076-payloads-external-SeaBIOS-add-bootorder-in-FMAP-opti.patch
-0077-mb-pcengines-apu2-add-variant-apu7.patch
 0078-mainboard-pcengines-fix-sign-of-life-coreboot-build-.patch
 0079-mainboard-pcengines-make-HUDSON_LEGACY_FREE-n-by-def.patch
 0080-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
