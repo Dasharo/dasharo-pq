@@ -74,7 +74,7 @@ index 56abbefd8405..36ad525fe934 100755
          echo "Invalid command: \"$CMD\""
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 new file mode 100644
-index 000000000000..459ad8988152
+index 000000000000..ef199d07959f
 --- /dev/null
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 @@ -0,0 +1,30 @@
@@ -100,7 +100,7 @@ index 000000000000..459ad8988152
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
++CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 +CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y

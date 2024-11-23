@@ -14,7 +14,7 @@ pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
 
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index c097cc39a55b..0f11793d88f6 100644
+index fe3a9b3c2f6f..09bd18855197 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -24,9 +24,9 @@ index c097cc39a55b..0f11793d88f6 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 2b6b3e84448a..c39a1998f549 100644
+index 8dc30fd9574c..0faaa445bb15 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -36,9 +36,9 @@ index 2b6b3e84448a..c39a1998f549 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 681018898c54..791db54094f7 100644
+index 5960e6416835..7ac364122d3d 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -48,9 +48,9 @@ index 681018898c54..791db54094f7 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 81fd105965be..fcd611e30ebb 100644
+index 8796bebf4685..387b68b62d11 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -60,7 +60,7 @@ index 81fd105965be..fcd611e30ebb 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
 index fbf29a452d8f..0561dcdfa90c 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig

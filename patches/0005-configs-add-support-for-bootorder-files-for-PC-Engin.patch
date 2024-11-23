@@ -8,7 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index b0a584ebc8e8..6f76ada5c6df 100644
+index 1f7461d6080f..8ef64b02e93b 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -16,6 +16,7 @@ CONFIG_NO_GFX_INIT=y
@@ -18,9 +18,9 @@ index b0a584ebc8e8..6f76ada5c6df 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 70bad236fd81..3ddebc871cde 100644
+index da16cf86a77b..5e2e5df663ba 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -30,9 +30,9 @@ index 70bad236fd81..3ddebc871cde 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 102e7e581864..371353ff2e25 100644
+index 64a8c2968c6a..835fa3e50efc 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -42,7 +42,7 @@ index 102e7e581864..371353ff2e25 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="5b5fd6ff90bea3a2b766bdda9ae91d28b86b1abf"
+ CONFIG_SEABIOS_REVISION_ID="8217fc68664a04ff4a86745ab0e9aa50aea06341"
 diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
 new file mode 100644
 index 0000000000000000000000000000000000000000..51b0fea1741238d986b4b47ac678fb344312d04b
