@@ -53,7 +53,10 @@ jobs:
           cd $GITHUB_WORKSPACE/coreboot
           cp configs/config.${{ matrix.vendor }}_${{ matrix.payload }}_${{ matrix.model }} .config
           make olddefconfig
-          make
+          make BUILD_TIMELESS=1
+      - name: Search for coreboot.rom
+        run: |
+          find $GITHUB_WORKSPACE/coreboot -name coreboot.rom
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -107,9 +110,12 @@ jobs:
       - name: Build Dasharo
         run: |
           cd $GITHUB_WORKSPACE/coreboot
-          cp configs/config.${{ matrix.vendor }}_${{ matrix.payload }}_${{ matrix.model }} .config
+          cp configs/config.${{ matrix.vendor }}_${{ matrix.model }}_${{ matrix.payload }} .config
           make olddefconfig
-          make
+          make BUILD_TIMELESS=1
+      - name: Search for coreboot.rom
+        run: |
+          find $GITHUB_WORKSPACE/coreboot -name coreboot.rom
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
