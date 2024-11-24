@@ -62,7 +62,7 @@ jobs:
         with:
           name: "dasharo-${{ matrix.vendor }}-${{ matrix.model }}-${{ matrix.payload }}"
           path: |
-            $GITHUB_WORKSPACE/coreboot/build/coreboot.rom
+            coreboot/build/coreboot.rom
           retention-days: 30
   build_q35:
     runs-on: ubuntu-22.04
@@ -121,6 +121,6 @@ jobs:
         with:
           name: "dasharo-${{ matrix.vendor }}-${{ matrix.model }}-${{ matrix.payload }}"
           path: |
-            $GITHUB_WORKSPACE/coreboot/build/coreboot.rom
+            coreboot/build/coreboot.rom
           retention-days: 30
 
