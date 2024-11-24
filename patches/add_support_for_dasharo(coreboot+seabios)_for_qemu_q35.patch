@@ -5,7 +5,7 @@ From: Piotr Król <piotr.krol@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 
 diff --git a/build.sh b/build.sh
-index 56abbefd8405..36ad525fe934 100755
+index 56abbefd8405..c03ac848080d 100755
 --- a/build.sh
 +++ b/build.sh
 @@ -28,6 +28,7 @@ usage() {
@@ -52,7 +52,7 @@ index 56abbefd8405..36ad525fe934 100755
 -    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
 -    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +    -w /home/coreboot/coreboot $SDKVER \
-+    /bin/bash -c "make olddefconfig && make"
++    /bin/bash -c "make olddefconfig && make BUILD_TIMELESS=1 -j$(nproc)"
  
    cp build/coreboot.rom qemu_q35_${FW_VERSION}.rom
    if [ $? -eq 0 ]; then
