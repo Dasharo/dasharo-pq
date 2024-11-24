@@ -7,15 +7,10 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- build.sh | 48 ++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 34 insertions(+), 14 deletions(-)
- mode change 100644 => 100755 build.sh
-
 diff --git a/build.sh b/build.sh
 old mode 100644
 new mode 100755
-index 7ceb2613b239..56abbefd8405
+index 7ceb2613b239..cf30f35eb8f3
 --- a/build.sh
 +++ b/build.sh
 @@ -21,12 +21,16 @@ usage() {
@@ -32,7 +27,7 @@ index 7ceb2613b239..56abbefd8405
  }
  
 -SDKVER="2023-11-24_2731fa619b"
-+SDKVER="ghcr.io/dasharo/dasharo-sdk:2024-03-30_cccada28f7"
++SDKVER="ghcr.io/dasharo/dasharo-sdk:v1.6.0-rc4"
  
  
  function build_optiplex_9010 {
@@ -110,6 +105,3 @@ index 7ceb2613b239..56abbefd8405
          ;;
      "optiplex_9010" | "optiplex_7010" )
          BOARD=optiplex_9010
--- 
-2.39.5
-
