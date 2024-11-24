@@ -64,7 +64,7 @@ jobs:
   build_q35:
     runs-on: ubuntu-22.04
     container:
-      image: coreboot/coreboot-sdk:2023-11-24_2731fa619b
+      image: ghcr.io/dasharo/dasharo-sdk:v1.6.0-rc4
       options: --user 1001
     strategy:
       matrix:
