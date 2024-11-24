@@ -44,10 +44,12 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/coreboot
           guilt push -a
-      - name: Checkout coreboot submodules
+      - name: Checkout coreboot submodules and add annoted tag
         run: |
           cd $GITHUB_WORKSPACE/coreboot
           git submodule update --init --recursive --checkout
+          # this is for verification of reproducibility in local builds
+          git tag -a github-actions-bot-tag -m "$GITHUB_REF_NAME"
       - name: Build Dasharo
         run: |
           cd $GITHUB_WORKSPACE/coreboot
@@ -103,10 +105,12 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/coreboot
           guilt push -a
-      - name: Checkout coreboot submodules
+      - name: Checkout coreboot submodules and add annoted tag
         run: |
           cd $GITHUB_WORKSPACE/coreboot
           git submodule update --init --recursive --checkout
+          # this is for verification of reproducibility in local builds
+          git tag -a github-actions-bot-tag -m "$GITHUB_REF_NAME"
       - name: Build Dasharo
         run: |
           cd $GITHUB_WORKSPACE/coreboot
