@@ -72,6 +72,14 @@ jobs:
         model: [ x86_q35 ]
         payload: [ smm_tseg_seabios ]
     steps:
+      - name: Checkout coreboot
+        run: |
+          COREBOOT_VERSION=$(echo $GITHUB_REF_NAME | cut -d_ -f2)
+          CORELABEL=$(echo $COREBOOT_VERSION | awk -F '.' '{if ($3 == "00") print $1"."$2; else print $1"."$2"."$3}')
+          echo "Extracted Coreboot version: $CORELABEL"
+          git clone https://review.coreboot.org/coreboot
+          cd coreboot
+          git checkout $CORELABEL -b patchqueue
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -80,9 +88,26 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           # Fetch complete history
           fetch-depth: 0
+          path: coreboot/.git/patches
+      - name: Set Up Git
+        run: |
+          cd $GITHUB_WORKSPACE/coreboot
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          ln -s patches .git/patches/patchqueue
+          touch .git/patches/patchqueue/status
+      - name: Apply Patches Using Guilt
+        run: |
+          cd $GITHUB_WORKSPACE/coreboot
+          guilt push -a
+      - name: Checkout coreboot submodules
+        run: |
+          cd $GITHUB_WORKSPACE/coreboot
+          git submodule update --init --recursive --checkout
       - name: Build Dasharo
         run: |
-          cp configs/config.${{ matrix.vendor }}_${{ matrix.model }}_${{ matrix.payload }} .config
+          cd $GITHUB_WORKSPACE/coreboot
+          cp configs/config.${{ matrix.vendor }}_${{ matrix.payload }}_${{ matrix.model }} .config
           make olddefconfig
           make
       - name: Save artifacts
