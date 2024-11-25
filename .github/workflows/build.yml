@@ -129,7 +129,7 @@ jobs:
         with:
           name: "dasharo-${{ matrix.vendor }}-${{ matrix.model }}-${{ matrix.payload }}_${VERSION}"
           path: |
-            qemu_q35_${VERSION}.rom
-            qemu_q35_${VERSION}.rom.sha256
+            $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom
+            $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom.sha256
           retention-days: 30
 
