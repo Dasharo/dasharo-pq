@@ -18,8 +18,8 @@ jobs:
     steps:
       - name: Checkout coreboot
         run: |
-          COREBOOT_VERSION=$(echo $GITHUB_REF_NAME | cut -d_ -f2)
-          CORELABEL=$(echo $COREBOOT_VERSION | awk -F '.' '{if ($3 == "00") print $1"."$2; else print $1"."$2"."$3}')
+          echo "VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')" >> $GITHUB_ENV
+          CORELABEL=$(echo $VERSION | awk -F '.' '{if ($3 == "00") print $1"."$2; else print $1"."$2"."$3}')
           echo "Extracted Coreboot version: $CORELABEL"
           git clone https://review.coreboot.org/coreboot
           cd coreboot
@@ -56,9 +56,6 @@ jobs:
           cp configs/config.${{ matrix.vendor }}_${{ matrix.payload }}_${{ matrix.model }} .config
           make olddefconfig
           make BUILD_TIMELESS=1
-      - name: Search for coreboot.rom
-        run: |
-          find $GITHUB_WORKSPACE/coreboot -name coreboot.rom
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -119,9 +116,12 @@ jobs:
           make BUILD_TIMELESS=1
       - name: Rename and generate SHA256
         run: |
-          VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')
           mv $GITHUB_WORKSPACE/coreboot/build/coreboot.rom $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom
           sha256sum $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom > $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom.sha256
+      - name: Search for coreboot.rom
+        run: |
+          VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')
+          find $GITHUB_WORKSPACE/coreboot -name qemu_q35_${VERSION}.rom
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
