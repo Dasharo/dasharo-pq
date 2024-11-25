@@ -116,8 +116,8 @@ jobs:
           cp configs/config.${{ matrix.vendor }}_${{ matrix.model }}_${{ matrix.payload }} .config
           make olddefconfig
           make BUILD_TIMELESS=1
-          mv coreboot/build/coreboot.rom coreboot/build/qemu_q35_${VERSION}.rom
-          sha256sum coreboot/build/qemu_q35_${VERSION}.rom > coreboot/build/qemu_q35_${VERSION}.rom.sha256
+          mv build/coreboot.rom build/qemu_q35_${VERSION}.rom
+          sha256sum build/qemu_q35_${VERSION}.rom > build/qemu_q35_${VERSION}.rom.sha256
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
