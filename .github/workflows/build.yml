@@ -117,14 +117,17 @@ jobs:
           cp configs/config.${{ matrix.vendor }}_${{ matrix.model }}_${{ matrix.payload }} .config
           make olddefconfig
           make BUILD_TIMELESS=1
-      - name: Search for coreboot.rom
+      - name: Rename and generate SHA256
         run: |
-          find $GITHUB_WORKSPACE/coreboot -name coreboot.rom
+          VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')
+          mv $GITHUB_WORKSPACE/coreboot/build/coreboot.rom $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom
+          sha256sum $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom > $GITHUB_WORKSPACE/coreboot/build/qemu_q35_${VERSION}.rom.sha256
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: "dasharo-${{ matrix.vendor }}-${{ matrix.model }}-${{ matrix.payload }}"
+          name: "dasharo-${{ matrix.vendor }}-${{ matrix.model }}-${{ matrix.payload }}_${VERSION}"
           path: |
-            coreboot/build/coreboot.rom
+            coreboot/build/qemu_q35_${VERSION}.rom
+            coreboot/build/qemu_q35_${VERSION}.rom.sha256
           retention-days: 30
 
