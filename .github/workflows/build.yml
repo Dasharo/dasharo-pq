@@ -19,6 +19,7 @@ jobs:
       - name: Checkout coreboot
         run: |
           echo "VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')" >> $GITHUB_ENV
+          VERSION=$(echo ${GITHUB_REF#refs/heads/rel_} | tr '/' '_')
           CORELABEL=$(echo $VERSION | awk -F '.' '{if ($3 == "00") print $1"."$2; else print $1"."$2"."$3}')
           echo "Extracted Coreboot version: $CORELABEL"
           git clone https://review.coreboot.org/coreboot
