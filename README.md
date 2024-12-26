@@ -29,7 +29,7 @@ cd coreboot
 Checkout branch on tag on which you would like to apply patchqueue:
 
 ```bash
-git checkout 24.05 -b patchqueue
+git checkout 24.08 -b patchqueue
 ```
 
 Clone this repo:
@@ -47,7 +47,7 @@ cd .git/patches
 In this case we plan to build Dasahro (coreboot+SeaBIOS) v24.05.00.01 for PC Engines:
 
 ```bash
-git checkout v25.05.00.01
+git checkout v25.08.00.01
 ```
 
 Get back to coreboot main directory:
@@ -114,14 +114,10 @@ Tag repository, otherwise hash of the build will not match since coreboot use
 tag during build process:
 
 ```sh
-git tag -a v24.05.00.01 -m "Some annotation which conten really doesn't matter"
+git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 ```
 
 **NOTE:** It has to be annotated tag, coreboot does not pick others.
-
-### Compile
-
-To compile created code base please use [pce-fw-builder](https://github.com/pcengines/pce-fw-builder).
 
 ## Development
 
