@@ -10,9 +10,9 @@ information on contributing to the Dasharo project.
 
 ## Usage
 
-Following procedure was created while testing PC Engines v24.05.00.01. It
-should be generalized after gaining better understanding of the Dasharo
-Patchqueue Initiative.
+Following procedure was created while testing PC Engines v24.05.00.01 and
+retested while releasing v24.08.00.01. It should be generalized after gaining
+better understanding of the Dasharo Patchqueue Initiative.
 
 ### Prepare code base
 
@@ -44,7 +44,8 @@ Go to `.git/patches` and checkout correct patchqueue version:
 cd .git/patches
 ```
 
-In this case we plan to build Dasahro (coreboot+SeaBIOS) v24.05.00.01 for PC Engines:
+In this case we plan to build Dasharo (coreboot+SeaBIOS) v25.08.00.01 for PC
+Engines:
 
 ```bash
 git checkout v25.08.00.01
@@ -121,13 +122,13 @@ git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 
 ## Development
 
-### How to handle bug in patches ?
+### How to handle bug in patches?
 
-- pop patches using `guilt pop` until you will have broken one on top of stack,
-- modify files,
+- Pop patches using `guilt pop` until you will have broken one on top of stack,
+- Modify files,
 - `guilt refresh` - this will store changes in required patch
 - `guilt push -a` - to make sure all patches on top apply without problems
-- commit changes to this repository
+- Commit changes to this repository
 
 Read `man guilt-pop` for efficient popping.
 
@@ -154,16 +155,6 @@ manually auto-generated `.rej` files may be helpful in resolving patch
 application issues. After resolving issues for given patch use `git add` to
 stage required changes and `guilt refresh` to update patch, so it reflects
 cleanly applicable change.
-
-At this point you may need to check if code still compiles at this point, that
-why [pce-fw-builder update](#pce-fw-builder-update) may be useful.
-
-#### pce-fw-builder update
-
-To understood what changes may be needed to
-[pce-fw-builder](https://github.com/pcengines/pce-fw-builder) when updating to
-new coreboot version, please check [this
-MR](https://github.com/pcengines/pce-fw-builder/pull/66).
 
 ## Background
 
@@ -215,7 +206,7 @@ mentioned in [#310](https://github.com/Dasharo/dasharo-issues/issues/310).
 
 ### Why Track Patches in Git Instead of Just Using Branches?
 
-> Follwing list of arguments was heavily influenced by discussion in
+> Following list of arguments was heavily influenced by discussion in
 > [#5](https://github.com/Dasharo/dasharo-pq/pull/5). Kudos to:
 > [@krystian-hebel](https://github.com/krystian-hebel),
 > [@andyhhp](https://github.com/andyhhp),
