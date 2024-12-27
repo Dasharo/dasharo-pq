@@ -120,6 +120,15 @@ git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 
 **NOTE:** It has to be annotated tag, coreboot does not pick others.
 
+## Release process notes
+
+After applying all patches binaries for all platforms can be build:
+
+```sh
+./build.sh seabios_apu2 && ./build.sh seabios_apu3 && ./build.sh seabios_apu4 \
+&& ./build.sh seabios_apu6
+```
+
 ## Development
 
 ### How to handle bug in patches?
