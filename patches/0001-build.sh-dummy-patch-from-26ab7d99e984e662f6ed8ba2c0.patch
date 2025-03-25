@@ -8,17 +8,12 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- build.sh | 301 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 301 insertions(+)
- create mode 100644 build.sh
-
 diff --git a/build.sh b/build.sh
 new file mode 100644
-index 000000000000..7ceb2613b239
+index 000000000000..4b23f372fc4a
 --- /dev/null
 +++ b/build.sh
-@@ -0,0 +1,301 @@
+@@ -0,0 +1,397 @@
 +#!/bin/bash
 +
 +set -euo pipefail
@@ -26,37 +21,51 @@ index 000000000000..7ceb2613b239
 +usage() {
 +  echo "${0} CMD"
 +  echo "Available CMDs:"
-+  echo -e "\tz690a_ddr4     - build Dasharo image compatible with MSI PRO Z690-A (WIFI) DDR4"
-+  echo -e "\tz690a_ddr5     - build Dasharo image compatible with MSI PRO Z690-A (WIFI)"
-+  echo -e "\tz790p_ddr4     - build Dasharo image compatible with MSI PRO Z790-P (WIFI) DDR4"
-+  echo -e "\tz790p_ddr5     - build Dasharo image compatible with MSI PRO Z790-P (WIFI)"
-+  echo -e "\tvp66xx         - build Dasharo for Protectli VP66xx"
-+  echo -e "\tvp46xx         - build Dasharo for Protectli VP46xx"
-+  echo -e "\tvp32xx         - build Dasharo for Protectli VP32xx"
-+  echo -e "\tvp2420         - build Dasharo for Protectli VP2420"
-+  echo -e "\tvp2410         - build Dasharo for Protectli VP2410"
-+  echo -e "\tV1210          - build Dasharo for Protectli V1210"
-+  echo -e "\tV1410          - build Dasharo for Protectli V1410"
-+  echo -e "\tV1610          - build Dasharo for Protectli V1610"
-+  echo -e "\tapu2           - build Dasharo for PC Engines APU2"
-+  echo -e "\tapu3           - build Dasharo for PC Engines APU3"
-+  echo -e "\tapu4           - build Dasharo for PC Engines APU4"
-+  echo -e "\tapu6           - build Dasharo for PC Engines APU6"
-+  echo -e "\toptiplex_9010  - build Dasharo compatible with Dell OptiPlex 7010/9010"
-+  echo -e "\tqemu           - build Dasharo for QEMU Q35"
-+  echo -e "\tqemu_full      - build Dasharo for QEMU Q35 with all menus available"
++  echo -e "\tz690a_ddr4             - build Dasharo image compatible with MSI PRO Z690-A (WIFI) DDR4"
++  echo -e "\tz690a_ddr5             - build Dasharo image compatible with MSI PRO Z690-A (WIFI)"
++  echo -e "\tz790p_ddr4             - build Dasharo image compatible with MSI PRO Z790-P (WIFI) DDR4"
++  echo -e "\tz790p_ddr5             - build Dasharo image compatible with MSI PRO Z790-P (WIFI)"
++  echo -e "\tvp66xx                 - build Dasharo for Protectli VP66xx"
++  echo -e "\tvp46xx                 - build Dasharo for Protectli VP46xx"
++  echo -e "\tvp32xx                 - build Dasharo for Protectli VP32xx"
++  echo -e "\tvp2430                 - build Dasharo for Protectli VP2430"
++  echo -e "\tvp2420                 - build Dasharo for Protectli VP2420"
++  echo -e "\tvp2410                 - build Dasharo for Protectli VP2410"
++  echo -e "\tV1210                  - build Dasharo for Protectli V1210"
++  echo -e "\tV1410                  - build Dasharo for Protectli V1410"
++  echo -e "\tV1610                  - build Dasharo for Protectli V1610"
++  echo -e "\tapu2                   - build Dasharo for PC Engines APU2"
++  echo -e "\tapu3                   - build Dasharo for PC Engines APU3"
++  echo -e "\tapu4                   - build Dasharo for PC Engines APU4"
++  echo -e "\tapu6                   - build Dasharo for PC Engines APU6"
++  echo -e "\toptiplex_9010_uefi     - build Dasharo compatible with Dell OptiPlex 7010/9010 (UEFI)"
++  echo -e "\toptiplex_9010_seabios  - build Dasharo compatible with Dell OptiPlex 7010/9010 (SeaBIOS)"
++  echo -e "\tqemu                   - build Dasharo for QEMU Q35"
++  echo -e "\tqemu_full              - build Dasharo for QEMU Q35 with all menus available"
++  echo -e "\todroid_h4              - build Dasharo compatible with Hardkernel ODROID H4"
 +}
 +
-+SDKVER="2023-11-24_2731fa619b"
-+
++SDKVER="2024-02-18_732134932b"
++DASHARO_SDK=${DASHARO_SDK:-"ghcr.io/dasharo/dasharo-sdk:latest"}
 +
 +function build_optiplex_9010 {
-+  DEFCONFIG="configs/config.dell_optiplex_9010_sff_uefi_txt"
-+  FW_VERSION=v0.1.0-rc1
++  DEFCONFIG=$1
++  # Determine FW flavor first (uefi or seabios)
++  if [[ ${DEFCONFIG} == *"uefi"* ]]; then
++    FW_FLAVOR="uefi"
++  else
++    FW_FLAVOR="seabios"
++  fi
++
++  # Get FW version
++  FW_VERSION=$(cat ${DEFCONFIG} | grep CONFIG_LOCALVERSION | cut -d '=' -f 2 | tr -d '"')
++
++  # Combine FW flavor with version
++  FW_VERSION="${FW_FLAVOR}_${FW_VERSION}"
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make distclean"
 +
 +  cp "${DEFCONFIG}" .config
@@ -67,7 +76,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom ${BOARD}_${FW_VERSION}.rom
@@ -86,7 +95,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make distclean"
 +
 +  cp "${DEFCONFIG}" .config
@@ -97,7 +106,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom ${BOARD}_${FW_VERSION}_$1.rom
@@ -129,7 +138,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom protectli_${BOARD}_${FW_VERSION}.rom
@@ -152,7 +161,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make distclean"
 +
 +  cp $DEFCONFIG .config
@@ -161,7 +170,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom protectli_$1_${FW_VERSION}.rom
@@ -187,7 +196,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make distclean"
 +
 +  cp $DEFCONFIG .config
@@ -196,7 +205,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom pcengines_${VARIANT}_${FW_VERSION}.rom
@@ -220,7 +229,7 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make distclean"
 +
 +  cp $DEFCONFIG .config
@@ -229,13 +238,79 @@ index 000000000000..7ceb2613b239
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
-+    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
++    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
 +  cp build/coreboot.rom qemu_q35_${FW_VERSION}.rom
 +  if [ $? -eq 0 ]; then
 +    echo "Result binary placed in $PWD/qemu_q35_${FW_VERSION}.rom"
 +    sha256sum qemu_q35_${FW_VERSION}.rom > qemu_q35_${FW_VERSION}.rom.sha256
++  else
++    echo "Build failed!"
++    exit 1
++  fi
++}
++
++function build_odroid_h4 {
++  DEFCONFIG=$1
++  FW_VERSION=$(cat ${DEFCONFIG} | grep CONFIG_LOCALVERSION | cut -d '=' -f 2 | tr -d '"')
++
++  # checkout several submodules needed by these boards (some others are checked
++  # out by coreboot's Makefile)
++  git submodule update --init --force --checkout \
++      3rdparty/dasharo-blobs
++
++  if [ "${AIRGAP}" -eq 1 ]; then
++    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
++      -v $HOME/.ssh:/home/coreboot/.ssh \
++      -w /home/coreboot/coreboot ${DASHARO_SDK} \
++      /bin/bash -c "make clean"
++  else
++    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
++      -v $HOME/.ssh:/home/coreboot/.ssh \
++      -w /home/coreboot/coreboot ${DASHARO_SDK} \
++      /bin/bash -c "make distclean"
++  fi
++
++  cp $DEFCONFIG .config
++
++  echo "Building Dasharo compatbile with Hardkernel ODROID H4 (version $FW_VERSION)"
++
++  if [ "${AIRGAP}" -eq 1 ]; then
++
++    # In this situation we assume that provided repository is ready to be used
++    # and nothing should be downloaded during build process.
++
++    if [ -d "${EDK2_REPO_PATH}" ]; then
++      # Without following sequence workspce would be created by docker with root
++      # privilidges and build will fail.
++      # Target directory
++      TARGET_DIR="payloads/external/edk2/workspace/Dasharo"
++      mkdir -p "$TARGET_DIR"
++      chown -R $(id -u):$(id -g) "$TARGET_DIR"
++      chmod -R 755 "$TARGET_DIR"
++      docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
++        -v $HOME/.ssh:/home/coreboot/.ssh \
++        --network none \
++        ${EDK2_REPO_PATH:+-v $EDK2_REPO_PATH:/home/coreboot/coreboot/payloads/external/edk2/workspace/Dasharo} \
++        -e BUILD_TIMELESS=${BUILD_TIMELESS} \
++        -w /home/coreboot/coreboot ${DASHARO_SDK} \
++        /bin/bash -c "make olddefconfig && make -j$(nproc)"
++    else
++      echo "EDK2_REPO_PATH is not defined in AIRGAP!"
++      exit 1
++    fi
++  else
++    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
++      -v $HOME/.ssh:/home/coreboot/.ssh \
++      -w /home/coreboot/coreboot ${DASHARO_SDK} \
++      /bin/bash -c "make olddefconfig && make -j$(nproc)"
++  fi
++
++  cp build/coreboot.rom hardkernel_odroid_h4_${FW_VERSION}.rom
++  if [ $? -eq 0 ]; then
++    echo "Result binary placed in $PWD/hardkernel_odroid_h4_${FW_VERSION}.rom"
++    sha256sum hardkernel_odroid_h4_${FW_VERSION}.rom > hardkernel_odroid_h4_${FW_VERSION}.rom.sha256
 +  else
 +    echo "Build failed!"
 +    exit 1
@@ -281,6 +356,10 @@ index 000000000000..7ceb2613b239
 +        BOARD="vp2420"
 +        build_protectli_vault
 +        ;;
++    "vp2430" | "VP2430")
++        BOARD="vp2430"
++        build_protectli_vault
++        ;;
 +    "v1210" | "V1210" )
 +        build_v1x10 "v1210"
 +        ;;
@@ -305,9 +384,13 @@ index 000000000000..7ceb2613b239
 +    "apu6" | "APU6" )
 +        build_pcengines "apu6"
 +        ;;
-+    "optiplex_9010" | "optiplex_7010" )
-+        BOARD=optiplex_9010
-+        build_optiplex_9010
++    "optiplex_9010_uefi")
++        BOARD="optiplex_9010"
++        build_optiplex_9010 "configs/config.dell_optiplex_9010_sff_uefi_txt"
++        ;;
++    "optiplex_9010_seabios")
++        BOARD="optiplex_9010"
++        build_optiplex_9010 "configs/config.dell_optiplex_9010_sff_txt"
 +        ;;
 +    "qemu" | "QEMU" | "q35" | "Q35" )
 +        build_qemu
@@ -315,11 +398,16 @@ index 000000000000..7ceb2613b239
 +    "qemu_full" | "QEMU_full" | "q35_full" | "Q35_full" )
 +        build_qemu "_all_menus"
 +        ;;
++    "odroid_h4" | "odroid_H4" | "ODROID_H4" )
++        BOARD="odroid_h4"
++        build_odroid_h4 "configs/config.hardkernel_odroid_h4"
++        ;;
++    "odroid_h4_btg" )
++        BOARD="odroid_h4"
++        build_odroid_h4 "configs/config.hardkernel_odroid_h4_btg"
++        ;;
 +    *)
 +        echo "Invalid command: \"$CMD\""
 +        usage
 +        ;;
 +esac
--- 
-2.39.5
-
