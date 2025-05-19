@@ -44,11 +44,11 @@ Go to `.git/patches` and checkout correct patchqueue version:
 cd .git/patches
 ```
 
-In this case we plan to build Dasharo (coreboot+SeaBIOS) v25.08.00.01 for PC
+In this case re plan to build Dasharo (coreboot+SeaBIOS) v24.08.00.01 for PC
 Engines:
 
 ```bash
-git checkout v25.08.00.01
+git checkout v24.08.00.01
 ```
 
 Get back to coreboot main directory:
