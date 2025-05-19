@@ -5,18 +5,18 @@ From: Piotr Król <piotr.krol@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 
 diff --git a/build.sh b/build.sh
-index cf30f35eb8f3..60deeb44e74d 100755
+index 3db13166e768..723b5fb758b0 100755
 --- a/build.sh
 +++ b/build.sh
-@@ -28,6 +28,7 @@ usage() {
-   echo -e "\toptiplex_9010  - build Dasharo compatible with Dell OptiPlex 7010/9010"
-   echo -e "\tqemu           - build Dasharo for QEMU Q35"
-   echo -e "\tqemu_full      - build Dasharo for QEMU Q35 with all menus available"
-+  echo -e "\tqemu_seabios   - build Dasharo(coreboot+SeaBIOS) for QEMU Q35"
+@@ -26,6 +26,7 @@ usage() {
+   echo -e "\toptiplex_9010_seabios  - build Dasharo compatible with Dell OptiPlex 7010/9010 (SeaBIOS)"
+   echo -e "\tqemu                   - build Dasharo for QEMU Q35"
+   echo -e "\tqemu_full              - build Dasharo for QEMU Q35 with all menus available"
++  echo -e "\tqemu_seabios           - build Dasharo(coreboot+SeaBIOS) for QEMU Q35"
+   echo -e "\todroid_h4              - build Dasharo compatible with Hardkernel ODROID H4"
  }
  
- SDKVER="ghcr.io/dasharo/dasharo-sdk:v1.6.0-rc4"
-@@ -197,17 +198,22 @@ function build_pcengines {
+@@ -203,13 +204,19 @@ function build_pcengines {
  }
  
  function build_qemu {
@@ -37,27 +37,21 @@ index cf30f35eb8f3..60deeb44e74d 100755
 +        3rdparty/dasharo-blobs \
 +        3rdparty/vboot
 +  fi
++
  
    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
      -v $HOME/.ssh:/home/coreboot/.ssh \
--    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
-+    -w /home/coreboot/coreboot $SDKVER \
-     /bin/bash -c "make distclean"
- 
-   cp $DEFCONFIG .config
-@@ -216,8 +222,8 @@ function build_qemu {
- 
+@@ -223,7 +230,7 @@ function build_qemu {
    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
      -v $HOME/.ssh:/home/coreboot/.ssh \
--    -w /home/coreboot/coreboot coreboot/coreboot-sdk:$SDKVER \
+     -w /home/coreboot/coreboot ${DASHARO_SDK} \
 -    /bin/bash -c "make olddefconfig && make -j$(nproc)"
-+    -w /home/coreboot/coreboot $SDKVER \
 +    /bin/bash -c "make olddefconfig && make BUILD_TIMELESS=1 -j$(nproc)"
  
    cp build/coreboot.rom qemu_q35_${FW_VERSION}.rom
    if [ $? -eq 0 ]; then
-@@ -309,10 +315,13 @@ case "$CMD" in
-         build_optiplex_9010
+@@ -389,10 +396,13 @@ case "$CMD" in
+         build_optiplex_9010 "configs/config.dell_optiplex_9010_sff_txt"
          ;;
      "qemu" | "QEMU" | "q35" | "Q35" )
 -        build_qemu
@@ -70,8 +64,8 @@ index cf30f35eb8f3..60deeb44e74d 100755
 +    "qemu_seabios" )
 +        build_qemu "smm_tseg_seabios"
          ;;
-     *)
-         echo "Invalid command: \"$CMD\""
+     "odroid_h4" | "odroid_H4" | "ODROID_H4" )
+         BOARD="odroid_h4"
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 new file mode 100644
 index 000000000000..37e4156d545e
