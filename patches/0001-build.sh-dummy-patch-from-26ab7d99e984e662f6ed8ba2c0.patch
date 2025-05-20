@@ -10,7 +10,7 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/build.sh b/build.sh
 new file mode 100644
-index 000000000000..4b23f372fc4a
+index 0000000000..1115d4751b
 --- /dev/null
 +++ b/build.sh
 @@ -0,0 +1,397 @@
@@ -185,7 +185,7 @@ index 000000000000..4b23f372fc4a
 +
 +function build_pcengines {
 +  VARIANT=$1
-+  DEFCONFIG="configs/config.pcengines_uefi_${VARIANT}"
++  DEFCONFIG="configs/config.pcengines_${VARIANT}"
 +  FW_VERSION=$(cat ${DEFCONFIG} | grep CONFIG_LOCALVERSION | cut -d '=' -f 2 | tr -d '"')
 +
 +  # checkout several submodules needed by these boards (some others are checked
