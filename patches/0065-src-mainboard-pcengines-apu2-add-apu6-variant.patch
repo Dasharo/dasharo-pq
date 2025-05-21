@@ -9,7 +9,7 @@ Content-Transfer-Encoding: 8bit
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
 new file mode 100644
-index 000000000000..bebf42a4119a
+index 0000000000..639811e0c8
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -0,0 +1,34 @@
@@ -41,14 +41,14 @@ index 000000000000..bebf42a4119a
 +CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="95692853947e0b36e4d7fb57bf6a951baa9f78c5"
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 +CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 823bbf11c410..fbf29a452d8f 100644
+index 823bbf11c4..fbf29a452d 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -1,7 +1,7 @@
@@ -95,7 +95,7 @@ index 823bbf11c410..fbf29a452d8f 100644
  config APU2_PINMUX_UART_D
  	bool "UART 0x2e8"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig.name b/src/mainboard/pcengines/apu2/Kconfig.name
-index 170080396ce5..8ee55dbe6057 100644
+index 170080396c..8ee55dbe60 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig.name
 +++ b/src/mainboard/pcengines/apu2/Kconfig.name
 @@ -11,3 +11,6 @@ config BOARD_PCENGINES_APU4
@@ -106,7 +106,7 @@ index 170080396ce5..8ee55dbe6057 100644
 +config BOARD_PCENGINES_APU6
 +	bool "APU6"
 diff --git a/src/mainboard/pcengines/apu2/dsdt.asl b/src/mainboard/pcengines/apu2/dsdt.asl
-index af979a9bcb21..0a91feec580e 100644
+index af979a9bcb..0a91feec58 100644
 --- a/src/mainboard/pcengines/apu2/dsdt.asl
 +++ b/src/mainboard/pcengines/apu2/dsdt.asl
 @@ -10,6 +10,8 @@
@@ -123,19 +123,19 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f
 GIT binary patch
 literal 4096
-zcmeH_OK!s;5Qek1<U6pAlHy1D+HsRAhOv!ez+y<++`fZVOO0Y~0Gq*l48Q$hK1(fh
-zCHoJ4#ZJ^!EXTd5%Yr9RlSXYCot{yX&RWq%)`~W=R<x1Trn6SGk+q_YtQ9?Gk+{?0
-z{ozw-spiV-8;FW4jTcd+IPH7pbPLDMYc+sq4zGM4Pf4Ga-2Lxt?~EA0Qb9idzza>v
-zf+m(;45hPl_w*CMQqMlf_)Jw%g;DBdpP?XVzT|YFCh1JGtai>}SQ=5a#wj4EoiSIc
-zv0*lU6Aw4=81eTx$WghWqEQyRJhFjoAREXAvVm+M8^{K-fovcf$Od*{)W~{00kZ%K
-xS#YcacB($#Sa%PAY;tyB+A`-A_=v#<?P0pdu8GwQXU+QQj3Yyk!TDWT`~u=)-O&I5
+zcmeH?OK!s;5Qeix;ts5>q=1vYcHE@0VPcPB9s-gkx36r~Qlpw1@NEY8X66?>XjCZl
+z`Ga3mucVmEp;3|&UQlgW9n0$UU$y0|Rc&OgY9nh^8(GJ4)~YtLR<)6}s^_dm$<zM*
+z>8p*BlADM(P=Xsw7bQwwZuy|`&_^@_sCNI#n|VulTe17k?&z%=z(sEp4|jNp-cl0o
+z-~=T}dnYNmrXH5s#jNLh7qgL+z^HNQvq2-YUwXO-O0>7_^4fc!@-mpr(Ru@d67<$y
+z1ts%9u)l{0H;8H0-(A+D@q-XTP_nC3DwRs5QmIrbmC7!UnAjO7U=F|}mObl%oy6xG
+o>mL~so4gwsI_9H+IBRejBTSEZYGRV5fb2YVX=Dj>_Hjqa58`6o(EtDd
 
 literal 0
 HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
 new file mode 100644
-index 000000000000..911df5af962e
+index 0000000000..911df5af96
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
 @@ -0,0 +1,60 @@

@@ -8,7 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 27614f10dcd5..02b2bd907d29 100644
+index 27614f10dc..e407412979 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
@@ -16,13 +16,13 @@ index 27614f10dcd5..02b2bd907d29 100644
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="95692853947e0b36e4d7fb57bf6a951baa9f78c5"
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index fc513d5c4321..55b9cb7d900f 100644
+index fc513d5c43..f0ea77b8a7 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -20,6 +20,9 @@ CONFIG_PXE_ROM_ID="8086,1539"
@@ -30,13 +30,13 @@ index fc513d5c4321..55b9cb7d900f 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="95692853947e0b36e4d7fb57bf6a951baa9f78c5"
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index b4610152ef2d..95e875e9d229 100644
+index b4610152ef..3a8b61cca6 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
@@ -44,13 +44,13 @@ index b4610152ef2d..95e875e9d229 100644
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="95692853947e0b36e4d7fb57bf6a951baa9f78c5"
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
 diff --git a/payloads/Kconfig b/payloads/Kconfig
-index ec1d40c99207..65e5e894dc30 100644
+index ec1d40c992..65e5e894dc 100644
 --- a/payloads/Kconfig
 +++ b/payloads/Kconfig
 @@ -175,6 +175,14 @@ config TINT_SECONDARY_PAYLOAD
@@ -69,7 +69,7 @@ index ec1d40c99207..65e5e894dc30 100644
  	bool "Load coreDOOM as a secondary payload"
  	default n
 diff --git a/payloads/Makefile.mk b/payloads/Makefile.mk
-index 5f988dac1bbb..537eaf5cd4ba 100644
+index 5f988dac1b..537eaf5cd4 100644
 --- a/payloads/Makefile.mk
 +++ b/payloads/Makefile.mk
 @@ -24,6 +24,7 @@ payloads/external/U-Boot \
@@ -81,7 +81,7 @@ index 5f988dac1bbb..537eaf5cd4ba 100644
  payloads/external/GRUB2 \
  payloads/external/LinuxBoot \
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index 53693f59174c..e5fad0684521 100644
+index 53693f5917..e5fad06845 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -341,6 +341,22 @@ payloads/external/Memtest86Plus/$(memtest_dir)/memtest: $(DOTCONFIG)
@@ -109,7 +109,7 @@ index 53693f59174c..e5fad0684521 100644
  PXE_ROM_PCI_ID:=$(subst $(comma),,$(CONFIG_PXE_ROM_ID))
 diff --git a/payloads/external/sortbootorder/Kconfig.secondary b/payloads/external/sortbootorder/Kconfig.secondary
 new file mode 100644
-index 000000000000..5d70dbb1c086
+index 0000000000..5d70dbb1c0
 --- /dev/null
 +++ b/payloads/external/sortbootorder/Kconfig.secondary
 @@ -0,0 +1,36 @@
@@ -151,7 +151,7 @@ index 000000000000..5d70dbb1c086
 +endif
 diff --git a/payloads/external/sortbootorder/Makefile b/payloads/external/sortbootorder/Makefile
 new file mode 100644
-index 000000000000..dd922d7020e6
+index 0000000000..dd922d7020
 --- /dev/null
 +++ b/payloads/external/sortbootorder/Makefile
 @@ -0,0 +1,53 @@
