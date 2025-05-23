@@ -74,7 +74,6 @@
 0071-mainboard-pcengines-avoid-ASSERT-on-the-stack-overwr.patch
 0072-amdblocks-psp_efs.h-allow-for-PI-00730F01-platforms.patch
 0073-pcengines-apu2-enable-EHCI-controller-by-default.patch
-0074-nb-amd-enable-ProcessorScopeInSb-for-fam14-and-00730.patch
 0075-src-northbridge-amd-pi-00730F01-northbridge.c-enable.patch
 0076-payloads-external-SeaBIOS-add-bootorder-in-FMAP-opti.patch
 0078-mainboard-pcengines-fix-sign-of-life-coreboot-build-.patch
