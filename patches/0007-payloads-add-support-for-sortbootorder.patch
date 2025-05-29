@@ -1,0 +1,226 @@
+From b415a04cd5baae441ee74ac07fbdaec4811b2678 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 01:27:38 +0200
+Subject: [PATCH 07/87] payloads: add support for sortbootorder
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu2         |  3 ++
+ configs/config.pcengines_seabios_apu3         |  3 ++
+ configs/config.pcengines_seabios_apu4         |  3 ++
+ payloads/Kconfig                              |  8 +++
+ payloads/Makefile.mk                          |  1 +
+ payloads/external/Makefile.mk                 | 16 ++++++
+ .../external/sortbootorder/Kconfig.secondary  | 36 +++++++++++++
+ payloads/external/sortbootorder/Makefile      | 53 +++++++++++++++++++
+ 8 files changed, 123 insertions(+)
+ create mode 100644 payloads/external/sortbootorder/Kconfig.secondary
+ create mode 100644 payloads/external/sortbootorder/Makefile
+
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index 27614f10dc..e407412979 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -20,6 +20,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
++CONFIG_SORTBOOTORDER_REVISION=y
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
++CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+ CONFIG_TPM2=y
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index fc513d5c43..f0ea77b8a7 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -20,6 +20,9 @@ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SORTBOOTORDER_REVISION=y
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
++CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index b4610152ef..3a8b61cca6 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -21,6 +21,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
++CONFIG_SORTBOOTORDER_REVISION=y
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
++CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+ CONFIG_TPM2=y
+diff --git a/payloads/Kconfig b/payloads/Kconfig
+index ec1d40c992..65e5e894dc 100644
+--- a/payloads/Kconfig
++++ b/payloads/Kconfig
+@@ -175,6 +175,14 @@ config TINT_SECONDARY_PAYLOAD
+ 	  tint can be loaded as a secondary payload under SeaBIOS, GRUB,
+ 	  or any other payload that can load additional payloads.
+ 
++config SORTBOOTORDER_SECONDARY_PAYLOAD
++	bool "Load sortbootorder as a secondary payload"
++	default n
++	depends on ARCH_X86
++	help
++	  sortbootorder can be loaded as a secondary payload under SeaBIOS
++	  or any other payload that can load additional payloads.
++
+ config COREDOOM_SECONDARY_PAYLOAD
+ 	bool "Load coreDOOM as a secondary payload"
+ 	default n
+diff --git a/payloads/Makefile.mk b/payloads/Makefile.mk
+index 5f988dac1b..537eaf5cd4 100644
+--- a/payloads/Makefile.mk
++++ b/payloads/Makefile.mk
+@@ -24,6 +24,7 @@ payloads/external/U-Boot \
+ payloads/external/Memtest86Plus \
+ payloads/external/iPXE \
+ payloads/external/tint \
++payloads/external/sortbootorder \
+ payloads/external/edk2 \
+ payloads/external/GRUB2 \
+ payloads/external/LinuxBoot \
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index 53693f5917..e5fad06845 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -341,6 +341,22 @@ payloads/external/Memtest86Plus/$(memtest_dir)/memtest: $(DOTCONFIG)
+ 		$(MEMTEST_SERIAL_OPTIONS) \
+ 		MFLAGS= MAKEFLAGS=
+ 
++# sortbootorder
++
++payloads/external/sortbootorder/sortbootorder/sortbootorder.elf sortbootorder:
++	$(MAKE) -C payloads/external/sortbootorder all \
++		TARGET_APU1=$(CONFIG_BOARD_PCENGINES_APU1) \
++		SORTBOOTORDER_REVISION=$(CONFIG_SORTBOOTORDER_REVISION) \
++		SORTBOOTORDER_REVISION_ID=$(CONFIG_SORTBOOTORDER_REVISION_ID) \
++		SORTBOOTORDER_MASTER=$(CONFIG_SORTBOOTORDER_MASTER) \
++		SORTBOOTORDER_STABLE=$(CONFIG_SORTBOOTORDER_STABLE) \
++
++
++cbfs-files-$(CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD) += img/setup
++img/setup-file := payloads/external/sortbootorder/sortbootorder/sortbootorder.elf
++img/setup-type := payload
++img/setup-compression := $(CBFS_PAYLOAD_COMPRESS_FLAG)
++
+ # iPXE
+ 
+ PXE_ROM_PCI_ID:=$(subst $(comma),,$(CONFIG_PXE_ROM_ID))
+diff --git a/payloads/external/sortbootorder/Kconfig.secondary b/payloads/external/sortbootorder/Kconfig.secondary
+new file mode 100644
+index 0000000000..5d70dbb1c0
+--- /dev/null
++++ b/payloads/external/sortbootorder/Kconfig.secondary
+@@ -0,0 +1,36 @@
++if SORTBOOTORDER_SECONDARY_PAYLOAD
++
++choice
++	prompt "sortbootorder version"
++	default SORTBOOTORDER_STABLE
++
++config SORTBOOTORDER_STABLE
++	bool "v4.6.17"
++	help
++	  Stable sortbootorder version
++
++config SORTBOOTORDER_MASTER
++	bool "master"
++	help
++	  Newest sortbootorder version
++
++config SORTBOOTORDER_REVISION
++	bool "git revision"
++	help
++	  Select this option if you have a specific commit or branch
++	  that you want to use as the revision from which to
++	  build sortbootorder.
++
++	  You will be able to specify the name of a branch or a commit id
++	  later.
++
++endchoice
++
++config SORTBOOTORDER_REVISION_ID
++	string "Insert sortbootorder commit's SHA-1 or a branch name"
++	depends on SORTBOOTORDER_REVISION
++	default "origin/master"
++	help
++	   The commit's SHA-1 or branch name of the revision to use.
++
++endif
+diff --git a/payloads/external/sortbootorder/Makefile b/payloads/external/sortbootorder/Makefile
+new file mode 100644
+index 0000000000..dd922d7020
+--- /dev/null
++++ b/payloads/external/sortbootorder/Makefile
+@@ -0,0 +1,53 @@
++TAG-$(SORTBOOTORDER_MASTER)=origin/master
++TAG-$(SORTBOOTORDER_STABLE)=v4.6.17
++TAG-$(SORTBOOTORDER_REVISION)=$(SORTBOOTORDER_REVISION_ID)
++
++project_git_repo=https://github.com/pcengines/sortbootorder.git
++project_name=sortbootorder
++project_dir=$(CURDIR)/sortbootorder
++
++unexport KCONFIG_AUTOHEADER
++unexport KCONFIG_AUTOCONFIG
++unexport KCONFIG_DEPENDENCIES
++unexport KCONFIG_SPLITCONFIG
++unexport KCONFIG_TRISTATE
++unexport KCONFIG_NEGATIVES
++
++all: build
++
++$(project_dir):
++	echo "    Cloning sortbootorder from Git"
++	git clone $(project_git_repo) $(project_dir)
++
++fetch: $(project_dir)
++ifeq ($(TAG-y),)
++	echo "Error: The specified tag is invalid"
++ifeq ($(SORTBOOTORDER_REVISION),y)
++	echo "Error: There is no revision specified for sortbootorder"
++	false
++endif
++	false
++endif
++	cd sortbootorder; git show $(TAG-y) >/dev/null 2>&1 ; \
++		if [ $$? -ne 0 ] || [ "$(TAG-y)" = "origin/master" ]; then \
++		echo "    Fetching new commits from the sortbootorder repo"; \
++		git fetch; fi
++
++checkout: fetch
++	echo "    Checking out sortbootorder revision $(TAG-y)"
++	cd sortbootorder; git checkout master; git branch -D coreboot 2>/dev/null; git checkout -b coreboot $(TAG-y)
++
++build: checkout
++	echo "    MAKE       sortbootorder"
++	$(MAKE) -C sortbootorder VERSION=$(TAG-y) APU1=$(TARGET_APU1)
++
++clean:
++	test -d sortbootorder && $(MAKE) -C sortbootorder clean || exit 0
++
++distclean:
++	rm -rf sortbootorder
++
++print-repo-info:
++	echo "$(project_git_repo) $(project_dir)"
++
++.PHONY: checkout build clean distclean fetch sortbootorder print-repo-info
+-- 
+2.49.0
+

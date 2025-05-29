@@ -1,0 +1,32 @@
+From bb3f5b3c60341c17cf75dd634799ca241ed97de1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 29 May 2025 16:18:18 +0200
+Subject: [PATCH 86/87] add dasharo-blobs submodule
+
+---
+ .gitmodules            | 3 +++
+ 3rdparty/dasharo-blobs | 1 +
+ 2 files changed, 4 insertions(+)
+ create mode 160000 3rdparty/dasharo-blobs
+
+diff --git a/.gitmodules b/.gitmodules
+index eec69fd1ec..0c8fc8917f 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -65,3 +65,6 @@
+ [submodule "src/vendorcode/amd/opensil/genoa_poc/opensil"]
+ 	path = src/vendorcode/amd/opensil/genoa_poc/opensil
+ 	url = https://review.coreboot.org/opensil_genoa_poc.git
++[submodule "3rdparty/dasharo-blobs"]
++	path = 3rdparty/dasharo-blobs
++	url = https://github.com/Dasharo/dasharo-blobs.git
+diff --git a/3rdparty/dasharo-blobs b/3rdparty/dasharo-blobs
+new file mode 160000
+index 0000000000..c4ecc9e3f4
+--- /dev/null
++++ b/3rdparty/dasharo-blobs
+@@ -0,0 +1 @@
++Subproject commit c4ecc9e3f4baf5cc4c68d07c84c23b6f673f90f9
+-- 
+2.49.0
+

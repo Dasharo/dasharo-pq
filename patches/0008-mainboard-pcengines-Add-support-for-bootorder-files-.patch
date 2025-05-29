@@ -1,0 +1,207 @@
+From a9203c93c00a8baeb13a37a3c85376d61de91be0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 01:35:25 +0200
+Subject: [PATCH 08/87] mainboard/pcengines: Add support for bootorder files to
+ SeaBIOS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ payloads/external/Makefile.mk                 |  36 ++++++++++++++++++
+ payloads/external/SeaBIOS/Kconfig             |  30 +++++++++++++++
+ src/mainboard/pcengines/apu2/boot-menu-key    | Bin 0 -> 8 bytes
+ .../pcengines/apu2/boot-menu-message          |   1 +
+ src/mainboard/pcengines/apu2/boot-menu-wait   | Bin 0 -> 8 bytes
+ src/mainboard/pcengines/apu2/bootorder_def    |  10 +++++
+ src/mainboard/pcengines/apu2/bootorder_map    |  10 +++++
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 0 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 0 -> 4096 bytes
+ 9 files changed, 87 insertions(+)
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-key
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-message
+ create mode 100644 src/mainboard/pcengines/apu2/boot-menu-wait
+ create mode 100644 src/mainboard/pcengines/apu2/bootorder_def
+ create mode 100644 src/mainboard/pcengines/apu2/bootorder_map
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu2/bootorder
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu4/bootorder
+
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index e5fad06845..f6529366fe 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -103,6 +103,42 @@ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
+ cbfs-files-y += bootorder
+ bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
+ bootorder-type := raw
++bootorder-align := 0x1000
++endif
++
++# add a SeaBIOS bootorder_map file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE)),)
++cbfs-files-y += bootorder_map
++bootorder_map-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE))
++bootorder_map-type := raw
++endif
++
++# add a SeaBIOS bootorder_def file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE)),)
++cbfs-files-y += bootorder_def
++bootorder_def-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE))
++bootorder_def-type := raw
++endif
++
++# add a SeaBIOS boot-menu-key file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_KEY_FILE)),)
++cbfs-files-y += etc/boot-menu-key
++etc/boot-menu-key-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_KEY_FILE))
++etc/boot-menu-key-type := raw
++endif
++
++# add a SeaBIOS boot-menu-wait file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_WAIT_FILE)),)
++cbfs-files-y += etc/boot-menu-wait
++etc/boot-menu-wait-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_WAIT_FILE))
++etc/boot-menu-wait-type := raw
++endif
++
++# add a SeaBIOS boot-menu-message file
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE)),)
++cbfs-files-y += etc/boot-menu-message
++etc/boot-menu-message-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE))
++etc/boot-menu-message-type := raw
+ endif
+ 
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index b12af46a14..d676934dba 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -109,6 +109,36 @@ config SEABIOS_BOOTORDER_FILE
+ 	  If used, a typical value would be:
+ 	    $(top)/src/mainboard/$(MAINBOARDDIR)/bootorder
+ 
++config SEABIOS_BOOTORDER_MAP_FILE
++	string "SeaBIOS bootorder_map file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_map"
++	help
++	  TBD
++
++config SEABIOS_BOOTORDER_DEF_FILE
++	string "SeaBIOS bootorder_def file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/bootorder_def"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_KEY_FILE
++	string "SeaBIOS boot-menu-key file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-key"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_WAIT_FILE
++	string "SeaBIOS boot-menu-wait file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-wait"
++	help
++	  TBD
++
++config SEABIOS_BOOTMENU_MESSAGE_FILE
++	string "SeaBIOS boot-menu-message file"
++	default "\$(top)/src/mainboard/\$(MAINBOARDDIR)/boot-menu-message"
++	help
++	  TBD
++
+ config SEABIOS_ADD_SERCON_PORT_FILE
+ 	prompt "Add SeaBIOS sercon-port file to CBFS"
+ 	default n
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-key b/src/mainboard/pcengines/apu2/boot-menu-key
+new file mode 100644
+index 0000000000000000000000000000000000000000..0ddf4f28e385d304edf8c8f82b4b59687420ba14
+GIT binary patch
+literal 8
+KcmZ=^fB*mjC;&wO
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-message b/src/mainboard/pcengines/apu2/boot-menu-message
+new file mode 100644
+index 0000000000..2b61487904
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/boot-menu-message
+@@ -0,0 +1 @@
++Press F10 key now for boot menu, N for PXE boot
+diff --git a/src/mainboard/pcengines/apu2/boot-menu-wait b/src/mainboard/pcengines/apu2/boot-menu-wait
+new file mode 100644
+index 0000000000000000000000000000000000000000..b1dea8d7af3241677efd07b78cb866e0825e5291
+GIT binary patch
+literal 8
+LcmXRAX8;2L1StTB
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+new file mode 100644
+index 0000000000..bc27c48349
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -0,0 +1,10 @@
++/pci@i0cf8/usb@10/usb-*@1
++/pci@i0cf8/usb@10/usb-*@2
++/pci@i0cf8/usb@10/usb-*@3
++/pci@i0cf8/usb@10/usb-*@4
++/pci@i0cf8/*@14,7
++/pci@i0cf8/*@11/drive@0/disk@0
++/pci@i0cf8/*@11/drive@1/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@0/disk@0
++/pci@i0cf8/pci-bridge@2,5/*@0/drive@1/disk@0
++/rom@genroms/pxe.rom
+diff --git a/src/mainboard/pcengines/apu2/bootorder_map b/src/mainboard/pcengines/apu2/bootorder_map
+new file mode 100644
+index 0000000000..e3e7551e64
+--- /dev/null
++++ b/src/mainboard/pcengines/apu2/bootorder_map
+@@ -0,0 +1,10 @@
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++a USB 1 / USB 2 SS and HS
++b SDCARD
++c mSATA
++d SATA
++e mPCIe1 SATA1 and SATA2
++e mPCIe1 SATA1 and SATA2
++f iPXE
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..51b0fea1741238d986b4b47ac678fb344312d04b
+GIT binary patch
+literal 4096
+zcmeIqL2kn!5J1tak+{RGt)zhKrtOZKR5pz5QEae)RLSitXVq3ky}-Q92tJJ399hzC
+zd{fsvSflrGYOIk$RZ?3|&-K*(NR2h!@%8tWQ9jWpTCF_gi`BJm{_2~f(~!tdXxrn9
+zYW6MlZPnM`cBi=72}6o&R@)7qQe36jZWy!_*~MU_xaI*LvronC=ROs0q`=wH<K4PB
+z!uG>07cIqsF~%5Uj4{R-`&XGM!$=E4K=c_(gaM(`?`Ih91v4x$Oh5r*@|gCFp-{r*
+VzW-XlK;8((rOz{DbS0*P6kkeli1z>h
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d8efc15d84d9efb9751835a7b3e64a20de2412b
+GIT binary patch
+literal 4096
+zcmeIqOK!s;5P;#Vk+{RGt)zgPzINQCvSDnGVuJ;wN^W1#ZrZBcV7|==ei*eovZUSg
+zs;+soM%QubtdT-BQr}LG?R5T?I&03ym%mp=`9vRRweplNR=2wOukVgdV<JDJ?T=5Y
+zt6SRJny-KCPI0p{h7`A~_8UH=xJj|!FlZ^Vi@`{d=K<@y=J9(DsknL`Qt?I#TpWG9
+z-*!jXzq|FKr8qFg7-Nhv#u#HwWuXictq1|pXDAUygtLBohVfo7!y3a36d)##sb&m?
+Y60Z09YXt*&Cz#eDFObodm=02W0!?&_O#lD@
+
+literal 0
+HcmV?d00001
+
+-- 
+2.49.0
+

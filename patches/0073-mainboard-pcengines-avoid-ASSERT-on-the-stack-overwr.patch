@@ -1,0 +1,31 @@
+From 10d8fe138a8637f097543fd4f65f417b8c1285e3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Thu, 2 May 2024 12:17:52 +0200
+Subject: [PATCH 73/85] mainboard/pcengines: avoid ASSERT on the stack
+ overwrite during flashing bootorder
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
+index 0561dcdfa9..0de22561a2 100644
+--- a/src/mainboard/pcengines/apu2/Kconfig
++++ b/src/mainboard/pcengines/apu2/Kconfig
+@@ -148,4 +148,9 @@ config AGESA_USE_1_0_0_4_HEADER
+ 	  revisions. This option removes the changes in headers introduced
+ 	  with AGESA 1.0.0.A to fit the 1.0.0.4 revision.
+ 
++# In order to avoid ASSERT on the stack overwrite during flashing bootorder
++config STACK_SIZE
++	hex
++	default 0x2000
++
+ endif # BOARD_PCENGINES_APU2
+-- 
+2.49.0
+

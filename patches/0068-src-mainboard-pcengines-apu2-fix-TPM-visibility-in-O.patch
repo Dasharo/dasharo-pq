@@ -1,0 +1,46 @@
+From 0521803056983afb9d5c7971a48f768b2edaeaf7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 20 Aug 2020 10:37:14 +0200
+Subject: [PATCH 68/87] src/mainboard/pcengines/apu2: fix TPM visibility in OS
+ for apu3d and apu4d
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb | 3 +++
+ src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+index 9bfb37033b..354b272a43 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
+@@ -48,6 +48,9 @@ chip northbridge/amd/pi/00730F01
+ 					device pnp 2e.607 off end
+ 					device pnp 2e.f on end
+ 				end
++				chip drivers/pc80/tpm
++					device pnp 0c31.0 on end
++				end # LPC TPM
+ 			end
+ 			register "sd_mode" = "3"
+ 			device ref sdhci	on end
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
+index b071683349..911df5af96 100644
+--- a/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
++++ b/src/mainboard/pcengines/apu2/variants/apu4/devicetree.cb
+@@ -48,6 +48,9 @@ chip northbridge/amd/pi/00730F01
+ 					device pnp 2e.607 off end
+ 					device pnp 2e.f on end
+ 				end # SIO NCT5104D
++				chip drivers/pc80/tpm
++					device pnp 0c31.0 on end
++				end # LPC TPM
+ 			end
+ 			register "sd_mode" = "3"
+ 			device ref sdhci	on end
+-- 
+2.49.0
+

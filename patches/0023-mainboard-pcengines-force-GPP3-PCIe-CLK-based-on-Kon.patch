@@ -1,0 +1,34 @@
+From c4f539da0c547365883dd00a3764391b55fc667e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Tue, 30 Apr 2024 15:36:21 +0200
+Subject: [PATCH 23/87] mainboard/pcengines: force GPP3 PCIe CLK based on
+ Konfig option for apu2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/Kconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
+index 381bfcbd80..a0100209bf 100644
+--- a/src/mainboard/pcengines/apu2/Kconfig
++++ b/src/mainboard/pcengines/apu2/Kconfig
+@@ -93,6 +93,12 @@ endchoice
+ config DIMM_SPD_SIZE
+ 	default 128
+ 
++config FORCE_MPCIE2_CLK
++	bool "Force clock of mPCIe slot2 (GPP3 PCIe clock)  to be always on"
++	default n
++	help
++	  If no card is attached to mPCIe2 slot, say N.
++
+ config AGESA_USE_1_0_0_4_HEADER
+ 	bool
+ 	default y
+-- 
+2.49.0
+

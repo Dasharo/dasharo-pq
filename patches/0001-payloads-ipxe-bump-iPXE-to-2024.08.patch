@@ -1,8 +1,8 @@
-From 3758ad5293127f80ce535271b9c93a48d31e3398 Mon Sep 17 00:00:00 2001
+From 2b02c269362b0d0be2c533665b529fb9cacd9849 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3FPiotr=3D20Kr=3DC3=3DB3l=3F=3D?=
  <piotr.krol@3mdeb.com>
 Date: Mon, 3 Jun 2024 14:51:03 +0200
-Subject: [PATCH] payloads/ipxe: bump iPXE to 2024.08
+Subject: [PATCH 01/87] payloads/ipxe: bump iPXE to 2024.08
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -16,7 +16,7 @@ Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index ff25d81957f8..19c7abdda98d 100644
+index ff25d81957..19c7abdda9 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
 @@ -54,7 +54,7 @@ choice
@@ -29,7 +29,7 @@ index ff25d81957f8..19c7abdda98d 100644
  	  iPXE uses a rolling release with no stable version, for
  	  reproducibility, use the last commit of a given month as the
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index 7ec8126c977e..684f7b241c06 100644
+index 7ec8126c97..684f7b241c 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -1,8 +1,8 @@
@@ -44,5 +44,5 @@ index 7ec8126c977e..684f7b241c06 100644
  TAG-$(CONFIG_IPXE_MASTER)=origin/master
  TAG-$(CONFIG_IPXE_STABLE)=$(STABLE_COMMIT_ID)
 -- 
-2.39.5
+2.49.0
 

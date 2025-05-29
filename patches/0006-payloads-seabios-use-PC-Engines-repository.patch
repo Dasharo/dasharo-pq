@@ -1,0 +1,71 @@
+From f492e2d7156612d3766b1f9d8921a3a55f218ef5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 8 May 2024 13:40:23 +0200
+Subject: [PATCH 06/87] payloads/seabios: use PC Engines repository
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu2 | 2 ++
+ configs/config.pcengines_seabios_apu3 | 2 ++
+ configs/config.pcengines_seabios_apu4 | 2 ++
+ payloads/external/SeaBIOS/Makefile    | 2 +-
+ 4 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index 7058b2c7cc..27614f10dc 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -17,6 +17,8 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,157b"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index 91758066ac..fc513d5c43 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index c1ad2636f1..b4610152ef 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
++CONFIG_SEABIOS_REVISION=y
++CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
+ CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
+ CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
+diff --git a/payloads/external/SeaBIOS/Makefile b/payloads/external/SeaBIOS/Makefile
+index 7926f3fb90..5bdd526296 100644
+--- a/payloads/external/SeaBIOS/Makefile
++++ b/payloads/external/SeaBIOS/Makefile
+@@ -2,7 +2,7 @@ TAG-$(CONFIG_SEABIOS_MASTER)=origin/master
+ TAG-$(CONFIG_SEABIOS_STABLE)=a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8
+ TAG-$(CONFIG_SEABIOS_REVISION)=$(CONFIG_SEABIOS_REVISION_ID)
+ 
+-project_git_repo=https://review.coreboot.org/seabios.git
++project_git_repo=https://github.com/pcengines/seabios.git
+ project_dir=seabios
+ 
+ unexport KCONFIG_AUTOHEADER
+-- 
+2.49.0
+

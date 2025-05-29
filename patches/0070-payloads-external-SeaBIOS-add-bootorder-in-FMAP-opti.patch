@@ -1,0 +1,70 @@
+From 2df9b812dbf8ee9924aab12ccb13a983b85b993b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 3 Apr 2020 13:32:04 +0200
+Subject: [PATCH 70/85] payloads/external/SeaBIOS: add bootorder in FMAP option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ payloads/external/Makefile.mk     | 11 +++++++++++
+ payloads/external/SeaBIOS/Kconfig |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index eb6c014d46..f40fb68db1 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -99,12 +99,14 @@ img/seabios-type := payload
+ img/seabios-compression := $(CBFS_SECONDARY_PAYLOAD_COMPRESS_FLAG)
+ 
+ # add a SeaBIOS bootorder file
++ifneq ($(CONFIG_SEABIOS_BOOTORDER_IN_FMAP),y)
+ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
+ cbfs-files-y += bootorder
+ bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
+ bootorder-type := raw
+ bootorder-align := 0x1000
+ endif
++endif
+ 
+ # add a SeaBIOS bootorder_map file
+ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE)),)
+@@ -113,6 +115,15 @@ bootorder_map-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_MAP_FILE))
+ bootorder_map-type := raw
+ endif
+ 
++ifeq ($(CONFIG_SEABIOS_BOOTORDER_IN_FMAP),y)
++ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
++$(call add_intermediate, seabios_bootorder_fmap, $(CBFSTOOL))
++	@printf "    SeaBIOS    Fill bootorder region\n"
++	$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< write -r BOOTORDER -u -i 0 -f /dev/zero 2>/dev/null)
++	$(CBFSTOOL) $< write -r BOOTORDER -u -i 0 -f $(CONFIG_SEABIOS_BOOTORDER_FILE)
++endif
++endif
++
+ # add a SeaBIOS bootorder_def file
+ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE)),)
+ cbfs-files-y += bootorder_def
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index 990923858e..bc749b04c0 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -93,6 +93,12 @@ config PAYLOAD_CONFIGFILE
+ 	  SeaBIOS payload.  In general, if the option is used, the default
+ 	  would be "$(top)/src/mainboard/$(MAINBOARDDIR)/config_seabios"
+ 
++config SEABIOS_BOOTORDER_IN_FMAP
++	bool "SeaBIOS bootorder file in FMAP"
++	default n
++	help
++	  Place the SeaBIOS bootorder into BOOTORDER FMAP region.
++
+ config SEABIOS_BOOTORDER_FILE
+ 	string "SeaBIOS bootorder file"
+ 	default ""
+-- 
+2.49.0
+

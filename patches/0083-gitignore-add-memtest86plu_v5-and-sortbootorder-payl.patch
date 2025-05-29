@@ -1,0 +1,32 @@
+From 40632d0524518195063c9600eec6f179fbe62d25 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 29 May 2025 16:17:54 +0200
+Subject: [PATCH 83/87] gitignore: add memtest86plu_v5 and sortbootorder
+ payloads
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ .gitignore | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index e813493526..40f0f7cd78 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -29,6 +29,10 @@ site-local
+ .test
+ .dependencies
+ 
++# payloads
++payloads/external/Memtest86Plus/memtest86plus_v5/
++payloads/external/sortbootorder/sortbootorder/
++
+ # Development friendly files
+ tags
+ .clang_complete
+-- 
+2.49.0
+

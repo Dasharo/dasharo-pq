@@ -1,0 +1,64 @@
+From efc59cc0d0fbcc48a4314c4cb4d0e2d64af25c00 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 30 May 2025 12:17:40 +0200
+Subject: [PATCH 27/87] mb/pcengines/apu2: Measure PSP blobs if measured boot
+ enabled
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 45c83bcf90..5d25eb3839 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -21,6 +21,8 @@
+ #include <superio/nuvoton/nct5104d/nct5104d.h>
+ #include <smbios.h>
+ #include <stdio.h>
++#include <fmap.h>
++#include <security/tpm/tspi.h>
+ #include <cpu/amd/mtrr.h>
+ #include <spd_bin.h>
+ #include <spi_flash.h>
+@@ -189,6 +191,19 @@ static void config_gpio_mux(void)
+ 	}
+ }
+ 
++static void measure_amd_blobs(void)
++{
++	struct region_device rdev;
++
++	printk(BIOS_DEBUG, "Measuring AMD blobs.\n");
++
++	if(fmap_locate_area_as_rdev("PSPDIR", &rdev)) {
++		printk(BIOS_ERR, "Error: Couldn't find PSPDIR region.");
++		return;
++	}
++	tpm_measure_region(&rdev, CONFIG_PCR_RUNTIME_DATA,"PSPDIR");
++}
++
+ /**********************************************
+  * enable the dedicated function in mainboard.
+  **********************************************/
+@@ -305,6 +320,12 @@ static void mainboard_enable(struct device *dev)
+ 	//
+ 	pm_write16(PM_RTC_CONTROL, pm_read16(PM_RTC_CONTROL) | (1 << 11));
+ 
++	if (CONFIG(TPM_MEASURED_BOOT)) {
++		/* Measure AGESA and PSPDIR */
++		measure_amd_blobs();
++	}
++
++
+ 	//
+ 	// Enable power on from WAKE#
+ 	//
+-- 
+2.49.0
+

@@ -1,0 +1,161 @@
+From 67440de80b67a1cae2501683de66fa3e3590241a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 13:10:51 +0200
+Subject: [PATCH 58/85] mainboard/pcengines: add pciepm runtime option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/OemCustomize.c   |  77 +++++++++++++++++-
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 5 files changed, 76 insertions(+), 2 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
+index 2f837fd9d8..ad23370637 100644
+--- a/src/mainboard/pcengines/apu2/OemCustomize.c
++++ b/src/mainboard/pcengines/apu2/OemCustomize.c
+@@ -9,7 +9,7 @@
+ 
+ #include "gpio_ftns.h"
+ 
+-static const PCIe_PORT_DESCRIPTOR PortList[] = {
++static const PCIe_PORT_DESCRIPTOR PortListAspm[] = {
+ 	{
+ 		0,
+ 		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 3, 3),
+@@ -71,6 +71,68 @@ static const PCIe_PORT_DESCRIPTOR PortList[] = {
+ 	}
+ };
+ 
++static const PCIe_PORT_DESCRIPTOR PortList[] = {
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 3, 3),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 5,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x01,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 1, PCI Device Number 2, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 2, 2),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 4,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x02,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 2, PCI Device Number 2, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 1, 1),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 3,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x03,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 3, PCI Device Number 2, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 0, 0),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 2,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x04,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 4-7, PCI Device Number 4, ...) */
++	{
++		DESCRIPTOR_TERMINATE_LIST,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 4, 7),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 1,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x05,
++				0)
++	}
++};
++
+ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
+ 	.Flags        = DESCRIPTOR_TERMINATE_LIST,
+ 	.SocketId     = 0,
+@@ -78,9 +140,20 @@ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
+ 	.DdiLinkList  = NULL,
+ };
+ 
++static const PCIe_COMPLEX_DESCRIPTOR PcieComplexAspm = {
++	.Flags        = DESCRIPTOR_TERMINATE_LIST,
++	.SocketId     = 0,
++	.PciePortList = PortListAspm,
++	.DdiLinkList  = NULL,
++};
++
+ void board_BeforeInitEarly(struct sysinfo *cb, AMD_EARLY_PARAMS *InitEarly)
+ {
+-	InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
++	if (check_pciepm())
++		InitEarly->GnbConfig.PcieComplexList = &PcieComplexAspm;
++	else
++		InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
++
+ 	if (check_boost()) {
+ 		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
+ 		InitEarly->PlatformConfig.CpbMode = CpbModeAuto;
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index 26686bea9c..d7f6d7feef 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -27,4 +27,5 @@ com2_en0
+ boosten1
+ sd3mode0
+ iommu0
++pciepm0
+ watchdog0000
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5..11a525d9da47a036120b473344e31edd1f46f9b0 100644
+GIT binary patch
+delta 23
+ecmZorXi(UY#l%*SoS9mXyE&c7ns@SQ{!jp4ZU^T8
+
+delta 20
+bcmZorXi(UY#k9GY$%1$C1SZbOtNB9#N1X<m
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5..11a525d9da47a036120b473344e31edd1f46f9b0 100644
+GIT binary patch
+delta 23
+ecmZorXi(UY#l%*SoS9mXyE&c7ns@SQ{!jp4ZU^T8
+
+delta 20
+bcmZorXi(UY#k9GY$%1$C1SZbOtNB9#N1X<m
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5..11a525d9da47a036120b473344e31edd1f46f9b0 100644
+GIT binary patch
+delta 23
+ecmZorXi(UY#l%*SoS9mXyE&c7ns@SQ{!jp4ZU^T8
+
+delta 20
+bcmZorXi(UY#k9GY$%1$C1SZbOtNB9#N1X<m
+
+-- 
+2.49.0
+

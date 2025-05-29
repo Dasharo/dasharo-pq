@@ -1,0 +1,41 @@
+From f6b5b7253a8710505063865ce58a41b51a19952e Mon Sep 17 00:00:00 2001
+From: Kamil Wcislo <kamil.wcislo@3mdeb.com>
+Date: Mon, 23 Jan 2017 17:29:36 +0100
+Subject: [PATCH 20/87] payloads/iPXE: Update Makefile.inc to change PXE ROM
+ path
+
+Include iPXE ROM as genroms/pxe.rom instead of a device-specific one.
+
+Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
+---
+ payloads/external/Makefile.mk | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index 149d35732e..d2961e0fec 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -410,16 +410,16 @@ ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO),yy)
+ IPXE_UART=COM$(call int-add,$(CONFIG_UART_FOR_CONSOLE) 1)
+ endif
+ 
++cbfs-files-$(CONFIG_PXE_ROM)$(CONFIG_BUILD_IPXE) += genroms/pxe.rom
++genroms/pxe.rom-file = $(PXE_ROM_FILE)
++genroms/pxe.rom-type := raw
++
+ ifeq ($(CONFIG_IPXE_SERIAL_CONSOLE),y)
+ IPXE_SERIAL_CONSOLE = $(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO)
+ else
+ IPXE_SERIAL_CONSOLE = n
+ endif
+ 
+-cbfs-files-$(CONFIG_PXE_ROM)$(CONFIG_BUILD_IPXE) += pci$(CONFIG_PXE_ROM_ID).rom
+-pci$(CONFIG_PXE_ROM_ID).rom-file := $(PXE_ROM_FILE)
+-pci$(CONFIG_PXE_ROM_ID).rom-type := raw
+-
+ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
+ 	$(MAKE) -C payloads/external/iPXE all \
+ 	CROSS_COMPILE="$(CROSS_COMPILE_$(ARCH-ramstage-y))" \
+-- 
+2.49.0
+

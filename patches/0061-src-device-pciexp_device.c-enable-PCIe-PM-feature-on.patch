@@ -1,0 +1,66 @@
+From 7ae4b2ce20b928f330a84ac7edcf264c44f588c2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sun, 26 Apr 2020 13:40:02 +0200
+Subject: [PATCH 61/87] src/device/pciexp_device.c: enable PCIe PM feature on
+ demand
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/device/pciexp_device.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/src/device/pciexp_device.c b/src/device/pciexp_device.c
+index db351efd49..885240f8b1 100644
+--- a/src/device/pciexp_device.c
++++ b/src/device/pciexp_device.c
+@@ -9,6 +9,8 @@
+ #include <device/pci_ops.h>
+ #include <device/pciexp.h>
+ 
++#include "mainboard/pcengines/apu2/bios_knobs.h"
++
+ static unsigned int ext_cap_id(unsigned int cap)
+ {
+ 	return cap & 0xffff;
+@@ -698,21 +700,23 @@ static void pciexp_tune_dev(struct device *dev)
+ 	if (!root_cap)
+ 		return;
+ 
+-	/* Check for and enable Common Clock */
+-	if (CONFIG(PCIEXP_COMMON_CLOCK))
+-		pciexp_enable_common_clock(root, root_cap, dev, cap);
++	if (check_pciepm()) {
++		/* Check for and enable Common Clock */
++		if (CONFIG(PCIEXP_COMMON_CLOCK))
++			pciexp_enable_common_clock(root, root_cap, dev, cap);
+ 
+-	/* Check if per port CLK req is supported by endpoint*/
+-	if (CONFIG(PCIEXP_CLK_PM))
+-		pciexp_enable_clock_power_pm(dev, cap);
++		/* Check if per port CLK req is supported by endpoint*/
++		if (CONFIG(PCIEXP_CLK_PM))
++			pciexp_enable_clock_power_pm(dev, cap);
+ 
+-	/* Enable L1 Sub-State when both root port and endpoint support */
+-	if (CONFIG(PCIEXP_L1_SUB_STATE))
+-		pciexp_config_L1_sub_state(root, dev);
++		/* Enable L1 Sub-State when both root port and endpoint support */
++		if (CONFIG(PCIEXP_L1_SUB_STATE))
++			pciexp_config_L1_sub_state(root, dev);
+ 
+-	/* Check for and enable ASPM */
+-	if (CONFIG(PCIEXP_ASPM))
+-		pciexp_enable_aspm(root, root_cap, dev, cap);
++		/* Check for and enable ASPM */
++		if (CONFIG(PCIEXP_ASPM))
++			pciexp_enable_aspm(root, root_cap, dev, cap);
++	}
+ 
+ 	/* Clear PCIe Lane Error Status */
+ 	if (CONFIG(PCIEXP_LANE_ERR_STAT_CLEAR))
+-- 
+2.49.0
+

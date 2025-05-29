@@ -1,0 +1,42 @@
+From 5bd1845d701eaf5ce2773019cf535e4cad8d21e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 26 Feb 2019 12:03:34 +0100
+Subject: [PATCH 41/87] src/mainboard/pcengines/apu2/OemCustomize.c: make boost
+ runtime configurable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/OemCustomize.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
+index 95af6ef92d..0a2b68529f 100644
+--- a/src/mainboard/pcengines/apu2/OemCustomize.c
++++ b/src/mainboard/pcengines/apu2/OemCustomize.c
+@@ -2,6 +2,7 @@
+ 
+ #include <AGESA.h>
+ #include <northbridge/amd/agesa/state_machine.h>
++#include "bios_knobs.h"
+ 
+ #include "gpio_ftns.h"
+ 
+@@ -77,8 +78,10 @@ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
+ void board_BeforeInitEarly(struct sysinfo *cb, AMD_EARLY_PARAMS *InitEarly)
+ {
+ 	InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
+-	InitEarly->PlatformConfig.CStateMode = CStateModeC6;
+-	InitEarly->PlatformConfig.CpbMode = CpbModeAuto;
++	if (check_boost()) {
++		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
++		InitEarly->PlatformConfig.CpbMode = CpbModeAuto;
++	}
+ }
+ 
+ void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
+-- 
+2.49.0
+

@@ -1,0 +1,124 @@
+From 2e3ee8e81bd6c77fa2744dd866e325d6422c9453 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 13:32:03 +0200
+Subject: [PATCH 15/87] mainboard/pcengines: add function to check whether COM2
+ redirection enabled
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bios_knobs.c | 76 ++++++++++++++++++++++-
+ src/mainboard/pcengines/apu2/bios_knobs.h |  1 +
+ 2 files changed, 76 insertions(+), 1 deletion(-)
+
+diff --git a/src/mainboard/pcengines/apu2/bios_knobs.c b/src/mainboard/pcengines/apu2/bios_knobs.c
+index 2dfbaccaab..1f237fc4d6 100644
+--- a/src/mainboard/pcengines/apu2/bios_knobs.c
++++ b/src/mainboard/pcengines/apu2/bios_knobs.c
+@@ -96,6 +96,79 @@ static u8 check_knob_value(const char *s)
+ 	return -1;
+ }
+ 
++u8 check_iommu(void)
++{
++	u8 iommu;
++	iommu = check_knob_value("iommu");
++
++	switch (iommu) {
++	case 0:
++		return 0;
++		break;
++	case 1:
++		return 1;
++		break;
++	default:
++		printk(BIOS_INFO,
++			"Missing or invalid iommu knob, disable IOMMU.\n");
++		break;
++	}
++
++	return 0;
++}
++
++u8 check_console(void)
++{
++	u8 scon;
++
++	//
++	// Find the serial console item
++	//
++	scon = check_knob_value("scon");
++
++	switch (scon) {
++	case 0:
++		return 0;
++		break;
++	case 1:
++		return 1;
++		break;
++	default:
++		printk(BIOS_INFO,
++			"Missing or invalid scon knob, enable console.\n");
++		break;
++	}
++
++	return 1;
++}
++
++int check_com2(void)
++{
++	u8 com2en;
++
++	if (CONFIG(BOARD_PCENGINES_APU5))
++		return 0;
++
++	//
++	// Find the COM2 redirection item
++	//
++	com2en = check_knob_value("com2en");
++
++	switch (com2en) {
++	case 0:
++		return 0;
++		break;
++	case 1:
++		return 1;
++		break;
++	default:
++		printk(BIOS_INFO,
++			"Missing or invalid com2 knob, disable COM2 output.\n");
++		break;
++	}
++
++	return 0;
++}
+ 
+ static u8 check_uart(char uart_letter)
+ {
+@@ -121,7 +194,8 @@ static u8 check_uart(char uart_letter)
+ 		return 1;
+ 		break;
+ 	default:
+-		printk(BIOS_EMERG, "Missing or invalid uart knob, disable port.\n");
++		printk(BIOS_INFO,
++			 "Missing or invalid uart knob, disable port.\n");
+ 		break;
+ 	}
+ 
+diff --git a/src/mainboard/pcengines/apu2/bios_knobs.h b/src/mainboard/pcengines/apu2/bios_knobs.h
+index b611675536..1e3560b207 100644
+--- a/src/mainboard/pcengines/apu2/bios_knobs.h
++++ b/src/mainboard/pcengines/apu2/bios_knobs.h
+@@ -19,6 +19,7 @@
+ #include <stdint.h>
+ 
+ u8 check_iommu(void);
++u8 check_console(void);
+ u8 check_uartc(void);
+ u8 check_uartd(void);
+ u8 check_ehci0(void);
+-- 
+2.49.0
+

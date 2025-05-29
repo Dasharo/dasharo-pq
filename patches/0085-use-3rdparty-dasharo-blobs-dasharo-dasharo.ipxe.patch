@@ -1,0 +1,81 @@
+From 1346f8eac1e9d88d7331b7b003aedc036c8b2a4b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 29 May 2025 16:18:18 +0200
+Subject: [PATCH 85/85] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
+
+---
+ configs/config.emulation_qemu_x86_q35_smm_tseg_seabios | 2 +-
+ configs/config.pcengines_seabios_apu2                  | 2 +-
+ configs/config.pcengines_seabios_apu3                  | 2 +-
+ configs/config.pcengines_seabios_apu4                  | 2 +-
+ configs/config.pcengines_seabios_apu6                  | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
+index 37e4156d54..e8a35eb362 100644
+--- a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
++++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
+@@ -7,7 +7,7 @@ CONFIG_CPU_QEMU_X86_TSEG_SMM=y
+ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_0=y
+ CONFIG_IPXE_ADD_SCRIPT=y
+ CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+-CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index 69eca3ee40..2d2f205416 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -10,7 +10,7 @@ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
+ CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+-CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index b9f7a009ef..54fc69a673 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
+ CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+-CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index c71e9826ee..b55a923ec2 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
+ CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+-CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
+index 764f24f198..d7055d40f8 100644
+--- a/configs/config.pcengines_seabios_apu6
++++ b/configs/config.pcengines_seabios_apu6
+@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
+ CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
+ CONFIG_IPXE_ADD_SCRIPT=y
+ CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
+-CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_MEMTEST86PLUS_V5=y
+ CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
+-- 
+2.49.0
+

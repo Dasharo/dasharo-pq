@@ -1,0 +1,55 @@
+From 04a3475be8618fc68e4d11cbc74a786b6c32bd13 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
+Date: Thu, 2 Jun 2022 17:42:14 +0200
+Subject: [PATCH 77/85] payloads/external/SeaBIOS: add bootorder in FMAP option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ payloads/external/Makefile.mk     | 8 ++++++++
+ payloads/external/SeaBIOS/Kconfig | 7 +++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index dafc3b7fb2..ba68632d1f 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -157,6 +157,14 @@ cbfs-files-y += etc/sercon-port
+ etc/sercon-port-file := $(strip $(CONFIG_SEABIOS_SERCON_PORT_FILE))
+ etc/sercon-port-type := raw
+ endif
++
++ifeq ($(CONFIG_SEABIOS_NO_OPROMS),y)
++$(call add_intermediate, seabios_no_oproms, $(CBFSTOOL))
++	@printf "    SeaBIOS    Add pci-optionrom-exec file\n"
++	$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< remove -n etc/pci-optionrom-exec 2>/dev/null)
++	$(CBFSTOOL) $< add-int -i 0 -n etc/pci-optionrom-exec
++endif
++
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),0)
+ $(call add_intermediate, seabios_ps2_timeout, $(CBFSTOOL))
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index bc749b04c0..2ad5b01335 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -52,6 +52,13 @@ config SEABIOS_PS2_TIMEOUT
+ 	  after powering on. This specifies how long SeaBIOS will wait for the
+ 	  keyboard controller to become ready before giving up.
+ 
++config SEABIOS_NO_OPROMS
++	prompt "Disable Option ROM execution in SeaBIOS"
++	default n
++	bool
++	help
++	  Select this option to disable Option ROM execution in SeaBIOS
++
+ config SEABIOS_THREAD_OPTIONROMS
+ 	prompt "Hardware init during option ROM execution"
+ 	default n
+-- 
+2.49.0
+

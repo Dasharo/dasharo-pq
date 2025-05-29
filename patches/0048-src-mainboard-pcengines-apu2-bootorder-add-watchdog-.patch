@@ -1,0 +1,57 @@
+From dfbb06159ee2b75fc8a967f356b3c2a74861b339 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 4 Jun 2019 14:21:15 +0200
+Subject: [PATCH 48/87] src/mainboard/pcengines/apu2/bootorder: add watchdog
+ entries
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 4 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index 37c4b8436e..210845d97c 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -26,3 +26,4 @@ mpcie2_clk0
+ com2_en0
+ boosten1
+ sd3mode0
++watchdog0000
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index f7d2212919704217c11daeefb5ac33814fe0567a..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 28
+jcmZorXi(UY#Kc{mSdyHPlAms1V6Zu!$&PpOYW`3Fh}H>0
+
+delta 20
+bcmZorXi(UY#I(7P$%=P!0~7z`)%>9VM$ZO_
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index f7d2212919704217c11daeefb5ac33814fe0567a..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 28
+jcmZorXi(UY#Kc{mSdyHPlAms1V6Zu!$&PpOYW`3Fh}H>0
+
+delta 20
+bcmZorXi(UY#I(7P$%=P!0~7z`)%>9VM$ZO_
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index f7d2212919704217c11daeefb5ac33814fe0567a..be63cf9a37ee5fd5ad7cfca3ad0f107aef88b744 100644
+GIT binary patch
+delta 28
+jcmZorXi(UY#Kc{mSdyHPlAms1V6Zu!$&PpOYW`3Fh}H>0
+
+delta 20
+bcmZorXi(UY#I(7P$%=P!0~7z`)%>9VM$ZO_
+
+-- 
+2.49.0
+

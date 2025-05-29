@@ -1,0 +1,70 @@
+From 0ae0eb476fa663423bad60b66c60282efc40ca14 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 01:36:08 +0200
+Subject: [PATCH 09/87] configs: add support for bootorder files for PC Engines
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu2            |   1 +
+ configs/config.pcengines_seabios_apu3            |   1 +
+ configs/config.pcengines_seabios_apu4            |   1 +
+ .../pcengines/apu2/variants/apu3/bootorder       | Bin 0 -> 4096 bytes
+ 4 files changed, 3 insertions(+)
+ create mode 100644 src/mainboard/pcengines/apu2/variants/apu3/bootorder
+
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index e407412979..e967f28613 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -16,6 +16,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index f0ea77b8a7..2aa97943af 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index 3a8b61cca6..28bc2bb00d 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+ CONFIG_SEABIOS_REVISION=y
+ CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+new file mode 100644
+index 0000000000000000000000000000000000000000..51b0fea1741238d986b4b47ac678fb344312d04b
+GIT binary patch
+literal 4096
+zcmeIqL2kn!5J1tak+{RGt)zhKrtOZKR5pz5QEae)RLSitXVq3ky}-Q92tJJ399hzC
+zd{fsvSflrGYOIk$RZ?3|&-K*(NR2h!@%8tWQ9jWpTCF_gi`BJm{_2~f(~!tdXxrn9
+zYW6MlZPnM`cBi=72}6o&R@)7qQe36jZWy!_*~MU_xaI*LvronC=ROs0q`=wH<K4PB
+z!uG>07cIqsF~%5Uj4{R-`&XGM!$=E4K=c_(gaM(`?`Ih91v4x$Oh5r*@|gCFp-{r*
+VzW-XlK;8((rOz{DbS0*P6kkeli1z>h
+
+literal 0
+HcmV?d00001
+
+-- 
+2.49.0
+

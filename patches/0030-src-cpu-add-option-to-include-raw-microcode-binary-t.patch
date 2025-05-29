@@ -1,0 +1,42 @@
+From d29c054b1d7e47dafec76a97a725315e4ee2e9da Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 10 May 2018 23:57:21 +0200
+Subject: [PATCH 30/85] src/cpu: add option to include raw microcode binary to
+ CBFS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/cpu/Kconfig | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/cpu/Kconfig b/src/cpu/Kconfig
+index 2770f648b4..fd2bf0b5e9 100644
+--- a/src/cpu/Kconfig
++++ b/src/cpu/Kconfig
+@@ -171,6 +171,11 @@ config CPU_MICROCODE_CBFS_NONE
+ 	  Make sure you have a way of flashing the ROM externally before
+ 	  selecting this option.
+ 
++config AGESA_UCODE_EXPERIMENTAL
++	bool "Add microcode patch for AMD fam16h (EXPERIMENTAL)"
++	help
++	  Include the microcode with Spectre mitigations for AMD fam16h.
++
+ endchoice
+ 
+ config CPU_MICROCODE_HEADER_FILES
+@@ -182,7 +187,7 @@ config CPU_MICROCODE_HEADER_FILES
+ 
+ config CPU_UCODE_BINARIES
+ 	string "Microcode binary path and filename"
+-	depends on CPU_MICROCODE_CBFS_EXTERNAL_BINS
++	depends on CPU_MICROCODE_CBFS_EXTERNAL_BINS || AGESA_UCODE_EXPERIMENTAL
+ 	default ""
+ 	help
+ 	  Some platforms have microcode in the blobs directory, and these can
+-- 
+2.49.0
+

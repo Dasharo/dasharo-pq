@@ -1,0 +1,37 @@
+From b00806c5bf01dce9c5b60511a295fd76fb830a81 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 27 Jun 2020 21:01:55 +0200
+Subject: [PATCH 63/87] src/commonlib/include/commonlib/cbmem_id.h: add new ID
+ for DRTM TPM log
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h b/src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h
+index b88a0831b9..caa8a17dab 100644
+--- a/src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h
++++ b/src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h
+@@ -20,6 +20,7 @@
+ #define CBMEM_ID_CONSOLE	0x434f4e53
+ #define CBMEM_ID_CPU_CRASHLOG	0x4350555f
+ #define CBMEM_ID_COVERAGE	0x47434f56
++#define CBMEM_ID_DRTM_LOG	0x444c4f47
+ #define CBMEM_ID_CSE_UPDATE	0x43534555
+ #define CBMEM_ID_EHCI_DEBUG	0xe4c1deb9
+ #define CBMEM_ID_ELOG		0x454c4f47
+@@ -108,6 +109,7 @@
+ 	{ CBMEM_ID_CB_EARLY_DRAM,	"EARLY DRAM USAGE" }, \
+ 	{ CBMEM_ID_CONSOLE,		"CONSOLE    " }, \
+ 	{ CBMEM_ID_COVERAGE,		"COVERAGE   " }, \
++	{ CBMEM_ID_DRTM_LOG,		"DRTM TPMLOG" }, \
+ 	{ CBMEM_ID_CPU_CRASHLOG,	"CPU CRASHLOG (deprecated)"}, \
+ 	{ CBMEM_ID_EHCI_DEBUG,		"USBDEBUG   " }, \
+ 	{ CBMEM_ID_ELOG,		"ELOG       " }, \
+-- 
+2.49.0
+

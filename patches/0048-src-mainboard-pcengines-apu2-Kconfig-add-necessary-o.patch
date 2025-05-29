@@ -1,0 +1,60 @@
+From 3014ed16ecb5a0e5e730ced2ecbe1d1711345a87 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 30 May 2019 12:02:48 +0200
+Subject: [PATCH 48/85] src/mainboard/pcengines/apu2/Kconfig: add necessary
+ options for vboot
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/Kconfig | 32 ++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
+index 613cff69cb..823bbf11c4 100644
+--- a/src/mainboard/pcengines/apu2/Kconfig
++++ b/src/mainboard/pcengines/apu2/Kconfig
+@@ -103,6 +103,38 @@ config FORCE_MPCIE2_CLK
+ 	help
+ 	  If no card is attached to mPCIe2 slot, say N.
+ 
++config FMDFILE
++	string
++	default "src/mainboard/\$(CONFIG_MAINBOARD_DIR)/vboot-rw-ab.fmd" if VBOOT
++
++config CBFS_SIZE
++	hex
++	default 0x0020C000 if VBOOT
++	default 0x00800000
++
++config VBOOT
++	select VBOOT_VBNV_CMOS
++	select VBOOT_NO_BOARD_SUPPORT
++	select GBB_FLAG_DISABLE_LID_SHUTDOWN
++	select GBB_FLAG_DISABLE_PD_SOFTWARE_SYNC
++	select GBB_FLAG_DISABLE_EC_SOFTWARE_SYNC
++	select GBB_FLAG_DISABLE_FWMP
++	select RTC
++	select VBOOT_STARTS_IN_ROMSTAGE
++	select AMDFW_OUTSIDE_CBFS
++
++config VBOOT_MEASURED_BOOT_RUNTIME_DATA
++	string
++	default "bootorder" if VBOOT
++
++config VBOOT_VBNV_OFFSET
++	hex
++	default 0x2D8 if VBOOT
++
++config RO_REGION_ONLY
++	string
++	default "spd.bin AGESA" if VBOOT
++
+ config AGESA_USE_1_0_0_4_HEADER
+ 	bool
+ 	default y
+-- 
+2.49.0
+

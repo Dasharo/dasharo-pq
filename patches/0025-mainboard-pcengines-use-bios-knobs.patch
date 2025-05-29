@@ -1,0 +1,83 @@
+From d637847eb86af8ad2d4fce1adb75b4541f29731c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Mon, 6 May 2024 11:55:33 +0200
+Subject: [PATCH 25/87] mainboard/pcengines: use bios knobs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c | 56 ++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 13 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 4f8d76539c..45c83bcf90 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -144,19 +144,49 @@ static void config_gpio_mux(void)
+ {
+ 	struct device *uart, *gpio;
+ 
+-	uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP3);
+-	gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO0);
+-	if (uart)
+-		uart->enabled = CONFIG(APU2_PINMUX_UART_C);
+-	if (gpio)
+-		gpio->enabled = CONFIG(APU2_PINMUX_GPIO0);
+-
+-	uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP4);
+-	gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO1);
+-	if (uart)
+-		uart->enabled = CONFIG(APU2_PINMUX_UART_D);
+-	if (gpio)
+-		gpio->enabled = CONFIG(APU2_PINMUX_GPIO1);
++	if (check_uartc()) {
++		printk(BIOS_INFO, "UARTC enabled\n");
++
++		uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP3);
++		if (uart)
++			uart->enabled = 1;
++
++		gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO0);
++		if (gpio)
++			gpio->enabled = 0;
++	} else {
++		printk(BIOS_INFO, "UARTC disabled\n");
++
++		uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP3);
++		if (uart)
++			uart->enabled = 0;
++
++		gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO0);
++		if (gpio)
++			gpio->enabled = 1;
++	}
++
++	if (check_uartd()) {
++		printk(BIOS_INFO, "UARTD enabled\n");
++
++		uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP4);
++		if (uart)
++			uart->enabled = 1;
++
++		gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO1);
++		if (gpio)
++			gpio->enabled = 0;
++	} else {
++		printk(BIOS_INFO, "UARTD disabled\n");
++
++		uart = dev_find_slot_pnp(SIO_PORT, NCT5104D_SP4);
++		if (uart)
++			uart->enabled = 0;
++
++		gpio = dev_find_slot_pnp(SIO_PORT, NCT5104D_GPIO1);
++		if (gpio)
++			gpio->enabled = 1;
++	}
+ }
+ 
+ /**********************************************
+-- 
+2.49.0
+

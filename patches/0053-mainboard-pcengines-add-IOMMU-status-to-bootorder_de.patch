@@ -1,0 +1,56 @@
+From 16dbc0640eb48dcba2103197a155b652a71e65c8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Witwicki?= <michal.witwicki@3mdeb.com>
+Date: Thu, 19 Dec 2019 10:14:12 +0100
+Subject: [PATCH 53/85] mainboard/pcengines: add IOMMU status to bootorder_def
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Witwicki <michal.witwicki@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 4 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index 210845d97c..26686bea9c 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -26,4 +26,5 @@ mpcie2_clk0
+ com2_en0
+ boosten1
+ sd3mode0
++iommu0
+ watchdog0000
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index 8ec8f645074c6149e8a56a10ae84dea1489607cd..c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5 100644
+GIT binary patch
+delta 22
+dcmZorXi(UY#KfAJpPO5{IiAUdck*ifPykm82Z#Uw
+
+delta 20
+bcmZorXi(UY#I!k!$&q*R1SXEjtNB9#M-B#&
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index 8ec8f645074c6149e8a56a10ae84dea1489607cd..c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5 100644
+GIT binary patch
+delta 22
+dcmZorXi(UY#KfAJpPO5{IiAUdck*ifPykm82Z#Uw
+
+delta 20
+bcmZorXi(UY#I!k!$&q*R1SXEjtNB9#M-B#&
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index 8ec8f645074c6149e8a56a10ae84dea1489607cd..c673e7d5ecaa8de00ee4f0cabcb92a027298d8d5 100644
+GIT binary patch
+delta 22
+dcmZorXi(UY#KfAJpPO5{IiAUdck*ifPykm82Z#Uw
+
+delta 20
+bcmZorXi(UY#I!k!$&q*R1SXEjtNB9#M-B#&
+
+-- 
+2.49.0
+

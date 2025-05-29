@@ -1,0 +1,40 @@
+From d5d36dcc82bfc41a9400fe64b9f769a175b17c07 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 30 May 2025 12:22:01 +0200
+Subject: [PATCH 30/87] mb/pcengines/apu2/mainboard.c: Configure IRQ7 for GPIO
+ controller
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/mainboard.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index d4d751ee6d..e9548f19a4 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -70,7 +70,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
+ 	[0x48] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 	[0x50] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 	[0x58] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+-	[0x60] = 0x00,0x00,0x1F
++	[0x60] = 0x00,0x00,0x07
+ };
+ 
+ static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
+@@ -93,7 +93,7 @@ static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
+ 	[0x48] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 	[0x50] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 	[0x58] = 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+-	[0x60] = 0x00,0x00,0x1F
++	[0x60] = 0x00,0x00,0x07
+ };
+ 
+ /*
+-- 
+2.49.0
+

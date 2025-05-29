@@ -1,0 +1,55 @@
+From 1e308d523f8168d6e01c7905d68486557ec5f0e9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 26 Feb 2019 12:04:12 +0100
+Subject: [PATCH 42/87] src/mainboard/pcengines/apu2/bootorder: add boost knobs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 4 files changed, 1 insertion(+)
+
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index a314740bde..2ff65ad426 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -16,3 +16,4 @@ uartd1
+ ehcien0
+ mpcie2_clk0
+ com2_en0
++boosten1
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index 1d19dba07707caefa7093fda865a2653f3219fa2..42e870d321980e78b9bc2891846b12d717a3d10f 100644
+GIT binary patch
+delta 27
+icmZorXi(Tt#>kbFpI=;(nrFz%wYiZ|i*NEO{xAT3Pzb{S
+
+delta 20
+bcmZorXi(Tt#<;nWQHyW#1V--3tNB9#NMQ!1
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index 1d19dba07707caefa7093fda865a2653f3219fa2..42e870d321980e78b9bc2891846b12d717a3d10f 100644
+GIT binary patch
+delta 27
+icmZorXi(Tt#>kbFpI=;(nrFz%wYiZ|i*NEO{xAT3Pzb{S
+
+delta 20
+bcmZorXi(Tt#<;nWQHyW#1V--3tNB9#NMQ!1
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index 1d19dba07707caefa7093fda865a2653f3219fa2..42e870d321980e78b9bc2891846b12d717a3d10f 100644
+GIT binary patch
+delta 27
+icmZorXi(Tt#>kbFpI=;(nrFz%wYiZ|i*NEO{xAT3Pzb{S
+
+delta 20
+bcmZorXi(Tt#<;nWQHyW#1V--3tNB9#NMQ!1
+
+-- 
+2.49.0
+

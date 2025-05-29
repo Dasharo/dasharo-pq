@@ -1,0 +1,38 @@
+From 28f3586bfd1163b8ea2de855138aec1127dc1c33 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Wed, 24 Apr 2019 13:47:59 +0200
+Subject: [PATCH 41/85] src/northbridge/amd/pi/00730F01/pci_devs.h: add IOMMU
+ and GNB devfn
+
+---
+ src/northbridge/amd/pi/00730F01/pci_devs.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/src/northbridge/amd/pi/00730F01/pci_devs.h b/src/northbridge/amd/pi/00730F01/pci_devs.h
+index 92f6ac5c57..8762e2e32c 100644
+--- a/src/northbridge/amd/pi/00730F01/pci_devs.h
++++ b/src/northbridge/amd/pi/00730F01/pci_devs.h
+@@ -3,6 +3,20 @@
+ #ifndef _AMD_00730F01_PCI_DEVS_H_
+ #define _AMD_00730F01_PCI_DEVS_H_
+ 
++#define BUS0 0
++
++/* GNB Root Complex */
++#define GNB_DEV			0x0
++#define GNB_FUNC		0
++#define GNB_DEVID		0x1576
++#define GNB_DEVFN		PCI_DEVFN(GNB_DEV, GNB_FUNC)
++
++/* IOMMU */
++#define IOMMU_DEV		0x0
++#define IOMMU_FUNC		2
++#define IOMMU_DEVID		0x1577
++#define IOMMU_DEVFN		PCI_DEVFN(IOMMU_DEV, IOMMU_FUNC)
++
+ /* Graphics and Display */
+ #define GFX_DEV 0x1
+ #define GFX_FUNC 0
+-- 
+2.49.0
+

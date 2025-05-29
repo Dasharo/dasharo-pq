@@ -1,0 +1,39 @@
+From 38850467be5c80a6a8a55965ff9029d5ed5c9acd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 7 Oct 2019 15:41:52 +0200
+Subject: [PATCH 79/85] src/southbridge/amd/pi/hudson/Makefile.inc: fix AMDFW
+ outside CBFS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The amdfwtool expects firmware location to be passed in hexadecimal
+format. When CONFIG_AMDFW_OUTSIDE_CBFS the firmware location is calculated
+by int-add call which produces decimal output.
+
+Use shell printf to generate a hexadecimal value of HUDSON_FWM_POSITION.
+
+TEST=prepare simple FMD file with AMD_FW region at 0x20000, select
+CONFIG_AMDFW_OUTSIDE_CBFS and build PC Engines apu2 board
+
+Change-Id: Ib4b03f971b88acbc3392b66e084babe738659ea6
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/southbridge/amd/pi/hudson/Makefile.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index e7ec1b73ec..5a4f88baec 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -126,6 +126,7 @@ $(obj)/amdfw.rom:	$(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE)) \
+ 		$(OPT_2SMUSCS_FILE) \
+ 		--flashsize $(CONFIG_ROM_SIZE) \
+ 		--location $(HUDSON_FWM_POSITION) \
++		--location $(shell printf "0x%x" $(HUDSON_FWM_POSITION)) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+ 		--output	$@
+ 
+-- 
+2.49.0
+

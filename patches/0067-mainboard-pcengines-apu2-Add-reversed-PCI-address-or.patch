@@ -1,0 +1,230 @@
+From 99137202cf1447f4204bb61e9f663c67f9680d5f Mon Sep 17 00:00:00 2001
+From: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
+Date: Thu, 16 Jul 2020 14:52:52 +0200
+Subject: [PATCH 67/87] mainboard/pcengines/apu2/: Add reversed PCI address
+ order option
+
+Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/OemCustomize.c   | 155 +++++++++++++++++-
+ src/mainboard/pcengines/apu2/bootorder_def    |   1 +
+ .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
+ .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
+ 5 files changed, 152 insertions(+), 4 deletions(-)
+
+diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
+index ad23370637..d868850ff9 100644
+--- a/src/mainboard/pcengines/apu2/OemCustomize.c
++++ b/src/mainboard/pcengines/apu2/OemCustomize.c
+@@ -133,6 +133,132 @@ static const PCIe_PORT_DESCRIPTOR PortList[] = {
+ 	}
+ };
+ 
++static const PCIe_PORT_DESCRIPTOR PortListAspmReverse[] = {
++	/* Initialize Port descriptor (PCIe port, Lanes 3, PCI Device Number 4, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 3, 3),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 4,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmL0sL1,
++				0x01,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 2, PCI Device Number 3, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 2, 2),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 3,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmL0sL1,
++				0x02,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 1, PCI Device Number 2, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 1, 1),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 2,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmL0sL1,
++				0x03,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 0, PCI Device Number 1, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 0, 0),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 1,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmL0sL1,
++				0x04,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 4-7, PCI Device Number 5, ...) */
++	{
++		DESCRIPTOR_TERMINATE_LIST,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 4, 7),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 5,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmL0sL1,
++				0x05,
++				0)
++	}
++};
++
++static const PCIe_PORT_DESCRIPTOR PortListReverse[] = {
++	/* Initialize Port descriptor (PCIe port, Lanes 3, PCI Device Number 4, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 3, 3),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 4,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x01,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 2, PCI Device Number 3, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 2, 2),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 3,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x02,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 1, PCI Device Number 2, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 1, 1),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 2,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x03,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 0, PCI Device Number 1, ...) */
++	{
++		0,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 0, 0),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 1,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x04,
++				0)
++	},
++	/* Initialize Port descriptor (PCIe port, Lanes 4-7, PCI Device Number 5, ...) */
++	{
++		DESCRIPTOR_TERMINATE_LIST,
++		PCIE_ENGINE_DATA_INITIALIZER(PciePortEngine, 4, 7),
++		PCIE_PORT_DATA_INITIALIZER_V2(PortEnabled, ChannelTypeExt6db, 2, 5,
++				HotplugDisabled,
++				PcieGenMaxSupported,
++				PcieGenMaxSupported,
++				AspmDisabled,
++				0x05,
++				0)
++	}
++};
++
+ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
+ 	.Flags        = DESCRIPTOR_TERMINATE_LIST,
+ 	.SocketId     = 0,
+@@ -147,12 +273,33 @@ static const PCIe_COMPLEX_DESCRIPTOR PcieComplexAspm = {
+ 	.DdiLinkList  = NULL,
+ };
+ 
++static const PCIe_COMPLEX_DESCRIPTOR PcieComplexReverse = {
++	.Flags        = DESCRIPTOR_TERMINATE_LIST,
++	.SocketId     = 0,
++	.PciePortList = PortListReverse,
++	.DdiLinkList  = NULL,
++};
++
++static const PCIe_COMPLEX_DESCRIPTOR PcieComplexAspmReverse = {
++	.Flags        = DESCRIPTOR_TERMINATE_LIST,
++	.SocketId     = 0,
++	.PciePortList = PortListAspmReverse,
++	.DdiLinkList  = NULL,
++};
++
+ void board_BeforeInitEarly(struct sysinfo *cb, AMD_EARLY_PARAMS *InitEarly)
+ {
+-	if (check_pciepm())
+-		InitEarly->GnbConfig.PcieComplexList = &PcieComplexAspm;
+-	else
+-		InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
++	if (check_pciepm()) {
++		if(check_pciereverse())
++			InitEarly->GnbConfig.PcieComplexList = &PcieComplexAspmReverse;
++		else
++			InitEarly->GnbConfig.PcieComplexList = &PcieComplexAspm;
++	} else {
++		if(check_pciereverse())
++			InitEarly->GnbConfig.PcieComplexList = &PcieComplexReverse;
++		else
++			InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
++	}
+ 
+ 	if (check_boost()) {
+ 		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
+diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
+index d7f6d7feef..88da074dd1 100644
+--- a/src/mainboard/pcengines/apu2/bootorder_def
++++ b/src/mainboard/pcengines/apu2/bootorder_def
+@@ -28,4 +28,5 @@ boosten1
+ sd3mode0
+ iommu0
+ pciepm0
++pciereverse0
+ watchdog0000
+diff --git a/src/mainboard/pcengines/apu2/variants/apu2/bootorder b/src/mainboard/pcengines/apu2/variants/apu2/bootorder
+index ebbd6072a13e06e085443bbea036f0d351fdc619..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f 100644
+GIT binary patch
+delta 28
+jcmZorXi(Tt%*0)goS9mbT9#T=oVvMyNtbu>YW`3Fl6MLZ
+
+delta 20
+bcmZorXi(Tt%(S_YNsD*#0w%u6tNB9#NXZ7c
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
+index ebbd6072a13e06e085443bbea036f0d351fdc619..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f 100644
+GIT binary patch
+delta 28
+jcmZorXi(Tt%*0)goS9mbT9#T=oVvMyNtbu>YW`3Fl6MLZ
+
+delta 20
+bcmZorXi(Tt%(S_YNsD*#0w%u6tNB9#NXZ7c
+
+diff --git a/src/mainboard/pcengines/apu2/variants/apu4/bootorder b/src/mainboard/pcengines/apu2/variants/apu4/bootorder
+index ebbd6072a13e06e085443bbea036f0d351fdc619..7e7e1b1a227ebaedc09bb74c05f3bc051d3b7b8f 100644
+GIT binary patch
+delta 28
+jcmZorXi(Tt%*0)goS9mbT9#T=oVvMyNtbu>YW`3Fl6MLZ
+
+delta 20
+bcmZorXi(Tt%(S_YNsD*#0w%u6tNB9#NXZ7c
+
+-- 
+2.49.0
+

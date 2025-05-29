@@ -1,0 +1,50 @@
+From 5b2d0e8a0376d014cd09d1afda64b987e889993e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Wed, 8 May 2024 01:30:49 +0200
+Subject: [PATCH 71/85] mainboard/pcengines: Add support for sercon-port
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit adds support for sercon-port in the SeaBIOS for the
+pcengines mainboard. The sercon-port file is added to the cbfs-files
+if the CONFIG_SEABIOS_SERCON_PORT_FILE is set.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ payloads/external/Makefile.mk            |   7 ++++++-
+ src/mainboard/pcengines/apu2/sercon-port | Bin 0 -> 8 bytes
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+ create mode 100644 src/mainboard/pcengines/apu2/sercon-port
+
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index f40fb68db1..dafc3b7fb2 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -151,7 +151,12 @@ cbfs-files-y += etc/boot-menu-message
+ etc/boot-menu-message-file := $(strip $(CONFIG_SEABIOS_BOOTMENU_MESSAGE_FILE))
+ etc/boot-menu-message-type := raw
+ endif
+-
++# add a SeaBIOS sercon-port file
++ifneq ($(strip $(CONFIG_SEABIOS_SERCON_PORT_FILE)),)
++cbfs-files-y += etc/sercon-port
++etc/sercon-port-file := $(strip $(CONFIG_SEABIOS_SERCON_PORT_FILE))
++etc/sercon-port-type := raw
++endif
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
+ ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),0)
+ $(call add_intermediate, seabios_ps2_timeout, $(CBFSTOOL))
+diff --git a/src/mainboard/pcengines/apu2/sercon-port b/src/mainboard/pcengines/apu2/sercon-port
+new file mode 100644
+index 0000000000000000000000000000000000000000..c2d9bb79b21e3022911e45846b19ea5936041759
+GIT binary patch
+literal 8
+Lcmeyt%m4-e2i*Yt
+
+literal 0
+HcmV?d00001
+
+-- 
+2.49.0
+

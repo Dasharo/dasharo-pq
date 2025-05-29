@@ -1,0 +1,33 @@
+From 711d4be70a678bddbd21e847d6e4f60cd9c99c33 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
+Date: Sun, 5 May 2024 00:35:25 +0200
+Subject: [PATCH 71/87] mainboard/pcengines: Update GPIO configuration and
+ remove unused macros
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit updates the GPIO configuration for apu3, apu4, and apu7
+boards. It also removes unused macros for SIO_PORT and SERIAL_DEV.
+
+Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
+---
+ src/mainboard/pcengines/apu2/romstage.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 71b5170ce4..aa428874b0 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -27,6 +27,8 @@ void board_BeforeAgesa(struct sysinfo *cb)
+ {
+ 	u32 val;
+ 
++	pm_write8(FCH_PMIOA_REGC5, 0);
++
+ 	early_lpc_init();
+ 
+ 	/* Disable SVI2 controller to wait for command completion */
+-- 
+2.49.0
+

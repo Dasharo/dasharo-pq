@@ -1,0 +1,28 @@
+From 051f96cacd0f9d35cc0393b0a59c6245bb9ae923 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 29 May 2025 16:16:54 +0200
+Subject: [PATCH 82/87] Makefile.mk: Use git describe for KERNELVERSION if in
+ git repo
+
+---
+ Makefile.mk | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.mk b/Makefile.mk
+index cc482acff4..8c10d54f7b 100644
+--- a/Makefile.mk
++++ b/Makefile.mk
+@@ -20,7 +20,9 @@ CONFIG_MEMLAYOUT_LD_FILE:=$(call strip_quotes, $(CONFIG_MEMLAYOUT_LD_FILE))
+ # misleadingly named, this is the coreboot version
+ ifeq ($(KERNELVERSION),)
+ ifeq ($(BUILD_TIMELESS),1)
+-KERNELVERSION := -TIMELESS--LESSTIME-
++KERNELVERSION := $(strip $(if $(GIT),\
++		 $(shell git describe --abbrev=12 --dirty --always || git describe), \
++		 -TIMELESS--LESSTIME-))
+ else
+ KERNELVERSION := $(strip $(if $(GIT),\
+ 	$(shell git describe --abbrev=12 --dirty --always || git describe),\
+-- 
+2.49.0
+
