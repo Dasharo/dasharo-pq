@@ -61,7 +61,6 @@
 0058-src-commonlib-include-commonlib-cbmem_id.h-add-new-I.patch
 0059-src-northbridge-amd-pi-00730F01-northbridge.c-genera.patch
 0060-coreboot_table-include-DRTM-TPM-log-in-coreboot-tabl.patch
-0061-src-commonlib-include-commonlib-tpm_log_serialized.h.patch
 0062-util-cbmem-cbmem.c-implement-DRTM-TPM-log-parser.patch
 0063-mainboard-pcengines-apu2-Add-reversed-PCI-address-or.patch
 0064-src-mainboard-pcengines-apu2-fix-TPM-visibility-in-O.patch
@@ -77,7 +76,6 @@
 0075-src-northbridge-amd-pi-00730F01-northbridge.c-enable.patch
 0076-payloads-external-SeaBIOS-add-bootorder-in-FMAP-opti.patch
 0078-mainboard-pcengines-fix-sign-of-life-coreboot-build-.patch
-0079-mainboard-pcengines-make-HUDSON_LEGACY_FREE-n-by-def.patch
 0080-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
 makefile.mk-if-in-git-repository-use-git-describe-for-kernelversion.patch
 gitignore-add-memstest86plus_v5-and-sortbootorder-payloads.patch
