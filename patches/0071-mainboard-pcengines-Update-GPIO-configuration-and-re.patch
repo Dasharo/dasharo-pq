@@ -10,6 +10,7 @@ Content-Transfer-Encoding: 8bit
 This commit updates the GPIO configuration for apu3, apu4, and apu7
 boards. It also removes unused macros for SIO_PORT and SERIAL_DEV.
 
+Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/romstage.c | 2 ++

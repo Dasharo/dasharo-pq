@@ -10,6 +10,7 @@ This commit adds support for sercon-port in the SeaBIOS for the
 pcengines mainboard. The sercon-port file is added to the cbfs-files
 if the CONFIG_SEABIOS_SERCON_PORT_FILE is set.
 
+Upstream-Status: Inappropriate [Use SEABIOS_SERCON_PORT_ADDR Kconfig]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  payloads/external/Makefile.mk            |   7 ++++++-

@@ -20,6 +20,7 @@ serial number in the NIC is not set.
 The commit also includes necessary includes and defines for the new
 functionality. The obtained information is exposed in SMBIOS tables.
 
+Upstream-Status: Pending
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---

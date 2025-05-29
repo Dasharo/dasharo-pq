@@ -4,6 +4,7 @@ Date: Wed, 22 Nov 2017 15:27:41 +0100
 Subject: [PATCH 11/87] drivers/spi: add secure registers support for winbond
  chips
 
+Upstream-Status: Pending
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 ---
  src/drivers/spi/spi_flash.c   |  6 +++

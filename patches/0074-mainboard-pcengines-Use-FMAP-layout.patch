@@ -12,6 +12,7 @@ been applied to the configurations of pcengines_apu2, pcengines_apu3,
 pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
 'board.fmd' has also been added to 'src/mainboard/pcengines/apu2'.
 
+Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  configs/config.pcengines_seabios_apu2  |  1 +

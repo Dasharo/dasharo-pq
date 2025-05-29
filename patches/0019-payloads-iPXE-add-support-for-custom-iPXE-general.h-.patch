@@ -17,6 +17,7 @@ and will fail the build process if the specified files do not exist.
 Additionally, several environment variables related to Kconfig have been
 unexported to prevent potential conflicts with the iPXE build process.
 
+Upstream-Status: Inappropriate [Use sed for fine-grained feature control]
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---

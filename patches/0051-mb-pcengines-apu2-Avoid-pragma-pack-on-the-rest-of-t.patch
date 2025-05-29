@@ -13,6 +13,7 @@ included below AGESA.h.
 
 Adapted from https://review.coreboot.org/c/coreboot/+/64382
 
+Upstream-Status: Pending
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
 Change-Id: I2ee658c0d2db9a4dffe2dd8dbf5f4a3a905eb75d
 ---

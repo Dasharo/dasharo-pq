@@ -12,6 +12,7 @@ Code for enabling watchdog is now in board_BeforeInitEarly, as hardware
 is not enabled before InitReset. It didn't work on first boot after
 power cycle.
 
+Upstream-Status: Pending
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---

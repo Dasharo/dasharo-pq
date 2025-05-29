@@ -7,6 +7,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Upstream-Status: Submitted [CB:51582]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  src/commonlib/bsd/include/commonlib/bsd/cbmem_id.h | 2 ++

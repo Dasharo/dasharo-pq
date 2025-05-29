@@ -6,6 +6,7 @@ Subject: [PATCH 20/87] payloads/iPXE: Update Makefile.inc to change PXE ROM
 
 Include iPXE ROM as genroms/pxe.rom instead of a device-specific one.
 
+Upstream-Status: Inappropriate [Custom workaround for PXE ROMs in SeaBIOS]
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 ---
  payloads/external/Makefile.mk | 8 ++++----

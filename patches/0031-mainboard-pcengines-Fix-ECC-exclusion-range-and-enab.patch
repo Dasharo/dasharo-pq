@@ -17,13 +17,14 @@ reserved bits in register D18F3xB8, disabling the ECC exclusion range,
 and then re-enabling DRAM ECC scrubbing. This ensures that ECC functions
 as expected and improves system stability.
 
+Upstream-Status: Submitted [CB:79612]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/mainboard.c | 40 ++++++++++++++++++++++++
  1 file changed, 40 insertions(+)
 
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index e9548f19a4..d564e37e6a 100644
+index 3d909037b1..86e8409acb 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -376,6 +376,46 @@ static void mainboard_enable(struct device *dev)

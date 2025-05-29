@@ -4,6 +4,8 @@ Date: Thu, 29 May 2025 16:16:54 +0200
 Subject: [PATCH 82/87] Makefile.mk: Use git describe for KERNELVERSION if in
  git repo
 
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  Makefile.mk | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)

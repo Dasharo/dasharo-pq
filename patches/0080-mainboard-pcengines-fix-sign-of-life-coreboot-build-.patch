@@ -11,6 +11,7 @@ yyyymmdd.
 https://github.com/pcengines/coreboot/pull/517 contains a complete
 explanation of the history of this date string.
 
+Upstream-Status: Inappropriate [Custom prints]
 Signed-off-by: Mark Mentovai <mark@mentovai.com>
 ---
  src/mainboard/pcengines/apu2/romstage.c | 4 ++--

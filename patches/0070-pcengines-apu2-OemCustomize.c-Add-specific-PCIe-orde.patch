@@ -4,6 +4,7 @@ Date: Fri, 23 Oct 2020 14:13:52 +0200
 Subject: [PATCH 70/87] pcengines/apu2/OemCustomize.c: Add specific PCIe order
  config for apu2
 
+Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/OemCustomize.c | 156 ++++++++++++++++++--

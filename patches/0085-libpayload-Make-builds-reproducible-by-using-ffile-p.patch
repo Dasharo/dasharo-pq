@@ -4,6 +4,8 @@ Date: Thu, 29 May 2025 16:18:18 +0200
 Subject: [PATCH 85/87] libpayload: Make builds reproducible by using
  -ffile-prefix-map
 
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  payloads/libpayload/Makefile.mk | 1 +
  1 file changed, 1 insertion(+)

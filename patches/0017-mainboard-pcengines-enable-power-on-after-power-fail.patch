@@ -13,6 +13,7 @@ been added and a bit manipulation operation has been included to set the
 necessary bit for this feature. This change improves the robustness of
 the system in case of unexpected power outages.
 
+Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/mainboard.c | 8 ++++++--

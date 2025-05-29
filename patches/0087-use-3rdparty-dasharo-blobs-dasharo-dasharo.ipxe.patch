@@ -3,6 +3,10 @@ From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 29 May 2025 16:18:18 +0200
 Subject: [PATCH 87/87] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
 
+
+Upstream-Status: Inappropriate [Custom submodule]
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
 ---
  configs/config.emulation_qemu_x86_q35_smm_tseg_seabios | 2 +-
  configs/config.pcengines_seabios_apu2                  | 2 +-

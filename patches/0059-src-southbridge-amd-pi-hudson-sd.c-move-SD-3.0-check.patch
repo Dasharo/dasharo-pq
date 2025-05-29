@@ -7,6 +7,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  src/southbridge/amd/pi/hudson/sd.c | 3 ++-

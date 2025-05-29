@@ -4,6 +4,8 @@ Date: Wed, 24 Apr 2019 13:47:59 +0200
 Subject: [PATCH 43/87] src/northbridge/amd/pi/00730F01/pci_devs.h: add IOMMU
  and GNB devfn
 
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  src/northbridge/amd/pi/00730F01/pci_devs.h | 14 ++++++++++++++
  1 file changed, 14 insertions(+)

@@ -9,6 +9,7 @@ Content-Transfer-Encoding: 8bit
 On apu5 the S1 button is not present. Its GPIO is used as a
 SIMSWAP.
 
+Upstream-Status: Inappropriate [Should be payload's feature]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/Makefile.mk |   3 +

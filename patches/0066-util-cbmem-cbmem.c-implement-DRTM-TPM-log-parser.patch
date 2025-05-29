@@ -6,6 +6,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Upstream-Status: Submitted [CB:51583]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>

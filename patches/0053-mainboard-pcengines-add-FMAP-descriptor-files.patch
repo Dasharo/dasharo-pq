@@ -6,6 +6,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/vboot-rw-ab.fmd | 29 ++++++++++++++++++++

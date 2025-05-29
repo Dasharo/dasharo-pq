@@ -15,6 +15,7 @@ as well. This additional logging will assist in debugging and system
 analysis, and ensure that the boot process is compatible with legacy
 systems and meets customer expectations.
 
+Upstream-Status: Inappropriate [Custom prints that are not necessary]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  src/lib/Makefile.mk                      |  1 +

@@ -8,6 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 on apu3,4,5 and 6
 
+Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
 ---
  src/mainboard/pcengines/apu2/bootorder_def    |   2 +-

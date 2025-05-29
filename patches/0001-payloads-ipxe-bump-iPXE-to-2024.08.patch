@@ -9,6 +9,7 @@ Content-Transfer-Encoding: 8bit
 
 This patch updates iPXE to last commit from August 2024 (2024.08).
 
+Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 ---
  payloads/external/iPXE/Kconfig  | 2 +-
