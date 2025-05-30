@@ -1,7 +1,7 @@
 From 35ff317e29d92bd160fa5ae12eb919fa8df5d17f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Thu, 2 May 2024 23:25:08 +0200
-Subject: [PATCH 53/87] mainboard/pcengines: add FMAP descriptor files
+Subject: [PATCH 53/88] mainboard/pcengines: add FMAP descriptor files
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

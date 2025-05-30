@@ -1,7 +1,7 @@
 From b4d9867dedd8c7897008de4ef52a01017c5d794c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Wed, 8 May 2024 01:30:49 +0200
-Subject: [PATCH 73/87] mainboard/pcengines: Add support for sercon-port
+Subject: [PATCH 73/88] mainboard/pcengines: Add support for sercon-port
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

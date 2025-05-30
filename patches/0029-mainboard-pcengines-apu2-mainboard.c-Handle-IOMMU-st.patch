@@ -1,7 +1,7 @@
 From 024c75ac3a92fe7dd4c9ca0c9e89a2b7ec53b43d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 30 May 2025 12:19:19 +0200
-Subject: [PATCH 29/87] mainboard/pcengines/apu2/mainboard.c: Handle IOMMU
+Subject: [PATCH 29/88] mainboard/pcengines/apu2/mainboard.c: Handle IOMMU
  state via devicetree
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

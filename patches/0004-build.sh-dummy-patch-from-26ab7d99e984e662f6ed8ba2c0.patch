@@ -1,7 +1,7 @@
 From 2f2369310edd4119000c1a76f4aaa6c7e8355011 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 4 Nov 2024 23:17:41 +0100
-Subject: [PATCH 04/87] build.sh: dummy patch from
+Subject: [PATCH 04/88] build.sh: dummy patch from
  26ab7d99e984e662f6ed8ba2c0e2725c43639a45 dasharo/coreboot
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

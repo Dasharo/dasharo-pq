@@ -1,7 +1,7 @@
 From 7b833a1de756e84ecae0beeff07947ef099b9d14 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sun, 28 Jun 2020 19:21:45 +0200
-Subject: [PATCH 65/87] coreboot_table: include DRTM TPM log in coreboot tables
+Subject: [PATCH 65/88] coreboot_table: include DRTM TPM log in coreboot tables
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

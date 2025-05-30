@@ -1,7 +1,7 @@
 From efc59cc0d0fbcc48a4314c4cb4d0e2d64af25c00 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 30 May 2025 12:17:40 +0200
-Subject: [PATCH 27/87] mb/pcengines/apu2: Measure PSP blobs if measured boot
+Subject: [PATCH 27/88] mb/pcengines/apu2: Measure PSP blobs if measured boot
  enabled
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

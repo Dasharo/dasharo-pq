@@ -1,7 +1,7 @@
 From 0ae0eb476fa663423bad60b66c60282efc40ca14 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 01:36:08 +0200
-Subject: [PATCH 09/87] configs: add support for bootorder files for PC Engines
+Subject: [PATCH 09/88] configs: add support for bootorder files for PC Engines
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

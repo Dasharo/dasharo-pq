@@ -1,7 +1,7 @@
 From ee47e35e030328fc88fd1eedc6a9211d46c0bbee Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 10 May 2018 23:57:21 +0200
-Subject: [PATCH 32/87] src/cpu: add option to include raw microcode binary to
+Subject: [PATCH 32/88] src/cpu: add option to include raw microcode binary to
  CBFS
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

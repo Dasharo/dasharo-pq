@@ -1,7 +1,7 @@
 From 296fece5006740aeae39e25f66b6f1360118fd0f Mon Sep 17 00:00:00 2001
 From: Timothy Pearson <tpearson@raptorengineering.com>
 Date: Mon, 13 Jun 2016 13:48:58 -0500
-Subject: [PATCH 34/87] nb/amd/pi/00730F01: Add initial native IVRS support
+Subject: [PATCH 34/88] nb/amd/pi/00730F01: Add initial native IVRS support
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

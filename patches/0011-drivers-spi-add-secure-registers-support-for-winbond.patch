@@ -1,7 +1,7 @@
 From 0625e390b88c8eca4cf9dd4667bbb4cfb3f5d37f Mon Sep 17 00:00:00 2001
 From: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Date: Wed, 22 Nov 2017 15:27:41 +0100
-Subject: [PATCH 11/87] drivers/spi: add secure registers support for winbond
+Subject: [PATCH 11/88] drivers/spi: add secure registers support for winbond
  chips
 
 Upstream-Status: Pending

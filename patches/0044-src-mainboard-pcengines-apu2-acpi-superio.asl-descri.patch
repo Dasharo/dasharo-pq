@@ -1,7 +1,7 @@
 From a543157797a73ba893eb71e77efabd1dd0b8189f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 24 May 2019 15:24:04 +0200
-Subject: [PATCH 44/87] src/mainboard/pcengines/apu2/acpi/superio.asl: describe
+Subject: [PATCH 44/88] src/mainboard/pcengines/apu2/acpi/superio.asl: describe
  serial ports
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

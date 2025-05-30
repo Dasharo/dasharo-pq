@@ -1,7 +1,7 @@
 From b00806c5bf01dce9c5b60511a295fd76fb830a81 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sat, 27 Jun 2020 21:01:55 +0200
-Subject: [PATCH 63/87] src/commonlib/include/commonlib/cbmem_id.h: add new ID
+Subject: [PATCH 63/88] src/commonlib/include/commonlib/cbmem_id.h: add new ID
  for DRTM TPM log
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

@@ -1,7 +1,7 @@
 From d5d36dcc82bfc41a9400fe64b9f769a175b17c07 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 30 May 2025 12:22:01 +0200
-Subject: [PATCH 30/87] mb/pcengines/apu2/mainboard.c: Configure IRQ7 for GPIO
+Subject: [PATCH 30/88] mb/pcengines/apu2/mainboard.c: Configure IRQ7 for GPIO
  controller
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

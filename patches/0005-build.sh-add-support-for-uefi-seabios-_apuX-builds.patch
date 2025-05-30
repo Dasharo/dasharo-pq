@@ -1,7 +1,7 @@
 From 26151d5a2a5c58164ca3cdb7d6a3495106becb2e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 4 Nov 2024 23:38:57 +0100
-Subject: [PATCH 05/87] build.sh: add support for {uefi,seabios}_apuX builds
+Subject: [PATCH 05/88] build.sh: add support for {uefi,seabios}_apuX builds
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

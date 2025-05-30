@@ -1,7 +1,7 @@
 From c7a62852e7dc9c3d200d39d2f215e27bf235fc29 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Mon, 7 Mar 2022 13:06:38 +0100
-Subject: [PATCH 78/87] src/northbridge/amd/pi/00730F01/northbridge.c: enable
+Subject: [PATCH 78/88] src/northbridge/amd/pi/00730F01/northbridge.c: enable
  PSP MMIO BARs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

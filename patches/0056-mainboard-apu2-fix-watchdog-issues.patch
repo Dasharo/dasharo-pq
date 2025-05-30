@@ -1,7 +1,7 @@
 From c5ea55e10da22548799b8a66cb043bed259ab14b Mon Sep 17 00:00:00 2001
 From: Krystian Hebel <krystian.hebel@3mdeb.com>
 Date: Tue, 31 Dec 2019 20:30:21 +0100
-Subject: [PATCH 56/87] mainboard/apu2: fix watchdog issues
+Subject: [PATCH 56/88] mainboard/apu2: fix watchdog issues
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

@@ -1,7 +1,7 @@
 From a6d61669fb5dfabd942db5020e97a806a6441a23 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 3 Apr 2020 13:33:39 +0200
-Subject: [PATCH 74/87] mainboard/pcengines: Use FMAP layout
+Subject: [PATCH 74/88] mainboard/pcengines: Use FMAP layout
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

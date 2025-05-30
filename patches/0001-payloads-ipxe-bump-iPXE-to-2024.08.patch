@@ -2,7 +2,7 @@ From 2b02c269362b0d0be2c533665b529fb9cacd9849 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3FPiotr=3D20Kr=3DC3=3DB3l=3F=3D?=
  <piotr.krol@3mdeb.com>
 Date: Mon, 3 Jun 2024 14:51:03 +0200
-Subject: [PATCH 01/87] payloads/ipxe: bump iPXE to 2024.08
+Subject: [PATCH 01/88] payloads/ipxe: bump iPXE to 2024.08
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

@@ -1,7 +1,7 @@
 From 6c9e25e78dc961427fb070947ed969d64db99cc3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Witwicki?= <michal.witwicki@3mdeb.com>
 Date: Thu, 19 Dec 2019 10:14:12 +0100
-Subject: [PATCH 55/87] mainboard/pcengines: add IOMMU status to bootorder_def
+Subject: [PATCH 55/88] mainboard/pcengines: add IOMMU status to bootorder_def
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

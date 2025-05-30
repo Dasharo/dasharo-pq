@@ -1,7 +1,7 @@
 From dfbb06159ee2b75fc8a967f356b3c2a74861b339 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 4 Jun 2019 14:21:15 +0200
-Subject: [PATCH 48/87] src/mainboard/pcengines/apu2/bootorder: add watchdog
+Subject: [PATCH 48/88] src/mainboard/pcengines/apu2/bootorder: add watchdog
  entries
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

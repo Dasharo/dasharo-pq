@@ -1,7 +1,7 @@
 From 8c0720ca6032b81ce9b9158bc858151a17311a1a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Wed, 24 Apr 2019 13:47:59 +0200
-Subject: [PATCH 43/87] src/northbridge/amd/pi/00730F01/pci_devs.h: add IOMMU
+Subject: [PATCH 43/88] src/northbridge/amd/pi/00730F01/pci_devs.h: add IOMMU
  and GNB devfn
 
 Upstream-Status: Pending

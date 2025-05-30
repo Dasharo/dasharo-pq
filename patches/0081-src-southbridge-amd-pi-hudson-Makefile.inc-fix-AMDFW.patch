@@ -1,7 +1,7 @@
 From da14b1ad66d3c9ed31737488fa48e228af6e7676 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Mon, 7 Oct 2019 15:41:52 +0200
-Subject: [PATCH 81/87] src/southbridge/amd/pi/hudson/Makefile.inc: fix AMDFW
+Subject: [PATCH 81/88] src/southbridge/amd/pi/hudson/Makefile.inc: fix AMDFW
  outside CBFS
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

@@ -1,7 +1,7 @@
 From 47f26f4eba473c9eac3d33869345ccf91eaacf48 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 13 May 2024 15:20:19 +0200
-Subject: [PATCH 17/87] mainboard/pcengines: enable power on after power
+Subject: [PATCH 17/88] mainboard/pcengines: enable power on after power
  failure
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

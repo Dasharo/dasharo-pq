@@ -1,7 +1,7 @@
 From 755bba1c1047f4267afc49fd15bde397f1e0e914 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 22 Dec 2017 17:01:34 +0100
-Subject: [PATCH 26/87] payloads/SeaBIOS: provide help for added SeaBIOS
+Subject: [PATCH 26/88] payloads/SeaBIOS: provide help for added SeaBIOS
  options
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

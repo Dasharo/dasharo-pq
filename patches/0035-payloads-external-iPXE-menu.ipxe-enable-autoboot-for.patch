@@ -1,7 +1,7 @@
 From ade0a0cbd3df2bb91380fb014ec851b4e73414bb Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 31 Aug 2018 10:37:01 +0200
-Subject: [PATCH 35/87] payloads/external/iPXE/menu.ipxe: enable autoboot for
+Subject: [PATCH 35/88] payloads/external/iPXE/menu.ipxe: enable autoboot for
  all interfaces
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

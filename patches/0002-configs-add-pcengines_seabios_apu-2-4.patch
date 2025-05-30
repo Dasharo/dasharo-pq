@@ -2,7 +2,7 @@ From 217888f5f22c4484638ed7cd48ba0cdbbd2238b3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3F=3D3D=3D3FUTF-8=3D3Fq=3D3FPiotr=3D3D20Kr?=
  =?UTF-8?q?=3D3DC3=3D3DB3l=3D3F=3D3D=3F=3D?= <>
 Date: Wed, 8 May 2024 13:32:17 +0200
-Subject: [PATCH 02/87] configs: add pcengines_seabios_apu{2,4}
+Subject: [PATCH 02/88] configs: add pcengines_seabios_apu{2,4}
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

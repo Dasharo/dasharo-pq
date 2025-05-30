@@ -1,7 +1,7 @@
 From 1e308d523f8168d6e01c7905d68486557ec5f0e9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 26 Feb 2019 12:04:12 +0100
-Subject: [PATCH 42/87] src/mainboard/pcengines/apu2/bootorder: add boost knobs
+Subject: [PATCH 42/88] src/mainboard/pcengines/apu2/bootorder: add boost knobs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

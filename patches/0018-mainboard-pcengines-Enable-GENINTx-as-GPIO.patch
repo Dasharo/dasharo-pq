@@ -1,7 +1,7 @@
 From 4a641872c09db7b154a7b7a8f9d1037b27bb66f5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 17:29:04 +0200
-Subject: [PATCH 18/87] mainboard/pcengines: Enable GENINTx as GPIO
+Subject: [PATCH 18/88] mainboard/pcengines: Enable GENINTx as GPIO
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

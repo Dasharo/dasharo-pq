@@ -1,7 +1,7 @@
 From cf9f5f8a1c2ad370596dde4b55b68f5b831ad942 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sat, 27 Jun 2020 21:01:31 +0200
-Subject: [PATCH 62/87] acpi: add DRTM table
+Subject: [PATCH 62/88] acpi: add DRTM table
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

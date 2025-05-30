@@ -1,7 +1,7 @@
 From de0e6e427776fef5142443271ea287c4f3590c15 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Wed, 30 Nov 2016 17:55:46 +0100
-Subject: [PATCH 16/87] mainboard/pcengines: add memory configuration and
+Subject: [PATCH 16/88] mainboard/pcengines: add memory configuration and
  status logging
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

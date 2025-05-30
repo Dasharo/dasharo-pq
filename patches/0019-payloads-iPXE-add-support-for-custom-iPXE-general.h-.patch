@@ -1,7 +1,7 @@
 From 5ba136d29a60d29d715b6ca30ec6df5c8a6973aa Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 5 Jul 2019 13:42:39 +0200
-Subject: [PATCH 19/87] payloads/iPXE: add support for custom iPXE general.h
+Subject: [PATCH 19/88] payloads/iPXE: add support for custom iPXE general.h
  and bootmenu file
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

@@ -1,7 +1,7 @@
 From 711d4be70a678bddbd21e847d6e4f60cd9c99c33 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Sun, 5 May 2024 00:35:25 +0200
-Subject: [PATCH 71/87] mainboard/pcengines: Update GPIO configuration and
+Subject: [PATCH 71/88] mainboard/pcengines: Update GPIO configuration and
  remove unused macros
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

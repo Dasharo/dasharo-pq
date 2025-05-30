@@ -1,7 +1,7 @@
 From 5bd1845d701eaf5ce2773019cf535e4cad8d21e2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 26 Feb 2019 12:03:34 +0100
-Subject: [PATCH 41/87] src/mainboard/pcengines/apu2/OemCustomize.c: make boost
+Subject: [PATCH 41/88] src/mainboard/pcengines/apu2/OemCustomize.c: make boost
  runtime configurable
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

@@ -1,7 +1,7 @@
 From d637847eb86af8ad2d4fce1adb75b4541f29731c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 11:55:33 +0200
-Subject: [PATCH 25/87] mainboard/pcengines: use bios knobs
+Subject: [PATCH 25/88] mainboard/pcengines: use bios knobs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

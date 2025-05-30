@@ -1,7 +1,7 @@
 From 3588eed727f4fc6bca527a69ec061ef3cbdceacf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 30 May 2019 12:02:48 +0200
-Subject: [PATCH 50/87] src/mainboard/pcengines/apu2/Kconfig: add necessary
+Subject: [PATCH 50/88] src/mainboard/pcengines/apu2/Kconfig: add necessary
  options for vboot
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

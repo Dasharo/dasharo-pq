@@ -1,7 +1,7 @@
 From 99137202cf1447f4204bb61e9f663c67f9680d5f Mon Sep 17 00:00:00 2001
 From: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
 Date: Thu, 16 Jul 2020 14:52:52 +0200
-Subject: [PATCH 67/87] mainboard/pcengines/apu2/: Add reversed PCI address
+Subject: [PATCH 67/88] mainboard/pcengines/apu2/: Add reversed PCI address
  order option
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]

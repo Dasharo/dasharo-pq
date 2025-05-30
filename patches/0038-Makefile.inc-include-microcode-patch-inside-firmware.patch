@@ -1,7 +1,7 @@
 From 3992e5cc8a3dedb4839b05dc785f8fa8403ff21e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 22 Nov 2018 12:29:52 +0100
-Subject: [PATCH 38/87] Makefile.inc: include microcode patch inside firmware
+Subject: [PATCH 38/88] Makefile.inc: include microcode patch inside firmware
  image
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

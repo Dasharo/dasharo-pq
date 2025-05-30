@@ -1,7 +1,7 @@
 From 02cd3557cfd6ae74f3767eb1349be5283b63fd53 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Thu, 29 May 2025 16:18:18 +0200
-Subject: [PATCH 84/87] add support for Dasharo(coreboot+SeaBIOS) for QEMU Q35
+Subject: [PATCH 84/88] add support for Dasharo(coreboot+SeaBIOS) for QEMU Q35
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

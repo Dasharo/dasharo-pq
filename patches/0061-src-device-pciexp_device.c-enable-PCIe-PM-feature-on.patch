@@ -1,7 +1,7 @@
 From 7ae4b2ce20b928f330a84ac7edcf264c44f588c2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sun, 26 Apr 2020 13:40:02 +0200
-Subject: [PATCH 61/87] src/device/pciexp_device.c: enable PCIe PM feature on
+Subject: [PATCH 61/88] src/device/pciexp_device.c: enable PCIe PM feature on
  demand
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

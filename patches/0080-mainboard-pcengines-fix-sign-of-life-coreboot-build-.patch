@@ -1,7 +1,7 @@
 From f8a0a0a6a6d1447367c077f328226d37af00edc7 Mon Sep 17 00:00:00 2001
 From: Mark Mentovai <mark@mentovai.com>
 Date: Sun, 5 Jun 2022 09:25:24 -0400
-Subject: [PATCH 80/87] mainboard/pcengines: fix sign-of-life coreboot build
+Subject: [PATCH 80/88] mainboard/pcengines: fix sign-of-life coreboot build
  date
 
 The coreboot build date shown by print_sign_of_life at early boot was

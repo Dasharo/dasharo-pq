@@ -1,7 +1,7 @@
 From 2e3ee8e81bd6c77fa2744dd866e325d6422c9453 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 13:32:03 +0200
-Subject: [PATCH 15/87] mainboard/pcengines: add function to check whether COM2
+Subject: [PATCH 15/88] mainboard/pcengines: add function to check whether COM2
  redirection enabled
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

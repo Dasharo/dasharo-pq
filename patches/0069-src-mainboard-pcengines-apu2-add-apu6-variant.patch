@@ -1,7 +1,7 @@
 From 3d5d96843fe085e128b6918544f6ba79eee4b25c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 25 Sep 2020 13:40:12 +0200
-Subject: [PATCH 69/87] src/mainboard/pcengines/apu2: add apu6 variant
+Subject: [PATCH 69/88] src/mainboard/pcengines/apu2: add apu6 variant
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

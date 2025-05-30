@@ -1,7 +1,7 @@
 From f0772ada5c92d91922abc01787cc2a7085df7d8b Mon Sep 17 00:00:00 2001
 From: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Date: Wed, 22 Nov 2017 15:26:10 +0100
-Subject: [PATCH 13/87] src/southbridge/amd/pi/hudson: use AMD common SPI block
+Subject: [PATCH 13/88] src/southbridge/amd/pi/hudson: use AMD common SPI block
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

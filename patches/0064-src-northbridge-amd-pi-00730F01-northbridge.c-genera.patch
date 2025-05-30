@@ -1,7 +1,7 @@
 From 9af1ceaa6ab5d9da388cc36c2d4e686fc448ea28 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sat, 27 Jun 2020 21:02:35 +0200
-Subject: [PATCH 64/87] src/northbridge/amd/pi/00730F01/northbridge.c: generate
+Subject: [PATCH 64/88] src/northbridge/amd/pi/00730F01/northbridge.c: generate
  DRTM table
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

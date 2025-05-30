@@ -1,7 +1,7 @@
 From cef59e7993d21fd9fdf9c38804b6d96364c3acdf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 1 Jun 2018 17:53:28 +0200
-Subject: [PATCH 33/87] src/mb/pcengines/apu: add custom SeaBIOS config
+Subject: [PATCH 33/88] src/mb/pcengines/apu: add custom SeaBIOS config
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

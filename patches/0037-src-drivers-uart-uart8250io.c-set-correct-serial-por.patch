@@ -1,7 +1,7 @@
 From c7a79369ac9837776a6ca0bd546f65067e86db18 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 27 Nov 2018 14:33:54 +0100
-Subject: [PATCH 37/87] src/drivers/uart/uart8250io.c: set correct serial port
+Subject: [PATCH 37/88] src/drivers/uart/uart8250io.c: set correct serial port
  index according to COM2 status
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

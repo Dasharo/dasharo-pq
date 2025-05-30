@@ -1,7 +1,7 @@
 From f935f4ea0669a2d4e746ae455f3ac8862bfef108 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 29 May 2025 16:18:18 +0200
-Subject: [PATCH 87/87] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
+Subject: [PATCH 87/88] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
 
 
 Upstream-Status: Inappropriate [Custom submodule]

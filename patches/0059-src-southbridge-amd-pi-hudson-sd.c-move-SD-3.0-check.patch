@@ -1,7 +1,7 @@
 From 000a2917c27d80c6d1ab77d5cb5761b1f80baf44 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Wed, 1 Apr 2020 17:36:43 +0200
-Subject: [PATCH 59/87] src/southbridge/amd/pi/hudson/sd.c: move SD 3.0 check
+Subject: [PATCH 59/88] src/southbridge/amd/pi/hudson/sd.c: move SD 3.0 check
  to southbridge
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

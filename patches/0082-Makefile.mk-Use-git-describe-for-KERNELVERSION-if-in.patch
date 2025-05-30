@@ -1,7 +1,7 @@
 From 051f96cacd0f9d35cc0393b0a59c6245bb9ae923 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 29 May 2025 16:16:54 +0200
-Subject: [PATCH 82/87] Makefile.mk: Use git describe for KERNELVERSION if in
+Subject: [PATCH 82/88] Makefile.mk: Use git describe for KERNELVERSION if in
  git repo
 
 Upstream-Status: Pending

@@ -1,7 +1,7 @@
 From 4b5ac03708787e34637f575fa957903c7ef37f81 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 13 May 2024 16:07:36 +0200
-Subject: [PATCH 24/87] mainboard/pcengines: use check_ehci0 in BiosCallOut
+Subject: [PATCH 24/88] mainboard/pcengines: use check_ehci0 in BiosCallOut
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

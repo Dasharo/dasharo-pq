@@ -1,7 +1,7 @@
 From adc21b16034b61d6c93d8b0286e038d4bb1e2f8c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 21 Nov 2016 23:45:47 +0100
-Subject: [PATCH 14/87] mainboard/pcengines: add support for getting sku and
+Subject: [PATCH 14/88] mainboard/pcengines: add support for getting sku and
  serial number
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

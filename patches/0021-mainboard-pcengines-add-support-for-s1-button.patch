@@ -1,7 +1,7 @@
 From 1b03955025fd9a3007526e35138398dd952f95af Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 18:23:46 +0200
-Subject: [PATCH 21/87] mainboard/pcengines: add support for s1 button
+Subject: [PATCH 21/88] mainboard/pcengines: add support for s1 button
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

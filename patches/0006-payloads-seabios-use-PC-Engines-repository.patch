@@ -1,7 +1,7 @@
 From f492e2d7156612d3766b1f9d8921a3a55f218ef5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Wed, 8 May 2024 13:40:23 +0200
-Subject: [PATCH 06/87] payloads/seabios: use PC Engines repository
+Subject: [PATCH 06/88] payloads/seabios: use PC Engines repository
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

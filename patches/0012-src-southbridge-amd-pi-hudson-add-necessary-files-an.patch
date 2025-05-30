@@ -1,7 +1,7 @@
 From fba5c432ce32c5bc745d8868e4c7404eb1f09c10 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 25 May 2021 12:05:11 +0200
-Subject: [PATCH 12/87] src/southbridge/amd/pi/hudson: add necessary files and
+Subject: [PATCH 12/88] src/southbridge/amd/pi/hudson: add necessary files and
  functions to use AMD SPI block
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

@@ -1,7 +1,7 @@
 From 50a7205c4ae8e43ce1b0176a26b04f66c5ca2531 Mon Sep 17 00:00:00 2001
 From: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
 Date: Fri, 23 Oct 2020 14:13:52 +0200
-Subject: [PATCH 70/87] pcengines/apu2/OemCustomize.c: Add specific PCIe order
+Subject: [PATCH 70/88] pcengines/apu2/OemCustomize.c: Add specific PCIe order
  config for apu2
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]

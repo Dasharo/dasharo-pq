@@ -1,7 +1,7 @@
 From 60638ee0557dcc546f32838051bb89e343c28b90 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 11:55:14 +0200
-Subject: [PATCH 10/87] mainboard/pcengines: add support for bios knobs
+Subject: [PATCH 10/88] mainboard/pcengines: add support for bios knobs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

@@ -1,7 +1,7 @@
 From bb3f5b3c60341c17cf75dd634799ca241ed97de1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 29 May 2025 16:18:18 +0200
-Subject: [PATCH 86/87] add dasharo-blobs submodule
+Subject: [PATCH 86/88] add dasharo-blobs submodule
 
 Upstream-Status: Inappropriate [Custom submodule]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>

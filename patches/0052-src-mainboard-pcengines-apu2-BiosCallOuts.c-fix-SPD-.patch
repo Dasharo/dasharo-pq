@@ -1,7 +1,7 @@
 From cca45187b7234eed99b43def2d18c846dec05439 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Mon, 3 Jun 2019 17:42:22 +0200
-Subject: [PATCH 52/87] src/mainboard/pcengines/apu2/BiosCallOuts.c: fix SPD
+Subject: [PATCH 52/88] src/mainboard/pcengines/apu2/BiosCallOuts.c: fix SPD
  retrieval when FMAP is used
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

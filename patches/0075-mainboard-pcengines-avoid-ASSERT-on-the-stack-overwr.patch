@@ -1,7 +1,7 @@
 From 6c819f6c3c14c7878446d7ca8ccbff80c3c3e766 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Thu, 2 May 2024 12:17:52 +0200
-Subject: [PATCH 75/87] mainboard/pcengines: avoid ASSERT on the stack
+Subject: [PATCH 75/88] mainboard/pcengines: avoid ASSERT on the stack
  overwrite during flashing bootorder
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

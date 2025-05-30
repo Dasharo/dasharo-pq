@@ -1,7 +1,7 @@
 From c58b396d4a70a8d3e2ae09a261fc481f092ce64f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 23 Jul 2019 15:52:35 +0200
-Subject: [PATCH 54/87] src/mainboard/pcengines/apu2/acpi: add GPIOs, LEDS and
+Subject: [PATCH 54/88] src/mainboard/pcengines/apu2/acpi: add GPIOs, LEDS and
  S1 button
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

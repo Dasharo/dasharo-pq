@@ -1,7 +1,7 @@
 From 86ac9900a76915fbfd1b917a97cd8f6a137e91de Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
 Date: Thu, 2 Jun 2022 17:42:14 +0200
-Subject: [PATCH 79/87] payloads/external/SeaBIOS: add bootorder in FMAP option
+Subject: [PATCH 79/88] payloads/external/SeaBIOS: add bootorder in FMAP option
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

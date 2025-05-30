@@ -1,7 +1,7 @@
 From 18b4bc4bb69dd627e9010946e689aa2eb526d854 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Tue, 27 Nov 2018 14:31:17 +0100
-Subject: [PATCH 36/87] src/mb/pcengines/apux/bootorder: prepare bootorder
+Subject: [PATCH 36/88] src/mb/pcengines/apux/bootorder: prepare bootorder
  files for COM2 runtime configuration
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

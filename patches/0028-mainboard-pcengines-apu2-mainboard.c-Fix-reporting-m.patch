@@ -1,7 +1,7 @@
 From 4981beb5e0f05d2ed44f7e8ce98960354ebe2f62 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Fri, 30 May 2025 12:18:41 +0200
-Subject: [PATCH 28/87] mainboard/pcengines/apu2/mainboard.c: Fix reporting
+Subject: [PATCH 28/88] mainboard/pcengines/apu2/mainboard.c: Fix reporting
  memory speed
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

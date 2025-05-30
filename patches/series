@@ -85,3 +85,4 @@
 0085-libpayload-Make-builds-reproducible-by-using-ffile-p.patch
 0086-add-dasharo-blobs-submodule.patch
 0087-use-3rdparty-dasharo-blobs-dasharo-dasharo.ipxe.patch
+0088-configs-config.pcengines_apu-Use-tagged-version-of-S.patch

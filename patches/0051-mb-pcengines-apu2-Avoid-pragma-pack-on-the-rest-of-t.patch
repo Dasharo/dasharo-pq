@@ -1,7 +1,7 @@
 From 5a6286c7eb3b908814ced0ce635fd6b95ec10f73 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
 Date: Tue, 21 Jun 2022 15:24:01 +0200
-Subject: [PATCH 51/87] mb/pcengines/apu2: Avoid pragma pack on the rest of the
+Subject: [PATCH 51/88] mb/pcengines/apu2: Avoid pragma pack on the rest of the
  file
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

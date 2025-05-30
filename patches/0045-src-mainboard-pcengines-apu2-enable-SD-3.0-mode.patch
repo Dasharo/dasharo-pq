@@ -1,7 +1,7 @@
 From da5012f5a71afdfc0711fa1b5e7752895ac01d04 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Mon, 20 May 2019 15:29:32 +0200
-Subject: [PATCH 45/87] src/mainboard/pcengines/apu2: enable SD 3.0 mode
+Subject: [PATCH 45/88] src/mainboard/pcengines/apu2: enable SD 3.0 mode
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

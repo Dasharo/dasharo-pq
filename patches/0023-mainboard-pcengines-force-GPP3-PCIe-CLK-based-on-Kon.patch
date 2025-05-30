@@ -1,7 +1,7 @@
 From c4f539da0c547365883dd00a3764391b55fc667e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Tue, 30 Apr 2024 15:36:21 +0200
-Subject: [PATCH 23/87] mainboard/pcengines: force GPP3 PCIe CLK based on
+Subject: [PATCH 23/88] mainboard/pcengines: force GPP3 PCIe CLK based on
  Konfig option for apu2
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

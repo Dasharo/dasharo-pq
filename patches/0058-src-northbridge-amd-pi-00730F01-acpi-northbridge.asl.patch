@@ -1,7 +1,7 @@
 From fa9982ef8494eb28ba25f3167240aadb22379a64 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Wed, 1 Apr 2020 16:49:30 +0200
-Subject: [PATCH 58/87] src/northbridge/amd/pi/00730F01/acpi/northbridge.asl:
+Subject: [PATCH 58/88] src/northbridge/amd/pi/00730F01/acpi/northbridge.asl:
  add missing device lost after rebase
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

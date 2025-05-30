@@ -1,7 +1,7 @@
 From ad4eb9ea411be3b057366bb7500dcac0f038b5bc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 30 May 2019 17:00:12 +0200
-Subject: [PATCH 47/87] src/mainboard/pcengines/apu2/bootorder: unify bootorder
+Subject: [PATCH 47/88] src/mainboard/pcengines/apu2/bootorder: unify bootorder
  for USB
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

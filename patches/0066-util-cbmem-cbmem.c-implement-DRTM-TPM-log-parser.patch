@@ -1,7 +1,7 @@
 From 19e672236e41c98101f9316ab4c10e26632d9cf7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Sun, 28 Jun 2020 19:22:30 +0200
-Subject: [PATCH 66/87] util/cbmem/cbmem.c: implement DRTM TPM log parser
+Subject: [PATCH 66/88] util/cbmem/cbmem.c: implement DRTM TPM log parser
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

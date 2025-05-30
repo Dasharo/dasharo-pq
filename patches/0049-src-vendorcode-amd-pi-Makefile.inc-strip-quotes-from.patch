@@ -1,7 +1,7 @@
 From 90dce9b09db78a37789351cc80ee48720635e827 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
 Date: Thu, 30 May 2019 11:44:11 +0200
-Subject: [PATCH 49/87] src/vendorcode/amd/pi/Makefile.inc: strip quotes from
+Subject: [PATCH 49/88] src/vendorcode/amd/pi/Makefile.inc: strip quotes from
  AGESA CBFS name
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

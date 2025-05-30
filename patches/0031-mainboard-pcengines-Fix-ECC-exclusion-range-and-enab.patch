@@ -1,7 +1,7 @@
 From f9d1a7ffe15691591a0052908595185efc5aca70 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 13 May 2024 23:18:13 +0200
-Subject: [PATCH 31/87] mainboard/pcengines: Fix ECC exclusion range and enable
+Subject: [PATCH 31/88] mainboard/pcengines: Fix ECC exclusion range and enable
  ECC scrubbing
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

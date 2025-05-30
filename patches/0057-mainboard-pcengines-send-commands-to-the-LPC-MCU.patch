@@ -1,7 +1,7 @@
 From 55c4de41be78a7e1d5b11c6bc243229cd90f934f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Fri, 3 May 2024 13:10:32 +0200
-Subject: [PATCH 57/87] mainboard/pcengines: send commands to the LPC MCU
+Subject: [PATCH 57/88] mainboard/pcengines: send commands to the LPC MCU
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

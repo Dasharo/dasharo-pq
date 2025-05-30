@@ -1,7 +1,7 @@
 From 8f3c20f9b4b3a5e84e2e8bd2eb6757a0408f6366 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
 Date: Wed, 28 Jul 2021 11:14:13 +0200
-Subject: [PATCH 77/87] pcengines/apu2: enable EHCI controller by default
+Subject: [PATCH 77/88] pcengines/apu2: enable EHCI controller by default
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

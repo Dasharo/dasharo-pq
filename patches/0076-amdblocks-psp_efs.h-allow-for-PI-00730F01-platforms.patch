@@ -1,7 +1,7 @@
 From d72b66a93fd27ed86cd5fb951077c29ef4b594db Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
 Date: Fri, 3 Sep 2021 15:03:06 +0200
-Subject: [PATCH 76/87] amdblocks/psp_efs.h: allow for PI 00730F01 platforms
+Subject: [PATCH 76/88] amdblocks/psp_efs.h: allow for PI 00730F01 platforms
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

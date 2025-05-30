@@ -1,7 +1,7 @@
 From b415a04cd5baae441ee74ac07fbdaec4811b2678 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Piotr=20Kr=C3=B3l?= <piotr.krol@3mdeb.com>
 Date: Mon, 6 May 2024 01:27:38 +0200
-Subject: [PATCH 07/87] payloads: add support for sortbootorder
+Subject: [PATCH 07/88] payloads: add support for sortbootorder
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

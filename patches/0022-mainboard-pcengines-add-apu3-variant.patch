@@ -2,7 +2,7 @@ From a3166ab1edf6f81b83498206e2d18ee2ebeffb5c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=3D=3FUTF-8=3Fq=3FPiotr=3D20Kr=3DC3=3DB3l=3F=3D?=
  <piotr.krol@3mdeb.com>
 Date: Thu, 2 May 2024 23:09:19 +0200
-Subject: [PATCH 22/87] mainboard/pcengines: add apu3 variant
+Subject: [PATCH 22/88] mainboard/pcengines: add apu3 variant
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
