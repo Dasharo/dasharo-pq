@@ -11,7 +11,7 @@ Upstream-Status: Inappropriate [The script should be placed elsewhere]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/build.sh b/build.sh
 new file mode 100644
-index 0000000000..6e8ec41f2f
+index 0000000000..2027f6aaf3
 --- /dev/null
 +++ b/build.sh
 @@ -0,0 +1,398 @@
@@ -47,7 +47,7 @@ index 0000000000..6e8ec41f2f
 +}
 +
 +SDKVER="2024-02-18_732134932b"
-+DASHARO_SDK=${DASHARO_SDK:-"ghcr.io/dasharo/dasharo-sdk:latest"}
++DASHARO_SDK=${DASHARO_SDK:-"ghcr.io/dasharo/dasharo-sdk:v1.6.0"}
 +
 +function build_optiplex_9010 {
 +  DEFCONFIG=$1
