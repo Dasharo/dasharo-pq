@@ -11,10 +11,10 @@ Upstream-Status: Inappropriate [The script should be placed elsewhere]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/build.sh b/build.sh
 new file mode 100644
-index 0000000000..2027f6aaf3
+index 0000000000..c87594d395
 --- /dev/null
 +++ b/build.sh
-@@ -0,0 +1,398 @@
+@@ -0,0 +1,399 @@
 +#!/bin/bash
 +
 +set -euo pipefail
@@ -206,8 +206,9 @@ index 0000000000..2027f6aaf3
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
++    -e BUILD_TIMELESS=${BUILD_TIMELESS} \
 +    -w /home/coreboot/coreboot ${DASHARO_SDK} \
-+    /bin/bash -c "make olddefconfig && make -j$(nproc)"
++    /bin/bash -c "make olddefconfig && make BUILD_TIMELESS=${BUILD_TIMELESS} -j$(nproc)"
 +
 +  cp build/coreboot.rom pcengines_${VARIANT}_${FW_VERSION}.rom
 +  if [ $? -eq 0 ]; then
