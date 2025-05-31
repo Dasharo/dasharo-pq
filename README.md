@@ -48,7 +48,7 @@ In this case re plan to build Dasharo (coreboot+SeaBIOS) v24.08.00.01 for PC
 Engines:
 
 ```bash
-git checkout v24.08.00.01
+git checkout 24.08.00.01
 ```
 
 Get back to coreboot main directory:
