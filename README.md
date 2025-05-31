@@ -125,8 +125,8 @@ git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 After applying all patches binaries for all platforms can be build:
 
 ```sh
-./build.sh seabios_apu2 && ./build.sh seabios_apu3 && ./build.sh seabios_apu4 \
-&& ./build.sh seabios_apu6
+export BUILD_TIMELESS=1 && ./build.sh seabios_apu2 && ./build.sh seabios_apu3\
+&& ./build.sh seabios_apu4 && ./build.sh seabios_apu6
 ```
 
 ## Development
