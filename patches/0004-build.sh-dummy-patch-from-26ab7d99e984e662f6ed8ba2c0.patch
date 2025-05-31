@@ -9,17 +9,12 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [The script should be placed elsewhere]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- build.sh | 397 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 397 insertions(+)
- create mode 100644 build.sh
-
 diff --git a/build.sh b/build.sh
 new file mode 100644
-index 0000000000..1115d4751b
+index 0000000000..6e8ec41f2f
 --- /dev/null
 +++ b/build.sh
-@@ -0,0 +1,397 @@
+@@ -0,0 +1,398 @@
 +#!/bin/bash
 +
 +set -euo pipefail
@@ -244,6 +239,7 @@ index 0000000000..1115d4751b
 +
 +  docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
 +    -v $HOME/.ssh:/home/coreboot/.ssh \
++    -e BUILD_TIMELESS=${BUILD_TIMELESS} \
 +    -w /home/coreboot/coreboot ${DASHARO_SDK} \
 +    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +
@@ -417,6 +413,3 @@ index 0000000000..1115d4751b
 +        usage
 +        ;;
 +esac
--- 
-2.49.0
-
