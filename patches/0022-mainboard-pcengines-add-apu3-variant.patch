@@ -9,24 +9,19 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should be payload's feature]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c                 | 9 +++++++++
- src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb | 2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 8cff46bb0c..4f8d76539c 100644
+index 7eba4cf3a03c..accf9bb37fd2 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -26,6 +26,7 @@
- #include <spi_flash.h>
+@@ -21,6 +21,7 @@
+ #include <spd_bin.h>
+ #include <AGESA.h>
  #include "gpio_ftns.h"
- #include "bios_knobs.h"
 +#include "s1_button.h"
  
  #define SPD_SIZE  128
- #define PM_RTC_CONTROL		0x56
-@@ -299,6 +300,14 @@ static void mainboard_final(void *chip_info)
+ #define PM_RTC_CONTROL	    0x56
+@@ -309,6 +310,14 @@ static void mainboard_final(void *chip_info)
  	//
  	gpio_set(GPIO_58, 1);
  	gpio_set(GPIO_59, 1);
@@ -42,7 +37,7 @@ index 8cff46bb0c..4f8d76539c 100644
  
  /*
 diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
-index 5c169208b9..eb0777b489 100644
+index 5c169208b9cf..eb0777b489ce 100644
 --- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
 +++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
 @@ -3,7 +3,7 @@
@@ -54,6 +49,3 @@ index 5c169208b9..eb0777b489 100644
  		device ref gpp_bridge_0		on end	# mPCIe slot 2 (on GFX lane)
  		device ref gpp_bridge_1		on end	# LAN3
  		device ref gpp_bridge_2		on end	# LAN2
--- 
-2.49.0
-

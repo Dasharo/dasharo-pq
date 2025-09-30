@@ -15,16 +15,12 @@ the system in case of unexpected power outages.
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 9f5f53c263..09a6605d0a 100644
+index 2b6eec30a3ae..13b5472320b2 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -28,8 +28,10 @@
- #include "bios_knobs.h"
+@@ -23,8 +23,9 @@
+ #include "gpio_ftns.h"
  
  #define SPD_SIZE  128
 -#define PM_RTC_CONTROL	    0x56
@@ -32,19 +28,16 @@ index 9f5f53c263..09a6605d0a 100644
 +#define PM_RTC_CONTROL		0x56
 +#define PM_RTC_SHADOW		0x5B
 +#define PM_S_STATE_CONTROL	0xBA
-+
- #define SEC_REG_SERIAL_ADDR	0x1000
- #define MAX_SERIAL_LEN		10
  
-@@ -276,6 +278,8 @@ static void mainboard_enable(struct device *dev)
+ /***********************************************************
+  * These arrays set up the FCH PCI_INTR registers 0xC00/0xC01.
+@@ -288,6 +289,9 @@ static void mainboard_enable(struct device *dev)
  	//
  	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
  
 +	/* Enable power on after power fail */
 +	pm_write8(PM_RTC_SHADOW, pm_read8(PM_RTC_SHADOW) | (1 << 0));
- 
- 
- 
--- 
-2.49.0
-
++
+ 	/* Initialize the PIRQ data structures for consumption */
+ 	pirq_setup();
+ #if CONFIG(GENERATE_SMBIOS_TABLES)

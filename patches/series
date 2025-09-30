@@ -1,37 +1,172 @@
-0001-payloads-ipxe-bump-iPXE-to-2024.08.patch
-0002-configs-add-pcengines_seabios_apu-2-4.patch
-0003-configs-add-pcengines_seabios_apu3.patch
+#
+# Dasharo patch queue on top of coreboot
+# Upstream at https://review.coreboot.org/coreboot
+#
+# In an effort to reduce future work of upgrading coreboot versions, all
+# patches in this queue require a justification as to why they can't/won't be
+# upstreamed, with the implication that everything else should be upstreamed.
+#
+# Following queue is WIP in sense that division of the code may not be done
+# well. What is confirmed is that 25.08.00.01 passed full LTS suite for
+# apu2,3,4 and 6. Then we can build on that cleaning this repository and
+# ordering patches in a ways that will minimize delta with usptream.
+#
+# All patches should follow the guidelines listed here:
+#       https://docs.dasharo.com/dev-proc/source-code-structure/#commit-message-guidelines
+# in particular with respect to a description and S-o-b lines, with the
+# exception of temporary debugging patches, which should contain at least a GH
+# issues reference.
+#
+# Overview of sections:
+# * Dasharo build system integration.
+#       **Minimal Upstream makefile hacks**
+# * Upstream patches.
+#       Verbatim patches from upstream, possibly with tweaks because of backporting
+# * Patches for upstream.
+#       Most patches should be in this section, especially new ones.  By using
+#       this section, you are assuming responsibility for getting the patches
+#       included upstream, and will be periodically chased by the patch queue
+#       maintainer.
+# * Un-upstreamable patches.
+#       Default tweaks, etc.  Should be minimal.
+# * Technical debt.
+#       Legacy patches brought forward from the past.  This section should
+#       never increase, and should progressively decrease.  **Remove when empty**
+# * Debugging patches.
+#       Temporary debugging patches, which must contain a CA reference.  Before
+#       closing a ticket, you are expected to remove debugging patches.
+################################################################################
+# Dasharo build system integration
+#
+# Q for Andrew: this is copy of Dasharo build.sh script, it seem it may change
+# between releases, some changes needed for this build system are introduced
+# it is very likely we will have update it every releases. How this should be
+# maintained?
+
+# A: this is build system integration, guilt fold <patch> (delete patch you
+# point to, put it into current patch and remove deleted patch from series) we
+# should not add git ref from Dasharo/coreboot into patch name, git fold merge
+# two commit messages wich is not useful, so typically after folding we remove,
+#
+
+# creating new parch is with guilt new
 0004-build.sh-dummy-patch-from-26ab7d99e984e662f6ed8ba2c0.patch
 0005-build.sh-add-support-for-uefi-seabios-_apuX-builds.patch
-0006-payloads-seabios-use-PC-Engines-repository.patch
-0007-payloads-add-support-for-sortbootorder.patch
-0008-mainboard-pcengines-Add-support-for-bootorder-files-.patch
-0009-configs-add-support-for-bootorder-files-for-PC-Engin.patch
-0010-mainboard-pcengines-add-support-for-bios-knobs.patch
-0011-drivers-spi-add-secure-registers-support-for-winbond.patch
-0012-src-southbridge-amd-pi-hudson-add-necessary-files-an.patch
-0013-src-southbridge-amd-pi-hudson-use-AMD-common-SPI-blo.patch
-0014-mainboard-pcengines-add-support-for-getting-sku-and-.patch
-0015-mainboard-pcengines-add-function-to-check-whether-CO.patch
-0016-mainboard-pcengines-add-memory-configuration-and-sta.patch
-0017-mainboard-pcengines-enable-power-on-after-power-fail.patch
-0018-mainboard-pcengines-Enable-GENINTx-as-GPIO.patch
+#
+# Dependencies
+# Q for Andrew: this may happen every release
+#
+# iPXE
+# This may be considered part of build infrastructure
+# A: would treat it as build infrastructure
+0001-payloads-ipxe-bump-iPXE-to-2024.08.patch
 0019-payloads-iPXE-add-support-for-custom-iPXE-general.h-.patch
 0020-payloads-iPXE-Update-Makefile.inc-to-change-PXE-ROM-.patch
+
+
+#
+# Configs
+# Q for Andrew: I guess we have to do something with placing configs in correct
+# place/order
+#
+0002-configs-add-pcengines_seabios_apu-2-4.patch
+0003-configs-add-pcengines_seabios_apu3.patch
+#
+# Build system adjustment, we change remote to get our patches for SeaBIOS and
+# PC Engines specific payload sortbootorder.
+#
+# Q for Andrew: Maybe SeaBIOS patches also should be maintained in a patchqueue
+# way?
+#
+0006-payloads-seabios-use-PC-Engines-repository.patch
+0007-payloads-add-support-for-sortbootorder.patch
+
+#
+# This is probably first change that make some sense from coreboot perspective,
+# but it is also unupstreamable, because of technical debt and specific payload
+# we use (sortbootorder) we have different way of manage various things
+# inclding bootorder, it happen through some standard files and customer
+# extension or additional files in CBFS, which can be handled by SeaBIOS and
+# sortbootorder.
+#
+#
+# This is technical debt, because there are more modern ways to handle
+# configuration upstream, which involve VPD or UEFI Variables, but to use that
+# we would have to teach SeaBIOS and sortbootorder using that.
+#
+
+# Version of bootorder_def added here is changed a lot of times until achieving
+# final version in this series, it could be handled better by stashing and
+# delivering final version in this patch.
+0008-mainboard-pcengines-Add-support-for-bootorder-files-.patch
+# This one probably should be stashed with previous one.
+0009-configs-add-support-for-bootorder-files-for-PC-Engin.patch
+# This is clear patch for handling our custom persisitent configuration system
+0010-mainboard-pcengines-add-support-for-bios-knobs.patch
+0015-mainboard-pcengines-add-function-to-check-whether-CO.patch
+
+# Feature in SPI for Winbond security registers
+0011-drivers-spi-add-secure-registers-support-for-winbond.patch
+
+#
+# SoC/chipset code
+#
+0012-src-southbridge-amd-pi-hudson-add-necessary-files-an.patch
+0013-src-southbridge-amd-pi-hudson-use-AMD-common-SPI-blo.patch
+# it depends on knobs, commmit message is misleading
+0034-nb-amd-pi-00730F01-Add-initial-native-IVRS-support.patch
+
+#
+# PC Engines mainabord sepecific code
+#
+# Fixes
+0028-mainboard-pcengines-apu2-mainboard.c-Fix-reporting-m.patch
+
+0016-mainboard-pcengines-add-memory-configuration-and-sta.patch
+
+# This patchs has two more defines it adds, what is unncecessary
+# always optimize for reduced diff, alignment is not priority
+# in this the case is to not change alignment in other line
+# and limit patch only to changes this patch should contain
+0017-mainboard-pcengines-enable-power-on-after-power-fail.patch
+0018-mainboard-pcengines-Enable-GENINTx-as-GPIO.patch
 0021-mainboard-pcengines-add-support-for-s1-button.patch
+#
+# This patch does not contain what is say so:
+# - there is S1 button handling in case of disabled concole
+# - there is apu3 iommu disabling here
 0022-mainboard-pcengines-add-apu3-variant.patch
 0023-mainboard-pcengines-force-GPP3-PCIe-CLK-based-on-Kon.patch
 0024-mainboard-pcengines-use-check_ehci0-in-BiosCallOut.patch
 0025-mainboard-pcengines-use-bios-knobs.patch
-0026-payloads-SeaBIOS-provide-help-for-added-SeaBIOS-opti.patch
 0027-mb-pcengines-apu2-Measure-PSP-blobs-if-measured-boot.patch
-0028-mainboard-pcengines-apu2-mainboard.c-Fix-reporting-m.patch
 0029-mainboard-pcengines-apu2-mainboard.c-Handle-IOMMU-st.patch
 0030-mb-pcengines-apu2-mainboard.c-Configure-IRQ7-for-GPI.patch
+
+#
+# Submitted
+#
+# Following patches were submitted:
+# 0064-src-northbridge-amd-pi-00730F01-northbridge.c-genera.patch
+# 0063-src-commonlib-include-commonlib-cbmem_id.h-add-new-I.patch
+# 0031-mainboard-pcengines-Fix-ECC-exclusion-range-and-enab.patch
+# 0039-payloads-iPXE-option-for-reproducible-building.patch
+# 0081-src-southbridge-amd-pi-hudson-Makefile.inc-fix-AMDFW.patch
+# 0065-coreboot_table-include-DRTM-TPM-log-in-coreboot-tabl.patch
+# 0066-util-cbmem-cbmem.c-implement-DRTM-TPM-log-parser.patch
+# 0062-acpi-add-DRTM-table.patch
 0031-mainboard-pcengines-Fix-ECC-exclusion-range-and-enab.patch
-0032-src-cpu-add-option-to-include-raw-microcode-binary-t.patch
+
+#
+# SeaBIOS
+#
+# This patch contain additional changes related to bootorder_def
+0026-payloads-SeaBIOS-provide-help-for-added-SeaBIOS-opti.patch
 0033-src-mb-pcengines-apu-add-custom-SeaBIOS-config.patch
-0034-nb-amd-pi-00730F01-Add-initial-native-IVRS-support.patch
+
+# Custom features
+0032-src-cpu-add-option-to-include-raw-microcode-binary-t.patch
+
 0035-payloads-external-iPXE-menu.ipxe-enable-autoboot-for.patch
 0036-src-mb-pcengines-apux-bootorder-prepare-bootorder-fi.patch
 0037-src-drivers-uart-uart8250io.c-set-correct-serial-por.patch

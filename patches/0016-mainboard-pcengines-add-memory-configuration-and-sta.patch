@@ -17,13 +17,8 @@ systems and meets customer expectations.
 
 Upstream-Status: Inappropriate [Custom prints that are not necessary]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/lib/Makefile.mk                      |  1 +
- src/mainboard/pcengines/apu2/mainboard.c | 32 +++++++++++++++++++++++-
- 2 files changed, 32 insertions(+), 1 deletion(-)
-
 diff --git a/src/lib/Makefile.mk b/src/lib/Makefile.mk
-index 56d8b1afd5..a983390b4e 100644
+index 56d8b1afd57d..a983390b4ed3 100644
 --- a/src/lib/Makefile.mk
 +++ b/src/lib/Makefile.mk
 @@ -359,6 +359,7 @@ $(foreach stage,$(libhwbase-stages), \
@@ -35,19 +30,19 @@ index 56d8b1afd5..a983390b4e 100644
  ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
  LIB_SPD_BIN = $(obj)/spd.bin
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 1c3f80acb8..9f5f53c263 100644
+index f5ecfa5b1ca7..2b6eec30a3ae 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -21,6 +21,8 @@
+@@ -17,6 +17,8 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
  #include <stdio.h>
 +#include <cpu/amd/mtrr.h>
 +#include <spd_bin.h>
- #include <spi_flash.h>
+ #include <AGESA.h>
  #include "gpio_ftns.h"
- #include "bios_knobs.h"
-@@ -236,10 +238,34 @@ static int mainboard_smbios_data(struct device *dev, int *handle,
+ 
+@@ -248,10 +250,34 @@ static int mainboard_smbios_data(struct device *dev, int *handle,
  static void mainboard_enable(struct device *dev)
  {
  	/* Maintain this text unchanged for manufacture process. */
@@ -83,17 +78,3 @@ index 1c3f80acb8..9f5f53c263 100644
  	//
  	// Enable the RTC output
  	//
-@@ -250,6 +276,10 @@ static void mainboard_enable(struct device *dev)
- 	//
- 	pm_write16(PM_S_STATE_CONTROL, pm_read16(PM_S_STATE_CONTROL) | (1 << 14));
- 
-+
-+
-+
-+
- 	/* Initialize the PIRQ data structures for consumption */
- 	pirq_setup();
- #if CONFIG(GENERATE_SMBIOS_TABLES)
--- 
-2.49.0
-
