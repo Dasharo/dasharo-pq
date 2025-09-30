@@ -141,6 +141,28 @@ export BUILD_TIMELESS=1 && ./build.sh seabios_apu2 && ./build.sh seabios_apu3\
 
 Read `man guilt-pop` for efficient popping.
 
+### How to fix broken `guilt push -a` after modification?
+
+Sometimes modifying patch means follow up patches stop applying. Example:
+
+```
+% guilt push -a
+Applying patch..0017-mainboard-pcengines-enable-power-on-after-power-fail.patch
+error: patch failed: src/mainboard/pcengines/apu2/mainboard.c:276
+error: src/mainboard/pcengines/apu2/mainboard.c: patch does not apply
+To force apply this patch, use 'guilt push -f'
+```
+
+* Force apply by `guilt push -f`.
+* Open reject file, in the examples it would be
+`src/mainboard/pcengines/apu2/mainboard.c.rej` and target file
+`src/mainboard/pcengines/apu2/mainboard.c`.
+* Add modifications manually.
+* `guilt refresh` to save changes in patchqueue
+* `guilt push -a` to continue with applying patches
+
+
+
 ### How to avoid coreboot version issues?
 
 coreboot version is built using output from `git describe`. After applying out
