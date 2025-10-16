@@ -1,0 +1,40 @@
+From 12619a9b53d695642c99817fc157959abaed9d18 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 7 Oct 2025 13:36:19 +0200
+Subject: [PATCH] sb600spi: Check if SPI BAR register has valid value
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On systems where AMD ROM Armor is enabled, the SPI BAR register in
+LPC PCI configuration space reads as all FFs. Check if the register
+reads as all FFs and bail out early if we detect that the SPI base
+address is not valid.
+
+TEST=Flashrom does not attempt to access incorrect physical address
+on Gigabyte MZ33-AR1 running vendor BIOS with ROM Armor enabled.
+
+Change-Id: I139ea849d6147ea8e8c26ace03627b30f5297267
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ sb600spi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sb600spi.c b/sb600spi.c
+index 2fbaf4c97750..e8580dc8c261 100644
+--- a/sb600spi.c
++++ b/sb600spi.c
+@@ -660,6 +660,10 @@ int sb600_probe_spi(const struct programmer_cfg *cfg, struct pci_dev *dev)
+ 
+ 	/* Read SPI_BaseAddr */
+ 	tmp = pci_read_long(dev, 0xa0);
++	/* If the BAR register is 0xffffffff, ROM Armor is likely active. */
++	if (tmp == UINT32_MAX)
++		return 0;
++
+ 	if (amd_gen >= CHIPSET_YANGTZE)
+ 		tmp &= 0xffffffc0;	/* remove bits 5-0 */
+ 	else
+-- 
+2.51.0
+

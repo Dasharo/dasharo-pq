@@ -1,0 +1,31 @@
+From a961af7a39138216660b410a4a0bec48ef0fdd35 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 29 Oct 2024 13:20:03 +0100
+Subject: [PATCH] chipset_enable.c: Add TGL chipset detection based on SPI PCI
+ ID
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Icb704032fe1560a71e66cb5c596aca6b65cade3d
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ chipset_enable.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/chipset_enable.c b/chipset_enable.c
+index 5d4bbaab8c33..a8685c2873b2 100644
+--- a/chipset_enable.c
++++ b/chipset_enable.c
+@@ -2223,6 +2223,8 @@ const struct penable chipset_enables[] = {
+ 	{0x8086, 0x0284, B_S,    DEP, "Intel", "Comet Lake U Premium",		enable_flash_pch400},
+ 	{0x8086, 0x0285, B_S,    DEP, "Intel", "Comet Lake U Base",		enable_flash_pch400},
+ 	{0x8086, 0xa082, B_S,    DEP, "Intel", "Tiger Lake U Premium",		enable_flash_pch500},
++	{0x8086, 0xa0a4, B_S,    DEP, "Intel", "Tiger Lake LP",			enable_flash_pch500},
++	{0x8086, 0x43a4, B_S,    DEP, "Intel", "Tiger Lake H",			enable_flash_pch500},
+ 	{0x8086, 0xa141, B_S,    NT,  "Intel", "Sunrise Point Desktop Sample",	enable_flash_pch100},
+ 	{0x8086, 0xa142, B_S,    NT,  "Intel", "Sunrise Point Unknown Sample",	enable_flash_pch100},
+ 	{0x8086, 0xa143, B_S,    DEP, "Intel", "H110",				enable_flash_pch100},
+-- 
+2.51.0
+

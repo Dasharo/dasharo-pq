@@ -1,0 +1,25 @@
+From 5b4a5b40bc091fb25c4cb2976a334e44c6199008 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 15 Mar 2024 15:16:11 +0100
+Subject: [PATCH] Update sb600spi.c
+
+---
+ sb600spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sb600spi.c b/sb600spi.c
+index 56c05ba3d3ba..2fbaf4c97750 100644
+--- a/sb600spi.c
++++ b/sb600spi.c
+@@ -761,7 +761,7 @@ int sb600_probe_spi(const struct programmer_cfg *cfg, struct pci_dev *dev)
+ 	msg_pdbg("\n");
+ 
+ 	if (((tmp >> 22) & 0x1) == 0 || ((tmp >> 23) & 0x1) == 0) {
+-		msg_perr("ERROR: State of SpiAccessMacRomEn or SpiHostAccessRomEn prohibits full access.\n");
++		msg_perr("State of SpiAccessMacRomEn or SpiHostAccessRomEn prohibits full access.\n");
+ 		/* Proceed on Yangtze or newer, we will catch SPI transaction
+ 		 * errors with illegal access bit
+ 		 */
+-- 
+2.51.0
+

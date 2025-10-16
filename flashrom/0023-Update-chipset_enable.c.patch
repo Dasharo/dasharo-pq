@@ -1,0 +1,25 @@
+From 32fba75ecb0628951c34e4cdab9fc42db9fa9b3a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 15 Mar 2024 15:15:14 +0100
+Subject: [PATCH] Update chipset_enable.c
+
+---
+ chipset_enable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/chipset_enable.c b/chipset_enable.c
+index 25414de83ab3..5d4bbaab8c33 100644
+--- a/chipset_enable.c
++++ b/chipset_enable.c
+@@ -1535,7 +1535,7 @@ static int enable_flash_fch(const struct programmer_cfg *cfg, struct pci_dev *de
+ 		}
+ 
+ 		if (ret != 0)
+-			msg_pwarn("ROM Protect registers are active and locked\n");
++			msg_pwarn("ROM Protect registers are active%s\n", spi_alt_cs & 0x20 ? " and locked" : "");
+ 	}
+ 
+ 	if (write_prot) {
+-- 
+2.51.0
+

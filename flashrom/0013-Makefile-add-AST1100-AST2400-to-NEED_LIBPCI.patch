@@ -1,0 +1,32 @@
+From 04c614ea1c5c7a8b22c182133fa7409c67c75546 Mon Sep 17 00:00:00 2001
+From: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+Date: Thu, 1 Dec 2022 23:35:53 +0100
+Subject: [PATCH] Makefile: add AST1100, AST2400 to NEED_LIBPCI
+
+Change-Id: I3eba9bf58ebfdf02dc3c8c54643c09f0a9a0a53f
+Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+---
+ Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 4d85abbe974d..67a2ac9eef9f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -652,11 +652,13 @@ endif
+ ifeq ($(CONFIG_AST1100), yes)
+ FEATURE_FLAGS += -D'CONFIG_AST1100=1'
+ PROGRAMMER_OBJS += ast1100.o
++NEED_LIBPCI += CONFIG_AST1100
+ endif
+ 
+ ifeq ($(CONFIG_AST2400), yes)
+ FEATURE_FLAGS += -D'CONFIG_AST2400=1'
+ PROGRAMMER_OBJS += ast2400.o
++NEED_LIBPCI += CONFIG_AST2400
+ endif
+ 
+ ifeq ($(CONFIG_SATASII), yes)
+-- 
+2.51.0
+

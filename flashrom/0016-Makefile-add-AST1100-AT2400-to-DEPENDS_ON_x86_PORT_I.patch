@@ -1,0 +1,27 @@
+From 7567e3ed3dc283da920c5575b939c642e5ea0b7f Mon Sep 17 00:00:00 2001
+From: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+Date: Tue, 10 Jan 2023 13:49:16 +0100
+Subject: [PATCH] Makefile: add AST1100, AT2400 to DEPENDS_ON_x86_PORT_IO
+
+Change-Id: Ib24dfd4f4e72da346a0e2db11d598c73ef5bc051
+Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+---
+ Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 0321d8b44468..9e843714b1ed 100644
+--- a/Makefile
++++ b/Makefile
+@@ -128,6 +128,8 @@ DEPENDS_ON_X86_MSR := \
+ 	CONFIG_INTERNAL_X86 \
+ 
+ DEPENDS_ON_X86_PORT_IO := \
++	CONFIG_AST1100 \
++	CONFIG_AST2400 \
+ 	CONFIG_ATAHPT \
+ 	CONFIG_ATAPROMISE \
+ 	CONFIG_INTERNAL_X86 \
+-- 
+2.51.0
+

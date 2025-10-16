@@ -1,0 +1,38 @@
+From 5e0c6fc3086149b851fb8e9ceb47ea5ce69dc1b2 Mon Sep 17 00:00:00 2001
+From: Karol Zmyslowski <karol.zmyslowski@3mdeb.com>
+Date: Mon, 9 Jan 2023 17:05:46 +0100
+Subject: [PATCH] Revert "ast[1100,2400].c: drop hwaccess_x86_io.h"
+
+This reverts commit 5111246d8dab57249148e08509b58e9f82056521.
+---
+ ast1100.c | 1 +
+ ast2400.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/ast1100.c b/ast1100.c
+index 3aa16efe2605..c73b4d7c8758 100644
+--- a/ast1100.c
++++ b/ast1100.c
+@@ -25,6 +25,7 @@
+ #include "platform/pci.h"
+ #include "hwaccess_physmap.h"
+ #include "platform/pci.h"
++#include "hwaccess_x86_io.h"
+ 
+ #define PCI_VENDOR_ID_ASPEED		0x1a03
+ 
+diff --git a/ast2400.c b/ast2400.c
+index 1c7280f741d8..87184f584da8 100644
+--- a/ast2400.c
++++ b/ast2400.c
+@@ -24,6 +24,7 @@
+ #include "programmer.h"
+ #include "platform/pci.h"
+ #include "hwaccess_physmap.h"
++#include "hwaccess_x86_io.h"
+ 
+ #define PCI_VENDOR_ID_ASPEED		0x1a03
+ 
+-- 
+2.51.0
+

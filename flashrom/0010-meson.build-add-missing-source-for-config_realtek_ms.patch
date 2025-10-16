@@ -1,0 +1,29 @@
+From 81d507caa4e280289de458b9c615b71ddbcc4389 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tomasz=20=C5=BByjewski?= <tomasz.zyjewski@3mdeb.com>
+Date: Thu, 27 Oct 2022 12:32:49 +0200
+Subject: [PATCH] meson.build: add missing source for
+ config_realtek_mst_i2c_spi
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Tomasz Żyjewski <tomasz.zyjewski@3mdeb.com>
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index f5f60808f07c..a01b93f4cbba 100644
+--- a/meson.build
++++ b/meson.build
+@@ -218,6 +218,7 @@ if get_option('config_lspcon_i2c_spi')
+ endif
+ if get_option('config_realtek_mst_i2c_spi')
+   srcs += 'realtek_mst_i2c_spi.c'
++  srcs += 'i2c_helper_linux.c'
+   cargs += '-DCONFIG_REALTEK_MST_I2C_SPI=1'
+ endif
+ if get_option('config_ite_ec')
+-- 
+2.51.0
+

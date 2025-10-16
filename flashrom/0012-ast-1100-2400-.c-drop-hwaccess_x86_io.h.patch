@@ -1,0 +1,39 @@
+From 122678ebc788567cad54bec94a20d22439dcda91 Mon Sep 17 00:00:00 2001
+From: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+Date: Thu, 1 Dec 2022 21:07:40 +0100
+Subject: [PATCH] ast[1100,2400].c: drop hwaccess_x86_io.h
+
+Change-Id: Ie355daf467b1e50b7a71e3512f908cbd0176e0e7
+Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+---
+ ast1100.c | 1 -
+ ast2400.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/ast1100.c b/ast1100.c
+index c73b4d7c8758..3aa16efe2605 100644
+--- a/ast1100.c
++++ b/ast1100.c
+@@ -25,7 +25,6 @@
+ #include "platform/pci.h"
+ #include "hwaccess_physmap.h"
+ #include "platform/pci.h"
+-#include "hwaccess_x86_io.h"
+ 
+ #define PCI_VENDOR_ID_ASPEED		0x1a03
+ 
+diff --git a/ast2400.c b/ast2400.c
+index 87184f584da8..1c7280f741d8 100644
+--- a/ast2400.c
++++ b/ast2400.c
+@@ -24,7 +24,6 @@
+ #include "programmer.h"
+ #include "platform/pci.h"
+ #include "hwaccess_physmap.h"
+-#include "hwaccess_x86_io.h"
+ 
+ #define PCI_VENDOR_ID_ASPEED		0x1a03
+ 
+-- 
+2.51.0
+

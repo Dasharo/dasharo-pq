@@ -1,0 +1,57 @@
+From 67a2167e5f8e35c71ebb514933bbd2d8eddfa3b6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 7 Oct 2025 13:39:19 +0200
+Subject: [PATCH] sb600spi: Fix Promontory flash read of chips larger than
+ 16MiB
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If the flash chip is larger than 16MiB, the memory mapped read from
+top of 4G address will not work properly, resulting in accesses
+to addresses below 0xff000000. In such cases flashrom fails with
+"Bus error".
+
+Fallback to default_spi_read for flashes larger than 16 MiB. Using
+memory mapped access with ROM3 register could be implemented, however
+it introduces the complexity of ROM page remapping. I.e. the PSP may
+remap 16MiB pages of 32MiB or larger flashes by XORing the host
+memory mapped address bits [31:24]. It results in non-linear memory
+mapped flash space.
+
+TEST=Read complete flash content on Gigabyte MZ33-AR1 running coreboot.
+
+Change-Id: I218a4c2dbf7cd7e8fa25b3ecb5aeac03f54f9dc6
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ sb600spi.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sb600spi.c b/sb600spi.c
+index e8580dc8c261..e486ed478385 100644
+--- a/sb600spi.c
++++ b/sb600spi.c
+@@ -586,6 +586,11 @@ static int promontory_read_memmapped(struct flashctx *flash, uint8_t *buf,
+ 		unsigned int start, unsigned int len)
+ {
+ 	struct sb600spi_data * data = (struct sb600spi_data *)flash->mst->spi.data;
++
++	/* If the flash size is bigger than 16MiB, we can't read it from the top of 4G */
++	if (flash->chip->total_size > (16 * 1024))
++		return default_spi_read(flash, buf, start, len);
++
+ 	if (!data->flash) {
+ 		map_flash(flash);
+ 		data->flash = flash; /* keep a copy of flashctx for unmap() on tear-down. */
+@@ -634,7 +639,7 @@ static const struct spi_master spi_master_yangtze = {
+ };
+ 
+ static const struct spi_master spi_master_promontory = {
+-	.max_data_read	= MAX_DATA_READ_UNLIMITED,
++	.max_data_read	= FIFO_SIZE_YANGTZE - 3,
+ 	.max_data_write	= FIFO_SIZE_YANGTZE - 3,
+ 	.command	= spi100_spi_send_command,
+ 	.multicommand	= default_spi_send_multicommand,
+-- 
+2.51.0
+

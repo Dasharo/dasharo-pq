@@ -1,0 +1,89 @@
+From 5180d8bcfdd9f880b29c47cd81b3f17f0d5508ea Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 25 Jun 2021 13:16:18 +0200
+Subject: [PATCH] pcidev: Move pci device functions out of internal programmer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+PCI device helper functions implemented in internal programmer are
+generic, not specific to this particular programmer. Move them to
+the common pcidev.c file which is included in all programmers
+requiring PCI and may be used not only for internal programmer.
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Change-Id: Ice40783a05c01cc78b34eb2c4a575554e9d55f8e
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+---
+ pcidev.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/pcidev.c b/pcidev.c
+index 0b35944aaddc..ed5032cecc73 100644
+--- a/pcidev.c
++++ b/pcidev.c
+@@ -410,3 +410,61 @@ int rpci_write_long(struct pci_dev *dev, int reg, uint32_t data)
+ 	register_undo_pci_write_long(dev, reg);
+ 	return pci_write_long(dev, reg, data);
+ }
++
++struct pci_dev *pci_dev_find_vendorclass(uint16_t vendor, uint16_t devclass)
++{
++	struct pci_dev *temp;
++	struct pci_filter filter;
++	uint16_t tmp2;
++
++	pci_filter_init(NULL, &filter);
++	filter.vendor = vendor;
++
++	for (temp = pacc->devices; temp; temp = temp->next)
++		if (pci_filter_match(&filter, temp)) {
++			/* Read PCI class */
++			tmp2 = pci_read_word(temp, 0x0a);
++			if (tmp2 == devclass)
++				return temp;
++		}
++
++	return NULL;
++}
++
++struct pci_dev *pci_dev_find(uint16_t vendor, uint16_t device)
++{
++	struct pci_dev *temp;
++	struct pci_filter filter;
++
++	pci_filter_init(NULL, &filter);
++	filter.vendor = vendor;
++	filter.device = device;
++
++	for (temp = pacc->devices; temp; temp = temp->next)
++		if (pci_filter_match(&filter, temp))
++			return temp;
++
++	return NULL;
++}
++
++struct pci_dev *pci_card_find(uint16_t vendor, uint16_t device,
++			      uint16_t card_vendor, uint16_t card_device)
++{
++	struct pci_dev *temp;
++	struct pci_filter filter;
++
++	pci_filter_init(NULL, &filter);
++	filter.vendor = vendor;
++	filter.device = device;
++
++	for (temp = pacc->devices; temp; temp = temp->next)
++		if (pci_filter_match(&filter, temp)) {
++			if ((card_vendor ==
++			     pci_read_word(temp, PCI_SUBSYSTEM_VENDOR_ID))
++			    && (card_device ==
++				pci_read_word(temp, PCI_SUBSYSTEM_ID)))
++				return temp;
++		}
++
++	return NULL;
++}
+-- 
+2.51.0
+

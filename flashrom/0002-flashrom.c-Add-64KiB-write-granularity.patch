@@ -1,0 +1,58 @@
+From e7451f00152981d8a6842b9063d9cee408f2cd2b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 18 Jun 2021 16:27:18 +0200
+Subject: [PATCH] flashrom.c: Add 64KiB write granularity
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add 64KiB write granularity for the incoming ITE Embedded Controllers
+found on Tuxedo laptops. These ECs can only operate on 64KiB blocks and
+any different operations result in a failure.
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Change-Id: I69801f581d0cb9b85f6596de7e1267ef9317673f
+---
+ flashrom.c      | 6 ++++++
+ include/flash.h | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/flashrom.c b/flashrom.c
+index 088d80450109..36a04345c8b5 100644
+--- a/flashrom.c
++++ b/flashrom.c
+@@ -529,6 +529,9 @@ static int need_erase(const uint8_t *have, const uint8_t *want, unsigned int len
+ 	case write_gran_1056bytes:
+ 		result = need_erase_gran_bytes(have, want, len, 1056, erased_value);
+ 		break;
++	case write_gran_64kbytes:
++		result = need_erase_gran_bytes(have, want, len, 64*KiB, erased_value);
++		break;
+ 	case write_gran_1byte_implicit_erase:
+ 		/* Do not erase, handle content changes from anything->0xff by writing 0xff. */
+ 		result = 0;
+@@ -598,6 +601,9 @@ static unsigned int get_next_write(const uint8_t *have, const uint8_t *want, uns
+ 	case write_gran_1056bytes:
+ 		stride = 1056;
+ 		break;
++	case write_gran_64kbytes:
++		stride = 64*KiB;
++		break;
+ 	default:
+ 		msg_cerr("%s: Unsupported granularity! Please report a bug at "
+ 			 "flashrom@flashrom.org\n", __func__);
+diff --git a/include/flash.h b/include/flash.h
+index c696f64e9af6..863eb8f047d3 100644
+--- a/include/flash.h
++++ b/include/flash.h
+@@ -92,6 +92,7 @@ enum write_granularity {
+ 	write_gran_528bytes,	/* If less than 528 bytes are written, the unwritten bytes are undefined. */
+ 	write_gran_1024bytes,	/* If less than 1024 bytes are written, the unwritten bytes are undefined. */
+ 	write_gran_1056bytes,	/* If less than 1056 bytes are written, the unwritten bytes are undefined. */
++	write_gran_64kbytes,    /* If less than 64 kbytes are written, the unwritten bytes are undefined. */
+ 	write_gran_1byte_implicit_erase, /* EEPROMs and other chips with implicit erase and 1-byte writes. */
+ };
+ 
+-- 
+2.51.0
+

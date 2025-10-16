@@ -1,0 +1,30 @@
+From 9bddf6233d8eda26b0cbc508745fc9a7738c9e73 Mon Sep 17 00:00:00 2001
+From: Artur Kowalski <artur.kowalski@3mdeb.com>
+Date: Fri, 14 Oct 2022 13:10:00 +0200
+Subject: [PATCH] ite_ec: fix Makefile
+
+Use FEATURE_FLAGS (instead of FEATURE_CFLAGS) so that ite_ec programmer
+is included into programmer table when enabled.
+
+Change-Id: I9fd77606f024ae0f7e5b8ba628a66122a989c6df
+Signed-off-by: Artur Kowalski <artur.kowalski@3mdeb.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4587c2cb3dfc..33bf6b4759d4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -597,7 +597,7 @@ NEED_LIBPCI += CONFIG_INTERNAL
+ endif
+ 
+ ifeq ($(CONFIG_ITE_EC), yes)
+-FEATURE_CFLAGS += -D'CONFIG_ITE_EC=1'
++FEATURE_FLAGS += -D'CONFIG_ITE_EC=1'
+ PROGRAMMER_OBJS += ite_ec.o
+ ifeq ($(findstring it87spi.o,$(PROGRAMMER_OBJS)),)
+ # Do not include it87spi.c twice
+-- 
+2.51.0
+

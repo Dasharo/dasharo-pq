@@ -1,0 +1,234 @@
+From 56b484af44d2aa152ee1e8fc977b9dd17b953027 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 25 Jun 2021 14:33:39 +0200
+Subject: [PATCH] sio.c: Put generic Super I/O access scattered throughout
+ files together
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Put generic Super I/O helpers in one file and depend compiling it on raw
+access and x86 architecture.
+
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+Change-Id: Ie36370c22edb05ee59b036859b44a968bcc37980
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+---
+ Makefile             | 30 +++++++++++++++
+ board_enable.c       | 22 -----------
+ include/programmer.h |  4 ++
+ meson.build          | 11 ++++++
+ sio.c                | 89 ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 134 insertions(+), 22 deletions(-)
+ create mode 100644 sio.c
+
+diff --git a/Makefile b/Makefile
+index f92cefdf73a2..d1f3d2af93ed 100644
+--- a/Makefile
++++ b/Makefile
+@@ -841,6 +841,36 @@ ifeq ($(USE_LIBPCI), yes)
+ PROGRAMMER_OBJS += pcidev.o
+ override CFLAGS  += $(CONFIG_LIBPCI_CFLAGS)
+ override LDFLAGS += $(CONFIG_LIBPCI_LDFLAGS)
++ifeq ($(TARGET_OS), NetBSD)
++# The libpci we want is called libpciutils on NetBSD and needs NetBSD libpci.
++PCILIBS += -lpciutils -lpci
++else
++PCILIBS += -lpci
++endif
++endif
++
++ifneq ($(NEED_RAW_ACCESS), )
++# Raw memory, MSR or PCI port I/O access.
++FEATURE_CFLAGS += -D'NEED_RAW_ACCESS=1'
++PROGRAMMER_OBJS += hwaccess.o hwaccess_physmap.o
++# Generic Super I/O and EC helpers for raw access
++PROGRAMMER_OBJS += sio.o acpi_ec.o
++ifeq ($(ARCH), x86)
++FEATURE_CFLAGS += -D'__FLASHROM_HAVE_OUTB__=1'
++PROGRAMMER_OBJS += hwaccess_x86_io.o  hwaccess_x86_msr.o
++
++ifeq ($(TARGET_OS), NetBSD)
++PCILIBS += -l$(shell uname -p)
++endif
++ifeq ($(TARGET_OS), OpenBSD)
++PCILIBS += -l$(shell uname -m)
++endif
++endif
++
++ifeq ($(TARGET_OS), Darwin)
++# DirectHW framework can be found in the DirectHW library.
++PCILIBS += -framework IOKit -framework DirectHW
++endif
+ endif
+ 
+ USE_LIBUSB1 := $(if $(call filter_deps,$(DEPENDS_ON_LIBUSB1)),yes,no)
+diff --git a/board_enable.c b/board_enable.c
+index 4903c0ffd238..91e92edf4e57 100644
+--- a/board_enable.c
++++ b/board_enable.c
+@@ -49,28 +49,6 @@ void w836xx_ext_leave(uint16_t port)
+ 	OUTB(0xAA, port);
+ }
+ 
+-/* Generic Super I/O helper functions */
+-uint8_t sio_read(uint16_t port, uint8_t reg)
+-{
+-	OUTB(reg, port);
+-	return INB(port + 1);
+-}
+-
+-void sio_write(uint16_t port, uint8_t reg, uint8_t data)
+-{
+-	OUTB(reg, port);
+-	OUTB(data, port + 1);
+-}
+-
+-void sio_mask(uint16_t port, uint8_t reg, uint8_t data, uint8_t mask)
+-{
+-	uint8_t tmp;
+-
+-	OUTB(reg, port);
+-	tmp = INB(port + 1) & ~mask;
+-	OUTB(tmp | (data & mask), port + 1);
+-}
+-
+ /* Winbond W83697 documentation indicates that the index register has to be written for each access. */
+ static void sio_mask_alzheimer(uint16_t port, uint8_t reg, uint8_t data, uint8_t mask)
+ {
+diff --git a/include/programmer.h b/include/programmer.h
+index bfce5d6f0323..a7c12726ce7b 100644
+--- a/include/programmer.h
++++ b/include/programmer.h
+@@ -223,6 +223,10 @@ void probe_superio_winbond(void);
+ int it8705f_write_enable(uint8_t port);
+ uint8_t sio_read(uint16_t port, uint8_t reg);
+ void sio_write(uint16_t port, uint8_t reg, uint8_t data);
++void sio_switch_ldn(uint16_t port, uint8_t ldn);
++uint16_t sio_get_iobase(uint16_t port, uint8_t io_bar_number);
++uint16_t sio_read_id(uint16_t port, uint8_t io_bar_number);
++bool sio_is_ldn_enabled(uint16_t port);
+ void sio_mask(uint16_t port, uint8_t reg, uint8_t data, uint8_t mask);
+ void board_handle_before_superio(void);
+ void board_handle_before_laptop(void);
+diff --git a/meson.build b/meson.build
+index 56ab55c63100..ddfbfd636f26 100644
+--- a/meson.build
++++ b/meson.build
+@@ -444,6 +444,17 @@ foreach p_name, p_data : programmer
+     'flags' : p_data.get('flags', []),
+     'default' : p_data.get('default', true),
+   }
++# raw memory, MSR or PCI port I/O access
++if need_raw_access
++  srcs += 'hwaccess.c'
++  srcs += 'hwaccess_x86_io.c'
++  srcs += 'hwaccess_x86_msr.c'
++  srcs += 'hwaccess_physmap.c'
++  srcs += 'acpi_ec.c'
++  srcs += 'sio.c'
++  cargs += '-DNEED_RAW_ACCESS=1'
++  cargs += '-D__FLASHROM_HAVE_OUTB__=1'
++endif
+ 
+   active        = false
+   deps_found    = true
+diff --git a/sio.c b/sio.c
+new file mode 100644
+index 000000000000..35b504ebd388
+--- /dev/null
++++ b/sio.c
+@@ -0,0 +1,89 @@
++/*
++ * This file is part of the flashrom project.
++ *
++ * Copyright (C) 2021, TUXEDO Computers GmbH
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#if defined(__i386__) || defined(__x86_64__)
++
++#include "programmer.h"
++#include "hwaccess.h"
++
++void probe_superio(void)
++{
++	probe_superio_winbond();
++	/* ITE probe causes SMSC LPC47N217 to power off the serial UART.
++	 * Always probe for SMSC first, and if a SMSC Super I/O is detected
++	 * at a given I/O port, do _not_ probe that port with the ITE probe.
++	 * This means SMSC probing must be done before ITE probing.
++	 */
++	//probe_superio_smsc();
++	probe_superio_ite();
++}
++
++int superio_count = 0;
++#define SUPERIO_MAX_COUNT 3
++
++struct superio superios[SUPERIO_MAX_COUNT];
++
++int register_superio(struct superio s)
++{
++	if (superio_count == SUPERIO_MAX_COUNT)
++		return 1;
++	superios[superio_count++] = s;
++	return 0;
++}
++
++/* Generic Super I/O helper functions */
++uint8_t sio_read(uint16_t port, uint8_t reg)
++{
++	OUTB(reg, port);
++	return INB(port + 1);
++}
++
++void sio_write(uint16_t port, uint8_t reg, uint8_t data)
++{
++	OUTB(reg, port);
++	OUTB(data, port + 1);
++}
++
++void sio_mask(uint16_t port, uint8_t reg, uint8_t data, uint8_t mask)
++{
++	uint8_t tmp;
++
++	OUTB(reg, port);
++	tmp = INB(port + 1) & ~mask;
++	OUTB(tmp | (data & mask), port + 1);
++}
++
++void sio_switch_ldn(uint16_t port, uint8_t ldn)
++{
++	sio_write(port, 0x07, ldn);
++}
++
++uint16_t sio_get_iobase(uint16_t port, uint8_t io_bar_number)
++{
++	return (sio_read(port, 0x60 + io_bar_number * 2) << 8) |
++		sio_read(port, 0x61 + io_bar_number * 2);
++}
++
++uint16_t sio_read_id(uint16_t port, uint8_t io_bar_number)
++{
++	return (sio_read(port, 0x20) << 8) | sio_read(port, 0x21);
++}
++
++bool sio_is_ldn_enabled(uint16_t port)
++{
++	return (sio_read(port, 0x30) & 1) ? true : false;
++}
++
++#endif
+\ No newline at end of file
+-- 
+2.51.0
+

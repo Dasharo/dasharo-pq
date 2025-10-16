@@ -1,0 +1,27 @@
+From 260e956ddc943df6395256473c4b60594955993b Mon Sep 17 00:00:00 2001
+From: Karol Zmyslowski <karol.zmyslowski@3mdeb.com>
+Date: Mon, 9 Jan 2023 17:04:06 +0100
+Subject: [PATCH] Makefile: add AST1100, AST2400 to RAW_MEM_ACCESS
+
+Change-Id: I2cbfbdc4fe45da071bc1356d33ae1f2f7cb1b178
+Signed-off-by: Karol Zmyslowski <karol.zmyslowski@3mdeb.com>
+---
+ Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 67a2ac9eef9f..0321d8b44468 100644
+--- a/Makefile
++++ b/Makefile
+@@ -110,6 +110,8 @@ DEPENDS_ON_BITBANG_SPI := \
+ 	CONFIG_RAYER_SPI \
+ 
+ DEPENDS_ON_RAW_MEM_ACCESS := \
++	CONFIG_AST1100 \
++	CONFIG_AST2400 \
+ 	CONFIG_ATAPROMISE \
+ 	CONFIG_DRKAISER \
+ 	CONFIG_GFXNVIDIA \
+-- 
+2.51.0
+

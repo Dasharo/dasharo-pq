@@ -1,0 +1,103 @@
+From f7a30248e3349bb54e411a9af7bda97eb8a1d6fe Mon Sep 17 00:00:00 2001
+From: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+Date: Thu, 3 Aug 2023 01:21:34 +0200
+Subject: [PATCH] github: add build workflow, remove lockdown
+
+Change-Id: Ife3c7ab77d07a0e92858da6bc88c6343023b01c6
+Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
+---
+ .github/workflows/build.yml    | 38 ++++++++++++++++++++++++++++++++++
+ .github/workflows/lockdown.yml | 36 --------------------------------
+ 2 files changed, 38 insertions(+), 36 deletions(-)
+ create mode 100644 .github/workflows/build.yml
+ delete mode 100644 .github/workflows/lockdown.yml
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+new file mode 100644
+index 000000000000..b678326e8dfd
+--- /dev/null
++++ b/.github/workflows/build.yml
+@@ -0,0 +1,38 @@
++name: Build Flashrom
++
++on:
++  push:
++    branches:
++      - dasharo-release
++      - dasharo-develop
++      - ci
++  pull_request:
++  workflow_dispatch:  # Allows manual triggering
++
++jobs:
++  build:
++    runs-on: ubuntu-22.04
++
++    steps:
++      - name: Checkout code
++        uses: actions/checkout@v2
++
++      - name: Install build dependencies
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y git build-essential debhelper pkg-config libpci-dev libusb-1.0-0-dev libftdi1-dev meson
++
++      - name: Build Flashrom
++        run: make
++
++      - name: Save Flashrom binary as artifact
++        run: |
++          mkdir artifacts
++          mv flashrom artifacts/
++        continue-on-error: true  # Allow workflow to continue even if 'flashrom' doesn't exist
++
++      - name: Upload artifact
++        uses: actions/upload-artifact@v2
++        with:
++          name: flashrom-artifact
++          path: artifacts/
+diff --git a/.github/workflows/lockdown.yml b/.github/workflows/lockdown.yml
+deleted file mode 100644
+index 39b65489b405..000000000000
+--- a/.github/workflows/lockdown.yml
++++ /dev/null
+@@ -1,36 +0,0 @@
+-name: 'Close issues and PRs'
+-
+-on:
+-  issues:
+-    types: opened
+-  pull_request_target:
+-    types: opened
+-
+-permissions:
+-  issues: write
+-  pull-requests: write
+-
+-jobs:
+-  action:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: dessant/repo-lockdown@0b093279a77b44bbc38e85089b5463dd06b4aea4
+-        with:
+-          issue-comment: >
+-            Thank you for your contribution. The flashrom project does not handle
+-            GitHub issues or pull requests, since this repository on GitHub is
+-            just a mirror of our actual repository. Thus, we would like to
+-            encourage you to have a look at on our [development guidelines](https://www.flashrom.org/Development_Guidelines)
+-            and submit your patch to [review.coreboot.org](https://review.coreboot.org/q/project:flashrom).
+-            Issues are handled over our [ticket system](https://ticket.coreboot.org/projects/flashrom).
+-            If you have questions, feel free to reach out to us. There are
+-            multiple ways to [contact us](https://www.flashrom.org/Contact).
+-          pr-comment: >
+-            Thank you for your contribution. The flashrom project does not handle
+-            GitHub issues or pull requests, since this repository on GitHub is
+-            just a mirror of our actual repository. Thus, we would like to
+-            encourage you to have a look at on our [development guidelines](https://www.flashrom.org/Development_Guidelines)
+-            and submit your patch to [review.coreboot.org](https://review.coreboot.org/q/project:flashrom).
+-            Issues are handled over our [ticket system](https://ticket.coreboot.org/projects/flashrom).
+-            If you have questions, feel free to reach out to us. There are
+-            multiple ways to [contact us](https://www.flashrom.org/Contact).
+-- 
+2.51.0
+

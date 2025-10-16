@@ -1,0 +1,221 @@
+From ac9bb8ba0fa2083ec0636467417e2384a84821ec Mon Sep 17 00:00:00 2001
+From: Kacper Stojek <kacper.stojek@3mdeb.com>
+Date: Wed, 12 Oct 2022 18:37:41 +0200
+Subject: [PATCH] Fix ec patch to work after rebase
+
+Change-Id: I1dba0271fa9ef07b2cd30f99b4d05ead1740057b
+Signed-off-by: Kacper Stojek <kacper.stojek@3mdeb.com>
+---
+ Makefile             |  2 +-
+ include/programmer.h |  9 +++++++--
+ internal.c           | 28 ----------------------------
+ ite_ec.c             | 28 ++++++++++++++--------------
+ meson.build          |  1 -
+ 5 files changed, 22 insertions(+), 46 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index d9972e0bdbbf..4587c2cb3dfc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -867,7 +867,7 @@ endif
+ ifneq ($(NEED_RAW_ACCESS), )
+ # Raw memory, MSR or PCI port I/O access.
+ FEATURE_CFLAGS += -D'NEED_RAW_ACCESS=1'
+-PROGRAMMER_OBJS += hwaccess.o hwaccess_physmap.o
++PROGRAMMER_OBJS += hwaccess_physmap.o
+ # Generic Super I/O and EC helpers for raw access
+ PROGRAMMER_OBJS += sio.o acpi_ec.o
+ ifeq ($(ARCH), x86)
+diff --git a/include/programmer.h b/include/programmer.h
+index 2356eb8003da..01007773bfc1 100644
+--- a/include/programmer.h
++++ b/include/programmer.h
+@@ -141,6 +141,11 @@ int rpci_write_byte(struct pci_dev *dev, int reg, uint8_t data);
+ int rpci_write_word(struct pci_dev *dev, int reg, uint16_t data);
+ int rpci_write_long(struct pci_dev *dev, int reg, uint32_t data);
+ 
++struct pci_dev *pci_dev_find_vendorclass(uint16_t vendor, uint16_t devclass);
++struct pci_dev *pci_dev_find(uint16_t vendor, uint16_t device);
++struct pci_dev *pci_card_find(uint16_t vendor, uint16_t device,
++			      uint16_t card_vendor, uint16_t card_device);
++
+ #if CONFIG_INTERNAL == 1
+ struct penable {
+ 	uint16_t vendor_id;
+@@ -233,7 +238,7 @@ int chipset_flash_enable(const struct programmer_cfg *cfg);
+ int processor_flash_enable(void);
+ #endif
+ 
+-#if NEED_RAW_ACCESS == 1
++//#if NEED_RAW_ACCESS == 1
+ /* sio.c */
+ uint8_t sio_read(uint16_t port, uint8_t reg);
+ void sio_write(uint16_t port, uint8_t reg, uint8_t data);
+@@ -242,7 +247,7 @@ uint16_t sio_get_iobase(uint16_t port, uint8_t io_bar_number);
+ uint16_t sio_read_id(uint16_t port, uint8_t io_bar_number);
+ bool sio_is_ldn_enabled(uint16_t port);
+ void sio_mask(uint16_t port, uint8_t reg, uint8_t data, uint8_t mask);
+-#endif
++//#endif
+ 
+ /* physmap.c */
+ void *physmap(const char *descr, uintptr_t phys_addr, size_t len);
+diff --git a/internal.c b/internal.c
+index 8c834e2c56de..473f21c68cf9 100644
+--- a/internal.c
++++ b/internal.c
+@@ -35,34 +35,6 @@ bool force_boardmismatch = false;
+ 
+ enum chipbustype internal_buses_supported = BUS_NONE;
+ 
+-#if defined(__i386__) || defined(__x86_64__)
+-void probe_superio(void)
+-{
+-	probe_superio_winbond();
+-	/* ITE probe causes SMSC LPC47N217 to power off the serial UART.
+-	 * Always probe for SMSC first, and if a SMSC Super I/O is detected
+-	 * at a given I/O port, do _not_ probe that port with the ITE probe.
+-	 * This means SMSC probing must be done before ITE probing.
+-	 */
+-	//probe_superio_smsc();
+-	probe_superio_ite();
+-}
+-
+-int superio_count = 0;
+-#define SUPERIO_MAX_COUNT 3
+-
+-struct superio superios[SUPERIO_MAX_COUNT];
+-
+-int register_superio(struct superio s)
+-{
+-	if (superio_count == SUPERIO_MAX_COUNT)
+-		return 1;
+-	superios[superio_count++] = s;
+-	return 0;
+-}
+-
+-#endif
+-
+ static void internal_chip_writeb(const struct flashctx *flash, uint8_t val,
+ 				 chipaddr addr)
+ {
+diff --git a/ite_ec.c b/ite_ec.c
+index 481baaef91af..c0324a8e53a3 100644
+--- a/ite_ec.c
++++ b/ite_ec.c
+@@ -526,9 +526,9 @@ static struct opaque_master programmer_opaque_ite_ec = {
+ 	.erase		= ite_ec_erase,
+ };
+ 
+-static bool ite_ec_board_mismatch_enabled(void)
++static bool ite_ec_board_mismatch_enabled(const struct programmer_cfg *cfg)
+ {
+-	char *p = extract_programmer_param("boardmismatch");
++	char *p = extract_programmer_param_str(cfg, "boardmismatch");
+ 	if (p && strcmp(p, "force") == 0) {
+ 		free(p);
+ 		return true;
+@@ -537,27 +537,27 @@ static bool ite_ec_board_mismatch_enabled(void)
+ 	return false;
+ }
+ 
+-static bool ite_ec_check_params(struct ite_ec_data *ctx_data)
++static bool ite_ec_check_params(struct ite_ec_data *ctx_data, const struct programmer_cfg *cfg)
+ {
+ 	char *p;
+ 	bool ret = true;
+ 
+ 	msg_pdbg("%s()\n", __func__);
+ 
+-	p = extract_programmer_param("noaccheck");
++	p = extract_programmer_param_str(cfg, "noaccheck");
+ 	if (p && strcmp(p, "yes") == 0) {
+ 		/* Just mark it as present. */
+ 		ctx_data->ac_adapter_plugged = true;
+ 	}
+ 	free(p);
+ 
+-	p = extract_programmer_param("ite5570");
++	p = extract_programmer_param_str(cfg, "ite5570");
+ 	if (p && strcmp(p, "yes") == 0) {
+ 		ctx_data->support_ite5570 = true;
+ 	}
+ 	free(p);
+ 
+-	p = extract_programmer_param("autoload");
++	p = extract_programmer_param_str(cfg, "autoload");
+ 	if (p) {
+ 		if (!strcmp(p, "none")) {
+ 			ctx_data->autoload_action = AUTOLOAD_NO_ACTION;
+@@ -575,7 +575,7 @@ static bool ite_ec_check_params(struct ite_ec_data *ctx_data)
+ 	}
+ 	free(p);
+ 
+-	p = extract_programmer_param("romsize");
++	p = extract_programmer_param_str(cfg, "romsize");
+ 	if (p) {
+ 		if (!strcmp(p, "64K")) {
+ 			ctx_data->rom_size_in_blocks = 1;
+@@ -669,7 +669,7 @@ static bool is_board_supported(void)
+ 	for (i = 0; i < ARRAY_SIZE(ite_ec_supported_boards); i++) {
+ 		const struct pci_match_vendor_entry *entry = &ite_ec_supported_boards[i];
+ 
+-		if (pci_card_find(entry->pci_vid, entry->pci_devid,
++		if (pcidev_card_find(entry->pci_vid, entry->pci_devid,
+ 				  entry->ss_venid, entry->ss_devid)) {
+ 			msg_perr("Found PCI subsystem match for device %s %s\n",
+ 				 entry->vendor, entry->model);
+@@ -707,7 +707,7 @@ static void probe_ite_superio_support(struct ite_ec_data *ctx_data)
+ 	}
+ }
+ 
+-static int ite_ec_init(void)
++static int ite_ec_init(const struct programmer_cfg *cfg)
+ {
+ 	bool read_success = false;
+ 	struct ite_ec_data *ctx_data;
+@@ -721,7 +721,7 @@ static int ite_ec_init(void)
+ 	}
+ 
+ 	if (!is_board_supported()) {
+-		if (ite_ec_board_mismatch_enabled()) {
++		if (ite_ec_board_mismatch_enabled(cfg)) {
+ 			msg_pinfo("Proceeding anyway because user forced us to.\n");
+ 		} else {
+ 			msg_pwarn("Probing on unsupported laptop may irritate your EC and cause fan failure, "
+@@ -749,7 +749,7 @@ static int ite_ec_init(void)
+ 	if (!ite_ec_init_ctx(ctx_data))
+ 		goto ite_ec_init_exit;
+ 
+-	if (!ite_ec_check_params(ctx_data))
++	if (!ite_ec_check_params(ctx_data, cfg))
+ 		goto ite_ec_init_exit;
+ 
+ 	if (!ec_write_cmd(0xde, EC_MAX_STATUS_CHECKS) ||
+@@ -899,8 +899,8 @@ const struct programmer_entry programmer_ite_ec = {
+ 	.type			= OTHER,
+ 	.devs.note		= "Programmer for ITE Embedded Controllers\n",
+ 	.init			= ite_ec_init,
+-	.map_flash_region	= fallback_map,
+-	.unmap_flash_region	= fallback_unmap,
+-	.delay			= internal_delay,
++//	.map_flash_region	= fallback_map,
++//	.unmap_flash_region	= fallback_unmap,
++//	.delay			= internal_delay,
+ };
+ #endif
+diff --git a/meson.build b/meson.build
+index 4183d61e7678..6050694cc340 100644
+--- a/meson.build
++++ b/meson.build
+@@ -542,7 +542,6 @@ foreach p_name, p_data : programmer
+   }
+ # raw memory, MSR or PCI port I/O access
+ if need_raw_access
+-  srcs += 'hwaccess.c'
+   srcs += 'hwaccess_x86_io.c'
+   srcs += 'hwaccess_x86_msr.c'
+   srcs += 'hwaccess_physmap.c'
+-- 
+2.51.0
+
