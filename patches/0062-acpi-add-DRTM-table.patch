@@ -8,16 +8,11 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Submitted [CB:51580]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/acpi/acpi.c         |  4 +++-
- src/include/acpi/acpi.h | 45 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
-
 diff --git a/src/acpi/acpi.c b/src/acpi/acpi.c
-index 06aa038caa..ab0cc2315b 100644
+index 07e84f6d3980..4c5f6362d5ba 100644
 --- a/src/acpi/acpi.c
 +++ b/src/acpi/acpi.c
-@@ -1783,7 +1783,9 @@ int get_acpi_table_revision(enum acpi_tables table)
+@@ -1781,7 +1781,9 @@ int get_acpi_table_revision(enum acpi_tables table)
  		return 2;
  	case DMAR:
  		return 1;
@@ -29,7 +24,7 @@ index 06aa038caa..ab0cc2315b 100644
  	case SPMI: /* IMPI 2.0 */
  		return 5;
 diff --git a/src/include/acpi/acpi.h b/src/include/acpi/acpi.h
-index a36e65c9d9..60581636b8 100644
+index 06dba6573819..f317b9734d80 100644
 --- a/src/include/acpi/acpi.h
 +++ b/src/include/acpi/acpi.h
 @@ -104,6 +104,7 @@ enum acpi_tables {
@@ -91,6 +86,3 @@ index a36e65c9d9..60581636b8 100644
  /* FADT Preferred Power Management Profile */
  enum acpi_preferred_pm_profiles {
  	PM_UNSPECIFIED		= 0,
--- 
-2.49.0
-

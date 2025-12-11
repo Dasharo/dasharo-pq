@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/device/pciexp_device.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
 diff --git a/src/device/pciexp_device.c b/src/device/pciexp_device.c
-index db351efd49..885240f8b1 100644
+index a5f162e8ac57..f07ef652a988 100644
 --- a/src/device/pciexp_device.c
 +++ b/src/device/pciexp_device.c
 @@ -9,6 +9,8 @@
@@ -26,7 +22,7 @@ index db351efd49..885240f8b1 100644
  static unsigned int ext_cap_id(unsigned int cap)
  {
  	return cap & 0xffff;
-@@ -698,21 +700,23 @@ static void pciexp_tune_dev(struct device *dev)
+@@ -718,21 +720,23 @@ static void pciexp_tune_dev(struct device *dev)
  	if (!root_cap)
  		return;
  
@@ -62,6 +58,3 @@ index db351efd49..885240f8b1 100644
  
  	/* Clear PCIe Lane Error Status */
  	if (CONFIG(PCIEXP_LANE_ERR_STAT_CLEAR))
--- 
-2.49.0
-

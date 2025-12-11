@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 0561dcdfa9..0de22561a2 100644
+index 0561dcdfa90c..0de22561a2a0 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -148,4 +148,9 @@ config AGESA_USE_1_0_0_4_HEADER
@@ -27,6 +23,3 @@ index 0561dcdfa9..0de22561a2 100644
 +	default 0x2000
 +
  endif # BOARD_PCENGINES_APU2
--- 
-2.49.0
-

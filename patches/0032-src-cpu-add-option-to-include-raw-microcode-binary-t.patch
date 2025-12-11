@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Microcode is not official, custom workaround]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/cpu/Kconfig | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
 diff --git a/src/cpu/Kconfig b/src/cpu/Kconfig
-index 2770f648b4..fd2bf0b5e9 100644
+index 2770f648b49a..fd2bf0b5e934 100644
 --- a/src/cpu/Kconfig
 +++ b/src/cpu/Kconfig
 @@ -171,6 +171,11 @@ config CPU_MICROCODE_CBFS_NONE
@@ -38,6 +34,3 @@ index 2770f648b4..fd2bf0b5e9 100644
  	default ""
  	help
  	  Some platforms have microcode in the blobs directory, and these can
--- 
-2.49.0
-

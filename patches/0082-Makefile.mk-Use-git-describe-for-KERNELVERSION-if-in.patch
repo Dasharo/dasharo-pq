@@ -6,12 +6,8 @@ Subject: [PATCH 82/88] Makefile.mk: Use git describe for KERNELVERSION if in
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- Makefile.mk | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
 diff --git a/Makefile.mk b/Makefile.mk
-index cc482acff4..8c10d54f7b 100644
+index 0931a3a65012..4d18f50fd33a 100644
 --- a/Makefile.mk
 +++ b/Makefile.mk
 @@ -20,7 +20,9 @@ CONFIG_MEMLAYOUT_LD_FILE:=$(call strip_quotes, $(CONFIG_MEMLAYOUT_LD_FILE))
@@ -25,6 +21,3 @@ index cc482acff4..8c10d54f7b 100644
  else
  KERNELVERSION := $(strip $(if $(GIT),\
  	$(shell git describe --abbrev=12 --dirty --always || git describe),\
--- 
-2.49.0
-

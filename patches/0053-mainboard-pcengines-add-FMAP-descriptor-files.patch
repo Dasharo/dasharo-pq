@@ -8,14 +8,9 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/vboot-rw-ab.fmd | 29 ++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
-
 diff --git a/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd b/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
 new file mode 100644
-index 0000000000..c17402e616
+index 000000000000..c17402e6160e
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/vboot-rw-ab.fmd
 @@ -0,0 +1,29 @@
@@ -48,6 +43,3 @@ index 0000000000..c17402e616
 +		}
 +	}
 +}
--- 
-2.49.0
-

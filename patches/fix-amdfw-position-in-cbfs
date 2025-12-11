@@ -1,0 +1,32 @@
+southbridge/amd/pi/hudson/Makefile.mk: Fix AMDFW position in CBFS
+
+HUDSON_FWM_POSITION defines hex offset in the ROM where AMDFW should
+be placed, but the cbfstool cannot find enough space in COREBOOT
+region to place the file if COREBOOT region does not span whole ROM.
+
+Calculate the absoluer physical address of AMDFW so that cbfstool
+will calculate the relative position in the COREBOOT region and
+not fail the coreboot CBFS creation.
+
+TEST=Build PC Engines apu2 image.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index 57adf82b089e..8df048c11764 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -139,9 +139,11 @@ $(call add_intermediate, add_amdfw, $(obj)/amdfw.rom)
+ 
+ else # ifeq ($(CONFIG_AMDFW_OUTSIDE_CBFS),y)
+ 
++HUDSON_FWM_CBFS_POSITION=$(call int-add, $(HUDSON_FWM_POSITION) $(call int-subtract, 0x100000000 $(CONFIG_ROM_SIZE)))
++
+ cbfs-files-y += apu/amdfw
+ apu/amdfw-file := $(obj)/amdfw.rom
+-apu/amdfw-position := $(HUDSON_FWM_POSITION)
++apu/amdfw-position := $(shell printf "0x%x" $(HUDSON_FWM_CBFS_POSITION))
+ apu/amdfw-type := raw
+ 
+ endif # ifeq ($(CONFIG_AMDFW_OUTSIDE_CBFS),y)

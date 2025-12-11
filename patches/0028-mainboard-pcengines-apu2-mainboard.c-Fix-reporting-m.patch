@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 5d25eb3839..6b4efe956f 100644
+index 5d25eb3839ba..6b4efe956fa0 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -228,6 +228,24 @@ static int mainboard_smbios_type16(DMI_INFO *agesa_dmi, int *handle,
@@ -61,6 +57,3 @@ index 5d25eb3839..6b4efe956f 100644
  	t->minimum_voltage = 1500; /* From SPD: 1.5V */
  	t->maximum_voltage = 1500;
  
--- 
-2.49.0
-

@@ -8,16 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2            |   1 +
- configs/config.pcengines_seabios_apu3            |   1 +
- configs/config.pcengines_seabios_apu4            |   1 +
- .../pcengines/apu2/variants/apu3/bootorder       | Bin 0 -> 4096 bytes
- 4 files changed, 3 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu3/bootorder
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index e407412979..e967f28613 100644
+index e407412979ff..e967f28613d4 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -16,6 +16,7 @@ CONFIG_NO_GFX_INIT=y
@@ -29,7 +21,7 @@ index e407412979..e967f28613 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index f0ea77b8a7..2aa97943af 100644
+index f0ea77b8a7c8..2aa97943af98 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -41,7 +33,7 @@ index f0ea77b8a7..2aa97943af 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 3a8b61cca6..28bc2bb00d 100644
+index 3a8b61cca668..28bc2bb00dd8 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -65,7 +57,4 @@ VzW-XlK;8((rOz{DbS0*P6kkeli1z>h
 
 literal 0
 HcmV?d00001
-
--- 
-2.49.0
 

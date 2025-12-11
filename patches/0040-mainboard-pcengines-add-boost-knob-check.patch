@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bios_knobs.c | 25 +++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/bios_knobs.c b/src/mainboard/pcengines/apu2/bios_knobs.c
-index 1f237fc4d6..5ae0da8e3a 100644
+index 1f237fc4d63a..5ae0da8e3a57 100644
 --- a/src/mainboard/pcengines/apu2/bios_knobs.c
 +++ b/src/mainboard/pcengines/apu2/bios_knobs.c
 @@ -170,6 +170,31 @@ int check_com2(void)
@@ -48,6 +44,3 @@ index 1f237fc4d6..5ae0da8e3a 100644
  static u8 check_uart(char uart_letter)
  {
  	u8 uarten;
--- 
-2.49.0
-

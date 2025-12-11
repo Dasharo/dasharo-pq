@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Pending
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/southbridge/amd/pi/hudson/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
 diff --git a/src/southbridge/amd/pi/hudson/Kconfig b/src/southbridge/amd/pi/hudson/Kconfig
-index 134b57546d..cd80868127 100644
+index 134b57546d21..cd80868127af 100644
 --- a/src/southbridge/amd/pi/hudson/Kconfig
 +++ b/src/southbridge/amd/pi/hudson/Kconfig
 @@ -24,6 +24,9 @@ config SOUTHBRIDGE_SPECIFIC_OPTIONS
@@ -27,6 +23,3 @@ index 134b57546d..cd80868127 100644
  	select USE_AMDFWTOOL
  
  config EHCI_BAR
--- 
-2.49.0
-

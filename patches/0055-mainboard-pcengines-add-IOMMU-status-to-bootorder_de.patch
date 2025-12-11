@@ -8,15 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Witwicki <michal.witwicki@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- 4 files changed, 1 insertion(+)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
-index 210845d97c..26686bea9c 100644
+index 210845d97c1d..26686bea9cee 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
 @@ -26,4 +26,5 @@ mpcie2_clk0
@@ -51,7 +44,4 @@ dcmZorXi(UY#KfAJpPO5{IiAUdck*ifPykm82Z#Uw
 
 delta 20
 bcmZorXi(UY#I!k!$&q*R1SXEjtNB9#M-B#&
-
--- 
-2.49.0
 

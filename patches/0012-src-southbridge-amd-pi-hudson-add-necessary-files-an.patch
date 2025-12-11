@@ -9,19 +9,21 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/southbridge/amd/pi/hudson/early_setup.c  |  6 ++++++
- src/southbridge/amd/pi/hudson/lpc.c          | 13 ++++++++++++
- src/southbridge/amd/pi/hudson/soc/iomap.h    |  6 ++++++
- src/southbridge/amd/pi/hudson/soc/lpc.h      | 13 ++++++++++++
- src/southbridge/amd/pi/hudson/soc/pci_devs.h | 21 ++++++++++++++++++++
- 5 files changed, 59 insertions(+)
- create mode 100644 src/southbridge/amd/pi/hudson/soc/iomap.h
- create mode 100644 src/southbridge/amd/pi/hudson/soc/lpc.h
- create mode 100644 src/southbridge/amd/pi/hudson/soc/pci_devs.h
-
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index 9d71df5efca1..57adf82b089e 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -15,6 +15,8 @@ romstage-y += smbus_spd.c
+ 
+ verstage-y += early_setup.c
+ 
++postcar-y += early_setup.c
++
+ ramstage-y += enable_usbdebug.c
+ ramstage-$(CONFIG_HAVE_ACPI_TABLES) += fadt.c
+ ramstage-y += hda.c
 diff --git a/src/southbridge/amd/pi/hudson/early_setup.c b/src/southbridge/amd/pi/hudson/early_setup.c
-index 1e1a2f44ae..7df11f7f0a 100644
+index 1e1a2f44aec6..7df11f7f0a01 100644
 --- a/src/southbridge/amd/pi/hudson/early_setup.c
 +++ b/src/southbridge/amd/pi/hudson/early_setup.c
 @@ -6,6 +6,7 @@
@@ -45,7 +47,7 @@ index 1e1a2f44ae..7df11f7f0a 100644
  {
  	uintptr_t base = hudson_spibase();
 diff --git a/src/southbridge/amd/pi/hudson/lpc.c b/src/southbridge/amd/pi/hudson/lpc.c
-index 66ec82414f..c7c56e0a01 100644
+index 66ec82414fe8..c7c56e0a01c4 100644
 --- a/src/southbridge/amd/pi/hudson/lpc.c
 +++ b/src/southbridge/amd/pi/hudson/lpc.c
 @@ -1,6 +1,7 @@
@@ -77,7 +79,7 @@ index 66ec82414f..c7c56e0a01 100644
  	if (dev->path.type != DEVICE_PATH_PCI)
 diff --git a/src/southbridge/amd/pi/hudson/soc/iomap.h b/src/southbridge/amd/pi/hudson/soc/iomap.h
 new file mode 100644
-index 0000000000..df40f0fe71
+index 000000000000..df40f0fe7148
 --- /dev/null
 +++ b/src/southbridge/amd/pi/hudson/soc/iomap.h
 @@ -0,0 +1,6 @@
@@ -89,7 +91,7 @@ index 0000000000..df40f0fe71
 +#endif /* SOC_IOMAP_H */
 diff --git a/src/southbridge/amd/pi/hudson/soc/lpc.h b/src/southbridge/amd/pi/hudson/soc/lpc.h
 new file mode 100644
-index 0000000000..0c966e9383
+index 000000000000..0c966e938382
 --- /dev/null
 +++ b/src/southbridge/amd/pi/hudson/soc/lpc.h
 @@ -0,0 +1,13 @@
@@ -108,7 +110,7 @@ index 0000000000..0c966e9383
 +#endif /* SOC_LPC_H */
 diff --git a/src/southbridge/amd/pi/hudson/soc/pci_devs.h b/src/southbridge/amd/pi/hudson/soc/pci_devs.h
 new file mode 100644
-index 0000000000..747ccfc088
+index 000000000000..747ccfc0884b
 --- /dev/null
 +++ b/src/southbridge/amd/pi/hudson/soc/pci_devs.h
 @@ -0,0 +1,21 @@
@@ -133,6 +135,32 @@ index 0000000000..747ccfc088
 +#define SOC_LPC_DEV		_SOC_DEV(PCU_DEV, LPC_FUNC)
 +
 +#endif /* SOC_PCI_DEVS_H */
--- 
-2.49.0
-
+diff --git a/src/vendorcode/amd/pi/Makefile.mk b/src/vendorcode/amd/pi/Makefile.mk
+index 446e9d477940..6222af4230b8 100644
+--- a/src/vendorcode/amd/pi/Makefile.mk
++++ b/src/vendorcode/amd/pi/Makefile.mk
+@@ -104,7 +104,7 @@ export AGESA_CFLAGS  := $(AGESA_CFLAGS)
+ 
+ CC_bootblock := $(CC_bootblock) $(AGESA_INC) $(AGESA_CFLAGS)
+ CC_romstage := $(CC_romstage) $(AGESA_INC) $(AGESA_CFLAGS)
+-CC_postcar:= $(CC_postcar) -I$(src)/southbridge/amd/pi/hudson -I$(AGESA_ROOT)/binaryPI
++CC_postcar:= $(CC_postcar) $(AGESA_INC)
+ CC_ramstage := $(CC_ramstage) $(AGESA_INC) $(AGESA_CFLAGS)
+ 
+ CC_x86_32 := $(CC_x86_32) $(AGESA_INC) $(AGESA_CFLAGS)
+@@ -165,9 +165,11 @@ ramstage-libs += $(agesa_output_path)/libagesa.a
+ 
+ #######################################################################
+ 
+-cbfs-files-y += $(CONFIG_AGESA_CBFS_NAME)
+-$(CONFIG_AGESA_CBFS_NAME)-file := $(CONFIG_AGESA_BINARY_PI_FILE)
+-$(CONFIG_AGESA_CBFS_NAME)-type := raw
+-$(CONFIG_AGESA_CBFS_NAME)-position := $(CONFIG_AGESA_BINARY_PI_LOCATION)
++agesa_binary := $(call strip_quotes,$(CONFIG_AGESA_CBFS_NAME))
++
++cbfs-files-y += $(agesa_binary)
++$(agesa_binary)-file := $(CONFIG_AGESA_BINARY_PI_FILE)
++$(agesa_binary)-type := raw
++$(agesa_binary)-position := $(CONFIG_AGESA_BINARY_PI_LOCATION)
+ 
+ endif

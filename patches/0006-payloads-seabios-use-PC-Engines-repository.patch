@@ -8,15 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2 | 2 ++
- configs/config.pcengines_seabios_apu3 | 2 ++
- configs/config.pcengines_seabios_apu4 | 2 ++
- payloads/external/SeaBIOS/Makefile    | 2 +-
- 4 files changed, 7 insertions(+), 1 deletion(-)
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 7058b2c7cc..27614f10dc 100644
+index bb5a319be7c3..2607b0fa19a0 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -17,6 +17,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -24,12 +17,12 @@ index 7058b2c7cc..27614f10dc 100644
  CONFIG_PXE_ROM_ID="8086,157b"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 91758066ac..fc513d5c43 100644
+index 464bb55c06bd..2251ec94b89a 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -37,12 +30,12 @@ index 91758066ac..fc513d5c43 100644
  CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index c1ad2636f1..b4610152ef 100644
+index 2896f018dbac..a9dd32db596b 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -50,16 +43,16 @@ index c1ad2636f1..b4610152ef 100644
  CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/payloads/external/SeaBIOS/Makefile b/payloads/external/SeaBIOS/Makefile
-index 7926f3fb90..5bdd526296 100644
+index bd31f52c7234..276ef25f7707 100644
 --- a/payloads/external/SeaBIOS/Makefile
 +++ b/payloads/external/SeaBIOS/Makefile
 @@ -2,7 +2,7 @@ TAG-$(CONFIG_SEABIOS_MASTER)=origin/master
- TAG-$(CONFIG_SEABIOS_STABLE)=a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8
+ TAG-$(CONFIG_SEABIOS_STABLE)=b52ca86e094d19b58e2304417787e96b940e39c6
  TAG-$(CONFIG_SEABIOS_REVISION)=$(CONFIG_SEABIOS_REVISION_ID)
  
 -project_git_repo=https://review.coreboot.org/seabios.git
@@ -67,6 +60,3 @@ index 7926f3fb90..5bdd526296 100644
  project_dir=seabios
  
  unexport KCONFIG_AUTOHEADER
--- 
-2.49.0
-

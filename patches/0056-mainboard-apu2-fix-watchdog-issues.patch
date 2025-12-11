@@ -15,14 +15,8 @@ power cycle.
 Upstream-Status: Pending
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c |  34 +++++
- src/mainboard/pcengines/apu2/bootblock.c    |  14 ++-
- src/mainboard/pcengines/apu2/romstage.c     | 132 ++++++++++++++++++++
- 3 files changed, 174 insertions(+), 6 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index 0a2b68529f..2f837fd9d8 100644
+index 0a2b68529f4b..2f837fd9d832 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -3,6 +3,9 @@
@@ -74,7 +68,7 @@ index 0a2b68529f..2f837fd9d8 100644
  
  void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
 diff --git a/src/mainboard/pcengines/apu2/bootblock.c b/src/mainboard/pcengines/apu2/bootblock.c
-index 3fa35af0ad..464b3c6035 100644
+index 3fa35af0ad88..464b3c6035a4 100644
 --- a/src/mainboard/pcengines/apu2/bootblock.c
 +++ b/src/mainboard/pcengines/apu2/bootblock.c
 @@ -6,6 +6,8 @@
@@ -104,7 +98,7 @@ index 3fa35af0ad..464b3c6035 100644
 +		nuvoton_enable_serial(SERIAL2_DEV, 0x2f8);
  }
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index 2509031f3e..5b9f9f7aa6 100644
+index 2509031f3e5f..5b9f9f7aa6c3 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
 @@ -1,17 +1,27 @@
@@ -261,6 +255,3 @@ index 2509031f3e..5b9f9f7aa6 100644
 +
 +	uart_init(CONFIG_UART_FOR_CONSOLE);
 +}
--- 
-2.49.0
-

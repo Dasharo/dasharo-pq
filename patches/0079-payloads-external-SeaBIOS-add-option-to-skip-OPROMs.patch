@@ -1,7 +1,7 @@
 From 86ac9900a76915fbfd1b917a97cd8f6a137e91de Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
 Date: Thu, 2 Jun 2022 17:42:14 +0200
-Subject: [PATCH 79/88] payloads/external/SeaBIOS: add bootorder in FMAP option
+Subject: [PATCH 79/88] payloads/external/SeaBIOS: add option to skip OPROMs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -9,13 +9,8 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.mk     | 8 ++++++++
- payloads/external/SeaBIOS/Kconfig | 7 +++++++
- 2 files changed, 15 insertions(+)
-
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index dafc3b7fb2..ba68632d1f 100644
+index 0c83bcc23dbd..7e56ae9a5612 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -157,6 +157,14 @@ cbfs-files-y += etc/sercon-port
@@ -34,7 +29,7 @@ index dafc3b7fb2..ba68632d1f 100644
  ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),0)
  $(call add_intermediate, seabios_ps2_timeout, $(CBFSTOOL))
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index bc749b04c0..2ad5b01335 100644
+index d17a7ec73c13..be8013e2c676 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
 @@ -52,6 +52,13 @@ config SEABIOS_PS2_TIMEOUT
@@ -51,6 +46,3 @@ index bc749b04c0..2ad5b01335 100644
  config SEABIOS_THREAD_OPTIONROMS
  	prompt "Hardware init during option ROM execution"
  	default n
--- 
-2.49.0
-

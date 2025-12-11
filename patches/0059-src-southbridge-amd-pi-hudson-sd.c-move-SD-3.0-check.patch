@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/southbridge/amd/pi/hudson/sd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
 diff --git a/src/southbridge/amd/pi/hudson/sd.c b/src/southbridge/amd/pi/hudson/sd.c
-index 6dad334991..3896ff6c3b 100644
+index 6dad3349916b..3896ff6c3b2d 100644
 --- a/src/southbridge/amd/pi/hudson/sd.c
 +++ b/src/southbridge/amd/pi/hudson/sd.c
 @@ -7,6 +7,7 @@
@@ -34,6 +30,3 @@ index 6dad334991..3896ff6c3b 100644
  		sd_mode = sd_chip->sd_mode;
  
  	if (sd_mode == 3) {	/* SD 3.0 mode */
--- 
-2.49.0
-

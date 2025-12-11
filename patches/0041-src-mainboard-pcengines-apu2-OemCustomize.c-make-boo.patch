@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index 95af6ef92d..0a2b68529f 100644
+index 95af6ef92d56..0a2b68529f4b 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -2,6 +2,7 @@
@@ -38,6 +34,3 @@ index 95af6ef92d..0a2b68529f 100644
  }
  
  void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
--- 
-2.49.0
-

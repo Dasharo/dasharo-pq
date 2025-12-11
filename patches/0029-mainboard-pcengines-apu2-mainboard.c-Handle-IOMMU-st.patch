@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 6b4efe956f..d4d751ee6d 100644
+index 6b4efe956fa0..d4d751ee6d49 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -358,6 +358,17 @@ static void mainboard_enable(struct device *dev)
@@ -35,6 +31,3 @@ index 6b4efe956f..d4d751ee6d 100644
  #if CONFIG(GENERATE_SMBIOS_TABLES)
  	dev->ops->get_smbios_data = mainboard_smbios_data;
  #endif
--- 
-2.49.0
-

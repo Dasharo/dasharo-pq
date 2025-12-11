@@ -8,16 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Makefile.mk  |   4 +
- src/mainboard/pcengines/apu2/bios_knobs.c | 360 ++++++++++++++++++++++
- src/mainboard/pcengines/apu2/bios_knobs.h |  34 ++
- 3 files changed, 398 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/bios_knobs.c
- create mode 100644 src/mainboard/pcengines/apu2/bios_knobs.h
-
 diff --git a/src/mainboard/pcengines/apu2/Makefile.mk b/src/mainboard/pcengines/apu2/Makefile.mk
-index 93df43d17d..37ac356e33 100644
+index 93df43d17dd8..37ac356e332a 100644
 --- a/src/mainboard/pcengines/apu2/Makefile.mk
 +++ b/src/mainboard/pcengines/apu2/Makefile.mk
 @@ -2,10 +2,14 @@
@@ -37,7 +29,7 @@ index 93df43d17d..37ac356e33 100644
  ramstage-y += gpio_ftns.c
 diff --git a/src/mainboard/pcengines/apu2/bios_knobs.c b/src/mainboard/pcengines/apu2/bios_knobs.c
 new file mode 100644
-index 0000000000..2dfbaccaab
+index 000000000000..2dfbaccaab9c
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/bios_knobs.c
 @@ -0,0 +1,360 @@
@@ -403,7 +395,7 @@ index 0000000000..2dfbaccaab
 +}
 diff --git a/src/mainboard/pcengines/apu2/bios_knobs.h b/src/mainboard/pcengines/apu2/bios_knobs.h
 new file mode 100644
-index 0000000000..b611675536
+index 000000000000..b61167553605
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/bios_knobs.h
 @@ -0,0 +1,34 @@
@@ -441,6 +433,3 @@ index 0000000000..b611675536
 +char *get_bootorder(void);
 +
 +#endif
--- 
-2.49.0
-

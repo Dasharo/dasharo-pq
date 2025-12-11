@@ -14,18 +14,8 @@ pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2  |  1 +
- configs/config.pcengines_seabios_apu3  |  1 +
- configs/config.pcengines_seabios_apu4  |  1 +
- configs/config.pcengines_seabios_apu6  |  1 +
- src/mainboard/pcengines/apu2/Kconfig   |  1 +
- src/mainboard/pcengines/apu2/board.fmd | 18 ++++++++++++++++++
- 6 files changed, 23 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/board.fmd
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 572900c4bb..69eca3ee40 100644
+index 572900c4bb2f..69eca3ee4087 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -37,7 +27,7 @@ index 572900c4bb..69eca3ee40 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 0c36d4813b..b9f7a009ef 100644
+index 0c36d4813b11..b9f7a009efc7 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -49,7 +39,7 @@ index 0c36d4813b..b9f7a009ef 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 7b737175e6..c71e9826ee 100644
+index 7b737175e6be..c71e9826eed6 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -61,7 +51,7 @@ index 7b737175e6..c71e9826ee 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 639811e0c8..764f24f198 100644
+index 639811e0c8e1..764f24f198b2 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -73,7 +63,7 @@ index 639811e0c8..764f24f198 100644
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index ee8e8c9f47..0561dcdfa9 100644
+index ee8e8c9f47da..0561dcdfa90c 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -108,6 +108,7 @@ config FORCE_MPCIE2_CLK
@@ -86,7 +76,7 @@ index ee8e8c9f47..0561dcdfa9 100644
  	hex
 diff --git a/src/mainboard/pcengines/apu2/board.fmd b/src/mainboard/pcengines/apu2/board.fmd
 new file mode 100644
-index 0000000000..0f344e580c
+index 000000000000..0f344e580caa
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/board.fmd
 @@ -0,0 +1,18 @@
@@ -108,6 +98,3 @@ index 0000000000..0f344e580c
 +		}
 +	}
 +}
--- 
-2.49.0
-

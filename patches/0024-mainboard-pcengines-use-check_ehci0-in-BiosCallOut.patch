@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/BiosCallOuts.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
 diff --git a/src/mainboard/pcengines/apu2/BiosCallOuts.c b/src/mainboard/pcengines/apu2/BiosCallOuts.c
-index c78dda6ecb..9b8518cdb0 100644
+index c78dda6ecbe7..9b8518cdb0f4 100644
 --- a/src/mainboard/pcengines/apu2/BiosCallOuts.c
 +++ b/src/mainboard/pcengines/apu2/BiosCallOuts.c
 @@ -10,6 +10,7 @@
@@ -33,6 +29,3 @@ index c78dda6ecb..9b8518cdb0 100644
  	}
  
  	// Enable EHCI 1 (port 4 to 7)
--- 
-2.49.0
-

@@ -8,16 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c   |  77 +++++++++++++++++-
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- 5 files changed, 76 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index 2f837fd9d8..ad23370637 100644
+index 2f837fd9d832..ad23370637af 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -9,7 +9,7 @@
@@ -121,7 +113,7 @@ index 2f837fd9d8..ad23370637 100644
  		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
  		InitEarly->PlatformConfig.CpbMode = CpbModeAuto;
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
-index 26686bea9c..d7f6d7feef 100644
+index 26686bea9cee..d7f6d7feef74 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
 @@ -27,4 +27,5 @@ com2_en0
@@ -156,7 +148,4 @@ ecmZorXi(UY#l%*SoS9mXyE&c7ns@SQ{!jp4ZU^T8
 
 delta 20
 bcmZorXi(UY#k9GY$%1$C1SZbOtNB9#N1X<m
-
--- 
-2.49.0
 

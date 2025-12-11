@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- .gitignore | 4 ++++
- 1 file changed, 4 insertions(+)
-
 diff --git a/.gitignore b/.gitignore
-index e813493526..40f0f7cd78 100644
+index e813493526f3..40f0f7cd78bb 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -29,6 +29,10 @@ site-local
@@ -28,6 +24,3 @@ index e813493526..40f0f7cd78 100644
  # Development friendly files
  tags
  .clang_complete
--- 
-2.49.0
-

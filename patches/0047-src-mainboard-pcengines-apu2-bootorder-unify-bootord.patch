@@ -9,16 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Custom payload feature]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bootorder_def    |   8 ++++++++
- src/mainboard/pcengines/apu2/bootorder_map    |  16 ++++++++++++----
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- 5 files changed, 20 insertions(+), 4 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
-index ed19a86d86..37c4b8436e 100644
+index ed19a86d86ee..37c4b8436e12 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
 @@ -2,6 +2,14 @@
@@ -37,7 +29,7 @@ index ed19a86d86..37c4b8436e 100644
  /pci@i0cf8/*@11/drive@0/disk@0
  /pci@i0cf8/*@11/drive@1/disk@0
 diff --git a/src/mainboard/pcengines/apu2/bootorder_map b/src/mainboard/pcengines/apu2/bootorder_map
-index e3e7551e64..f5d47e4ee4 100644
+index e3e7551e6496..f5d47e4ee46c 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_map
 +++ b/src/mainboard/pcengines/apu2/bootorder_map
 @@ -1,7 +1,15 @@
@@ -89,7 +81,4 @@ cf+=MT(r-LbM@q&Rw|?V|NrilqSM!Gg06cCY=l}o!
 
 delta 19
 acmZorXi%6?zS*BKhHr8M(~Zfi`9lFmO$S5(
-
--- 
-2.49.0
 

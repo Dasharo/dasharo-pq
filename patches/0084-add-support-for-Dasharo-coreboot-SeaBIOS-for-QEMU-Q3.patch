@@ -8,33 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- build.sh                                      |  26 +++++++++-----
- ...ig.emulation_qemu_x86_q35_smm_tseg_seabios |  30 ++++++++++++++++
- src/device/pciexp_device.c                    |   2 +-
- src/drivers/uart/uart8250io.c                 |   2 +-
- src/mainboard/emulation/qemu-q35/Kconfig      |   2 +-
- src/mainboard/emulation/qemu-q35/board.fmd    |  18 ++++++++++
- .../emulation/qemu-q35/boot-menu-key          | Bin 0 -> 8 bytes
- .../emulation/qemu-q35/boot-menu-message      |   1 +
- .../emulation/qemu-q35/boot-menu-wait         | Bin 0 -> 8 bytes
- src/mainboard/emulation/qemu-q35/bootorder    | Bin 0 -> 4096 bytes
- .../emulation/qemu-q35/bootorder_def          |  32 ++++++++++++++++++
- .../emulation/qemu-q35/bootorder_map          |  18 ++++++++++
- .../emulation/qemu-q35/seabios_config         |   9 +++++
- 13 files changed, 129 insertions(+), 11 deletions(-)
- create mode 100644 configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
- create mode 100644 src/mainboard/emulation/qemu-q35/board.fmd
- create mode 100644 src/mainboard/emulation/qemu-q35/boot-menu-key
- create mode 100644 src/mainboard/emulation/qemu-q35/boot-menu-message
- create mode 100644 src/mainboard/emulation/qemu-q35/boot-menu-wait
- create mode 100644 src/mainboard/emulation/qemu-q35/bootorder
- create mode 100644 src/mainboard/emulation/qemu-q35/bootorder_def
- create mode 100644 src/mainboard/emulation/qemu-q35/bootorder_map
- create mode 100644 src/mainboard/emulation/qemu-q35/seabios_config
-
 diff --git a/build.sh b/build.sh
-index bb9f7acfc6..3ef32f241b 100755
+index 0723ed5f283d..97528dbbeebf 100755
 --- a/build.sh
 +++ b/build.sh
 @@ -26,6 +26,7 @@ usage() {
@@ -45,7 +20,7 @@ index bb9f7acfc6..3ef32f241b 100755
    echo -e "\todroid_h4              - build Dasharo compatible with Hardkernel ODROID H4"
  }
  
-@@ -203,13 +204,19 @@ function build_pcengines {
+@@ -204,13 +205,19 @@ function build_pcengines {
  }
  
  function build_qemu {
@@ -70,16 +45,16 @@ index bb9f7acfc6..3ef32f241b 100755
  
    docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
      -v $HOME/.ssh:/home/coreboot/.ssh \
-@@ -223,7 +230,7 @@ function build_qemu {
-   docker run --rm -t -u $UID -v $PWD:/home/coreboot/coreboot \
+@@ -225,7 +232,7 @@ function build_qemu {
      -v $HOME/.ssh:/home/coreboot/.ssh \
+     -e BUILD_TIMELESS=${BUILD_TIMELESS} \
      -w /home/coreboot/coreboot ${DASHARO_SDK} \
 -    /bin/bash -c "make olddefconfig && make -j$(nproc)"
 +    /bin/bash -c "make olddefconfig && make BUILD_TIMELESS=1 -j$(nproc)"
  
    cp build/coreboot.rom qemu_q35_${FW_VERSION}.rom
    if [ $? -eq 0 ]; then
-@@ -389,10 +396,13 @@ case "$CMD" in
+@@ -391,10 +398,13 @@ case "$CMD" in
          build_optiplex_9010 "configs/config.dell_optiplex_9010_sff_txt"
          ;;
      "qemu" | "QEMU" | "q35" | "Q35" )
@@ -97,7 +72,7 @@ index bb9f7acfc6..3ef32f241b 100755
          BOARD="odroid_h4"
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 new file mode 100644
-index 0000000000..37e4156d54
+index 000000000000..b2743363d06c
 --- /dev/null
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 @@ -0,0 +1,30 @@
@@ -110,8 +85,8 @@ index 0000000000..37e4156d54
 +CONFIG_DEFAULT_CONSOLE_LOGLEVEL_0=y
 +CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
-+CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
-+CONFIG_LOCALVERSION="v24.08.00.01"
++CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
++CONFIG_LOCALVERSION="v25.09.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_OPTION_BACKEND_NONE=y
@@ -123,19 +98,19 @@ index 0000000000..37e4156d54
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
 +CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 +CONFIG_SEABIOS_ADD_SERCON_PORT_FILE=y
 +CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
-+CONFIG_SORTBOOTORDER_REVISION_ID="95692853947e0b36e4d7fb57bf6a951baa9f78c5"
++CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_EMULATION=y
 diff --git a/src/device/pciexp_device.c b/src/device/pciexp_device.c
-index 885240f8b1..b973f3d9b3 100644
+index f07ef652a988..a25ccfbdf9aa 100644
 --- a/src/device/pciexp_device.c
 +++ b/src/device/pciexp_device.c
-@@ -700,7 +700,7 @@ static void pciexp_tune_dev(struct device *dev)
+@@ -720,7 +720,7 @@ static void pciexp_tune_dev(struct device *dev)
  	if (!root_cap)
  		return;
  
@@ -145,7 +120,7 @@ index 885240f8b1..b973f3d9b3 100644
  		if (CONFIG(PCIEXP_COMMON_CLOCK))
  			pciexp_enable_common_clock(root, root_cap, dev, cap);
 diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
-index 1f33a612cd..51faeb65fe 100644
+index 2671f6f7c8fd..02d71f88c993 100644
 --- a/src/drivers/uart/uart8250io.c
 +++ b/src/drivers/uart/uart8250io.c
 @@ -94,7 +94,7 @@ void uart_init(unsigned int idx)
@@ -157,22 +132,9 @@ index 1f33a612cd..51faeb65fe 100644
  			port_index = 1;
  		else
  			port_index = idx;
-diff --git a/src/mainboard/emulation/qemu-q35/Kconfig b/src/mainboard/emulation/qemu-q35/Kconfig
-index 2fb180b7ec..424375e3af 100644
---- a/src/mainboard/emulation/qemu-q35/Kconfig
-+++ b/src/mainboard/emulation/qemu-q35/Kconfig
-@@ -10,7 +10,7 @@ config BOARD_SPECIFIC_OPTIONS
- 	select HAVE_OPTION_TABLE
- #	select HAVE_PIRQ_TABLE
- 	select HAVE_ACPI_TABLES
--	select BOARD_ROMSIZE_KB_16384
-+	select BOARD_ROMSIZE_KB_8192
- 	select MAINBOARD_HAS_NATIVE_VGA_INIT
- 	select MAINBOARD_FORCE_NATIVE_VGA_INIT if !CHROMEOS
- 	select MEMORY_MAPPED_TPM
 diff --git a/src/mainboard/emulation/qemu-q35/board.fmd b/src/mainboard/emulation/qemu-q35/board.fmd
 new file mode 100644
-index 0000000000..0f344e580c
+index 000000000000..0f344e580caa
 --- /dev/null
 +++ b/src/mainboard/emulation/qemu-q35/board.fmd
 @@ -0,0 +1,18 @@
@@ -206,7 +168,7 @@ HcmV?d00001
 
 diff --git a/src/mainboard/emulation/qemu-q35/boot-menu-message b/src/mainboard/emulation/qemu-q35/boot-menu-message
 new file mode 100644
-index 0000000000..2b61487904
+index 000000000000..2b61487904a4
 --- /dev/null
 +++ b/src/mainboard/emulation/qemu-q35/boot-menu-message
 @@ -0,0 +1 @@
@@ -238,7 +200,7 @@ HcmV?d00001
 
 diff --git a/src/mainboard/emulation/qemu-q35/bootorder_def b/src/mainboard/emulation/qemu-q35/bootorder_def
 new file mode 100644
-index 0000000000..774434f980
+index 000000000000..774434f980f8
 --- /dev/null
 +++ b/src/mainboard/emulation/qemu-q35/bootorder_def
 @@ -0,0 +1,32 @@
@@ -276,7 +238,7 @@ index 0000000000..774434f980
 +watchdog0000
 diff --git a/src/mainboard/emulation/qemu-q35/bootorder_map b/src/mainboard/emulation/qemu-q35/bootorder_map
 new file mode 100644
-index 0000000000..f5d47e4ee4
+index 000000000000..f5d47e4ee46c
 --- /dev/null
 +++ b/src/mainboard/emulation/qemu-q35/bootorder_map
 @@ -0,0 +1,18 @@
@@ -300,7 +262,7 @@ index 0000000000..f5d47e4ee4
 +f iPXE
 diff --git a/src/mainboard/emulation/qemu-q35/seabios_config b/src/mainboard/emulation/qemu-q35/seabios_config
 new file mode 100644
-index 0000000000..42b3c6bf03
+index 000000000000..42b3c6bf0389
 --- /dev/null
 +++ b/src/mainboard/emulation/qemu-q35/seabios_config
 @@ -0,0 +1,9 @@
@@ -313,6 +275,3 @@ index 0000000000..42b3c6bf03
 +# CONFIG_USB_UHCI is not set
 +# CONFIG_USB_OHCI is not set
 +# CONFIG_LPT is not set
--- 
-2.49.0
-

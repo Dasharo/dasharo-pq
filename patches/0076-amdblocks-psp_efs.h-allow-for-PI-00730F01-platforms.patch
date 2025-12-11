@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
----
- src/soc/amd/common/block/include/amdblocks/psp_efs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
 diff --git a/src/soc/amd/common/block/include/amdblocks/psp_efs.h b/src/soc/amd/common/block/include/amdblocks/psp_efs.h
-index d0b9b016d2..17efc1adb3 100644
+index d0b9b016d2e1..17efc1adb37c 100644
 --- a/src/soc/amd/common/block/include/amdblocks/psp_efs.h
 +++ b/src/soc/amd/common/block/include/amdblocks/psp_efs.h
 @@ -10,7 +10,7 @@
@@ -25,6 +21,3 @@ index d0b9b016d2..17efc1adb3 100644
    #define SPI_MODE_FIELD spi_readmode_f15_mod_60_6f
    #define SPI_SPEED_FIELD fast_speed_new_f15_mod_60_6f
  #elif CONFIG(SOC_AMD_PICASSO)
--- 
-2.49.0
-

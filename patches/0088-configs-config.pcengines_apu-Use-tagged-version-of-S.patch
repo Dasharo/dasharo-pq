@@ -9,15 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2 | 2 +-
- configs/config.pcengines_seabios_apu3 | 2 +-
- configs/config.pcengines_seabios_apu4 | 2 +-
- configs/config.pcengines_seabios_apu6 | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 2d2f205416..0a7025eec3 100644
+index 2d2f20541672..0a7025eec39b 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -23,7 +23,7 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
@@ -30,7 +23,7 @@ index 2d2f205416..0a7025eec3 100644
  CONFIG_SORTBOOTORDER_REVISION=y
  CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 54fc69a673..6cbe69da3b 100644
+index 54fc69a673ff..6cbe69da3b95 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -24,7 +24,7 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
@@ -43,7 +36,7 @@ index 54fc69a673..6cbe69da3b 100644
  CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
  CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index b55a923ec2..1ab04f462f 100644
+index b55a923ec23e..1ab04f462fe4 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -24,7 +24,7 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
@@ -56,7 +49,7 @@ index b55a923ec2..1ab04f462f 100644
  CONFIG_SORTBOOTORDER_REVISION=y
  CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index d7055d40f8..ce2ff11d7a 100644
+index d7055d40f80b..ce2ff11d7adc 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -24,7 +24,7 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
@@ -68,6 +61,3 @@ index d7055d40f8..ce2ff11d7a 100644
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SORTBOOTORDER_REVISION=y
  CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
--- 
-2.49.0
-

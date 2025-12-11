@@ -9,27 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.mk                 |  36 ++++++++++++++++++
- payloads/external/SeaBIOS/Kconfig             |  30 +++++++++++++++
- src/mainboard/pcengines/apu2/boot-menu-key    | Bin 0 -> 8 bytes
- .../pcengines/apu2/boot-menu-message          |   1 +
- src/mainboard/pcengines/apu2/boot-menu-wait   | Bin 0 -> 8 bytes
- src/mainboard/pcengines/apu2/bootorder_def    |  10 +++++
- src/mainboard/pcengines/apu2/bootorder_map    |  10 +++++
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 0 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 0 -> 4096 bytes
- 9 files changed, 87 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-key
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-message
- create mode 100644 src/mainboard/pcengines/apu2/boot-menu-wait
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_def
- create mode 100644 src/mainboard/pcengines/apu2/bootorder_map
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu2/bootorder
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu4/bootorder
-
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index e5fad06845..f6529366fe 100644
+index 68775156ac46..d0004c22f5cc 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -103,6 +103,42 @@ ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_FILE)),)
@@ -76,7 +57,7 @@ index e5fad06845..f6529366fe 100644
  
  ifneq ($(CONFIG_SEABIOS_PS2_TIMEOUT),)
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index b12af46a14..d676934dba 100644
+index 38c7f7f36a26..a727098e02ef 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
 @@ -109,6 +109,36 @@ config SEABIOS_BOOTORDER_FILE
@@ -128,7 +109,7 @@ HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/boot-menu-message b/src/mainboard/pcengines/apu2/boot-menu-message
 new file mode 100644
-index 0000000000..2b61487904
+index 000000000000..2b61487904a4
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/boot-menu-message
 @@ -0,0 +1 @@
@@ -145,7 +126,7 @@ HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
 new file mode 100644
-index 0000000000..bc27c48349
+index 000000000000..bc27c4834981
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
 @@ -0,0 +1,10 @@
@@ -161,7 +142,7 @@ index 0000000000..bc27c48349
 +/rom@genroms/pxe.rom
 diff --git a/src/mainboard/pcengines/apu2/bootorder_map b/src/mainboard/pcengines/apu2/bootorder_map
 new file mode 100644
-index 0000000000..e3e7551e64
+index 000000000000..e3e7551e6496
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/bootorder_map
 @@ -0,0 +1,10 @@
@@ -202,7 +183,4 @@ Y60Z09YXt*&Cz#eDFObodm=02W0!?&_O#lD@
 
 literal 0
 HcmV?d00001
-
--- 
-2.49.0
 

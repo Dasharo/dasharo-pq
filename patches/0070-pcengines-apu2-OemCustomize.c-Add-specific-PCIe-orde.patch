@@ -6,12 +6,8 @@ Subject: [PATCH 70/88] pcengines/apu2/OemCustomize.c: Add specific PCIe order
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c | 156 ++++++++++++++++++--
- 1 file changed, 141 insertions(+), 15 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index d868850ff9..e803173716 100644
+index d868850ff90e..e803173716d8 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -132,9 +132,9 @@ static const PCIe_PORT_DESCRIPTOR PortList[] = {
@@ -261,6 +257,3 @@ index d868850ff9..e803173716 100644
  static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
  	.Flags        = DESCRIPTOR_TERMINATE_LIST,
  	.SocketId     = 0,
--- 
-2.49.0
-

@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 09a6605d0a..8cff46bb0c 100644
+index 09a6605d0a9a..8cff46bb0cd1 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -31,6 +31,7 @@
@@ -35,6 +31,3 @@ index 09a6605d0a..8cff46bb0c 100644
  
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
--- 
-2.49.0
-

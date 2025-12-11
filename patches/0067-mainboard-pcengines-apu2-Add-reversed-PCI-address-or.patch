@@ -6,16 +6,8 @@ Subject: [PATCH 67/88] mainboard/pcengines/apu2/: Add reversed PCI address
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
----
- src/mainboard/pcengines/apu2/OemCustomize.c   | 155 +++++++++++++++++-
- src/mainboard/pcengines/apu2/bootorder_def    |   1 +
- .../pcengines/apu2/variants/apu2/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu3/bootorder    | Bin 4096 -> 4096 bytes
- .../pcengines/apu2/variants/apu4/bootorder    | Bin 4096 -> 4096 bytes
- 5 files changed, 152 insertions(+), 4 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index ad23370637..d868850ff9 100644
+index ad23370637af..d868850ff90e 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -133,6 +133,132 @@ static const PCIe_PORT_DESCRIPTOR PortList[] = {
@@ -190,7 +182,7 @@ index ad23370637..d868850ff9 100644
  	if (check_boost()) {
  		InitEarly->PlatformConfig.CStateMode = CStateModeC6;
 diff --git a/src/mainboard/pcengines/apu2/bootorder_def b/src/mainboard/pcengines/apu2/bootorder_def
-index d7f6d7feef..88da074dd1 100644
+index d7f6d7feef74..88da074dd189 100644
 --- a/src/mainboard/pcengines/apu2/bootorder_def
 +++ b/src/mainboard/pcengines/apu2/bootorder_def
 @@ -28,4 +28,5 @@ boosten1
@@ -225,7 +217,4 @@ jcmZorXi(Tt%*0)goS9mbT9#T=oVvMyNtbu>YW`3Fl6MLZ
 
 delta 20
 bcmZorXi(Tt%(S_YNsD*#0w%u6tNB9#NXZ7c
-
--- 
-2.49.0
 

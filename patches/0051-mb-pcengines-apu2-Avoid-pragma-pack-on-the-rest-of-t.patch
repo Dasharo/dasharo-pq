@@ -16,12 +16,8 @@ Adapted from https://review.coreboot.org/c/coreboot/+/64382
 Upstream-Status: Pending
 Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
 Change-Id: I2ee658c0d2db9a4dffe2dd8dbf5f4a3a905eb75d
----
- src/mainboard/pcengines/apu2/BiosCallOuts.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/BiosCallOuts.c b/src/mainboard/pcengines/apu2/BiosCallOuts.c
-index 9b8518cdb0..f9d419399f 100644
+index 9b8518cdb0f4..f9d419399f2d 100644
 --- a/src/mainboard/pcengines/apu2/BiosCallOuts.c
 +++ b/src/mainboard/pcengines/apu2/BiosCallOuts.c
 @@ -1,6 +1,10 @@
@@ -35,6 +31,3 @@ index 9b8518cdb0..f9d419399f 100644
  #include <console/console.h>
  #include <spd_bin.h>
  #include <northbridge/amd/agesa/BiosCallOuts.h>
--- 
-2.49.0
-
