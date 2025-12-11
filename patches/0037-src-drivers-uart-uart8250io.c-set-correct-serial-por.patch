@@ -10,13 +10,8 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/drivers/uart/uart8250io.c            | 19 ++++++++++++++-----
- src/mainboard/pcengines/apu2/Makefile.mk |  1 +
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
 diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
-index a7fc3466f3..1f33a612cd 100644
+index 89ec229dfc9b..2671f6f7c8fd 100644
 --- a/src/drivers/uart/uart8250io.c
 +++ b/src/drivers/uart/uart8250io.c
 @@ -8,6 +8,8 @@
@@ -78,7 +73,7 @@ index a7fc3466f3..1f33a612cd 100644
  	serial->regwidth = 1;
  	serial->input_hertz = uart_platform_refclk();
 diff --git a/src/mainboard/pcengines/apu2/Makefile.mk b/src/mainboard/pcengines/apu2/Makefile.mk
-index 423726ae10..e2882d2736 100644
+index 423726ae10ee..e2882d2736c6 100644
 --- a/src/mainboard/pcengines/apu2/Makefile.mk
 +++ b/src/mainboard/pcengines/apu2/Makefile.mk
 @@ -1,6 +1,7 @@
@@ -89,6 +84,3 @@ index 423726ae10..e2882d2736 100644
  
  romstage-y += bios_knobs.c
  romstage-y += BiosCallOuts.c
--- 
-2.49.0
-

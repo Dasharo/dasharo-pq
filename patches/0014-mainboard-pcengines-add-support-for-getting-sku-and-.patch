@@ -23,12 +23,8 @@ functionality. The obtained information is exposed in SMBIOS tables.
 Upstream-Status: Pending
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 63 ++++++++++++++++++++----
- 1 file changed, 53 insertions(+), 10 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 242ad9d932..1c3f80acb8 100644
+index 242ad9d932ed..1c3f80acb891 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -1,5 +1,9 @@
@@ -135,6 +131,3 @@ index 242ad9d932..1c3f80acb8 100644
  	return serial;
  }
  
--- 
-2.49.0
-

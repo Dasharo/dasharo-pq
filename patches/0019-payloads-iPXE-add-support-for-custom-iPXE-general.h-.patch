@@ -20,19 +20,11 @@ unexported to prevent potential conflicts with the iPXE build process.
 Upstream-Status: Inappropriate [Use sed for fine-grained feature control]
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- payloads/external/Makefile.mk    |   2 +
- payloads/external/iPXE/Kconfig   |   6 ++
- payloads/external/iPXE/Makefile  |  17 ++-
- payloads/external/iPXE/general.h | 178 +++++++++++++++++++++++++++++++
- 4 files changed, 202 insertions(+), 1 deletion(-)
- create mode 100644 payloads/external/iPXE/general.h
-
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index f6529366fe..149d35732e 100644
+index d0004c22f5cc..95d5e9d408be 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
-@@ -429,6 +429,8 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
+@@ -433,6 +433,8 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
  	CONSOLE_SERIAL=$(IPXE_SERIAL_CONSOLE) \
  	IPXE_UART=$(IPXE_UART) \
  	CONFIG_TTYS0_BAUD=$(CONFIG_TTYS0_BAUD) \
@@ -42,7 +34,7 @@ index f6529366fe..149d35732e 100644
  	CONFIG_HAS_SCRIPT=$(CONFIG_IPXE_ADD_SCRIPT) \
  	CONFIG_IPXE_NO_PROMPT=$(CONFIG_IPXE_NO_PROMPT) \
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index 19c7abdda9..3f01073743 100644
+index 19c7abdda98d..3f0107374350 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
 @@ -68,6 +68,12 @@ config IPXE_MASTER
@@ -59,7 +51,7 @@ index 19c7abdda9..3f01073743 100644
  	bool "Enable iPXE serial console"
  	def_bool y
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index 684f7b241c..83fa6b911b 100644
+index 684f7b241c06..83fa6b911b10 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -11,6 +11,13 @@ project_name=iPXE
@@ -102,7 +94,7 @@ index 684f7b241c..83fa6b911b 100644
  ifeq ($(CONSOLE_SERIAL),yy)
 diff --git a/payloads/external/iPXE/general.h b/payloads/external/iPXE/general.h
 new file mode 100644
-index 0000000000..1025247a14
+index 000000000000..1025247a1450
 --- /dev/null
 +++ b/payloads/external/iPXE/general.h
 @@ -0,0 +1,178 @@
@@ -284,6 +276,3 @@ index 0000000000..1025247a14
 +#include LOCAL_NAMED_CONFIG(general.h)
 +
 +#endif /* CONFIG_GENERAL_H */
--- 
-2.49.0
-

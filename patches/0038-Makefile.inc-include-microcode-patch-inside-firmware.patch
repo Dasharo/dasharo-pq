@@ -9,15 +9,11 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Microcode is not official]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- Makefile.mk | 3 +++
- 1 file changed, 3 insertions(+)
-
 diff --git a/Makefile.mk b/Makefile.mk
-index 9efef49ba6..cc482acff4 100644
+index 1c5b8f05d5be..0931a3a65012 100644
 --- a/Makefile.mk
 +++ b/Makefile.mk
-@@ -1302,6 +1302,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
+@@ -1317,6 +1317,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
  	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
  endif # CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK
  endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
@@ -27,6 +23,3 @@ index 9efef49ba6..cc482acff4 100644
  	mv $@.tmp $@
  	@printf "    CBFSLAYOUT  $(subst $(obj)/,,$(@))\n\n"
  	$(CBFSTOOL) $@ layout
--- 
-2.49.0
-

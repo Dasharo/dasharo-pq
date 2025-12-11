@@ -11,13 +11,8 @@ This patch updates iPXE to last commit from August 2024 (2024.08).
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/iPXE/Kconfig  | 2 +-
- payloads/external/iPXE/Makefile | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index ff25d81957..19c7abdda9 100644
+index ff25d81957f8..19c7abdda98d 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
 @@ -54,7 +54,7 @@ choice
@@ -30,7 +25,7 @@ index ff25d81957..19c7abdda9 100644
  	  iPXE uses a rolling release with no stable version, for
  	  reproducibility, use the last commit of a given month as the
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index 7ec8126c97..684f7b241c 100644
+index 7ec8126c977e..684f7b241c06 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
 @@ -1,8 +1,8 @@
@@ -44,6 +39,3 @@ index 7ec8126c97..684f7b241c 100644
  
  TAG-$(CONFIG_IPXE_MASTER)=origin/master
  TAG-$(CONFIG_IPXE_STABLE)=$(STABLE_COMMIT_ID)
--- 
-2.49.0
-

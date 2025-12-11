@@ -17,16 +17,11 @@ systems and meets customer expectations.
 
 Upstream-Status: Inappropriate [Custom prints that are not necessary]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/lib/Makefile.mk                      |  1 +
- src/mainboard/pcengines/apu2/mainboard.c | 32 +++++++++++++++++++++++-
- 2 files changed, 32 insertions(+), 1 deletion(-)
-
 diff --git a/src/lib/Makefile.mk b/src/lib/Makefile.mk
-index 56d8b1afd5..a983390b4e 100644
+index d9792dbea4cf..d6ae3661072b 100644
 --- a/src/lib/Makefile.mk
 +++ b/src/lib/Makefile.mk
-@@ -359,6 +359,7 @@ $(foreach stage,$(libhwbase-stages), \
+@@ -368,6 +368,7 @@ $(foreach stage,$(libhwbase-stages), \
  endif # CONFIG_ROMSTAGE_LIBHWBASE || CONFIG_RAMSTAGE_LIBHWBASE
  
  romstage-y += spd_bin.c
@@ -35,7 +30,7 @@ index 56d8b1afd5..a983390b4e 100644
  ifeq ($(CONFIG_HAVE_SPD_IN_CBFS),y)
  LIB_SPD_BIN = $(obj)/spd.bin
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 1c3f80acb8..9f5f53c263 100644
+index 1c3f80acb891..9f5f53c2632c 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -21,6 +21,8 @@
@@ -94,6 +89,3 @@ index 1c3f80acb8..9f5f53c263 100644
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
  #if CONFIG(GENERATE_SMBIOS_TABLES)
--- 
-2.49.0
-

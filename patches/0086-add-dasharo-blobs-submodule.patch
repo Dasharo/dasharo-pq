@@ -5,30 +5,24 @@ Subject: [PATCH 86/88] add dasharo-blobs submodule
 
 Upstream-Status: Inappropriate [Custom submodule]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- .gitmodules            | 3 +++
- 3rdparty/dasharo-blobs | 1 +
- 2 files changed, 4 insertions(+)
- create mode 160000 3rdparty/dasharo-blobs
-
 diff --git a/.gitmodules b/.gitmodules
-index eec69fd1ec..0c8fc8917f 100644
+index 4fa82999dc82..ff2b7208999a 100644
 --- a/.gitmodules
 +++ b/.gitmodules
-@@ -65,3 +65,6 @@
+@@ -67,6 +67,9 @@
  [submodule "src/vendorcode/amd/opensil/genoa_poc/opensil"]
  	path = src/vendorcode/amd/opensil/genoa_poc/opensil
  	url = https://review.coreboot.org/opensil_genoa_poc.git
 +[submodule "3rdparty/dasharo-blobs"]
 +	path = 3rdparty/dasharo-blobs
 +	url = https://github.com/Dasharo/dasharo-blobs.git
+ [submodule "3rdparty/open-power-signing-utils"]
+ 	path = 3rdparty/open-power-signing-utils
+ 	url = https://review.coreboot.org/open-power-signing-utils.git
 diff --git a/3rdparty/dasharo-blobs b/3rdparty/dasharo-blobs
 new file mode 160000
-index 0000000000..c4ecc9e3f4
+index 000000000000..c4ecc9e3f4ba
 --- /dev/null
 +++ b/3rdparty/dasharo-blobs
 @@ -0,0 +1 @@
 +Subproject commit c4ecc9e3f4baf5cc4c68d07c84c23b6f673f90f9
--- 
-2.49.0
-

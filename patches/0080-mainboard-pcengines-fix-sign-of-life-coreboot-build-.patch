@@ -13,12 +13,8 @@ explanation of the history of this date string.
 
 Upstream-Status: Inappropriate [Custom prints]
 Signed-off-by: Mark Mentovai <mark@mentovai.com>
----
- src/mainboard/pcengines/apu2/romstage.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index aa428874b0..d22c482a21 100644
+index aa428874b0a0..d22c482a2187 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
 @@ -96,8 +96,8 @@ static void print_sign_of_life(void)
@@ -32,6 +28,3 @@ index aa428874b0..d22c482a21 100644
  	tmp[8] = '\0';
  	printk(BIOS_ALERT, CONFIG_MAINBOARD_VENDOR " "
  	                   CONFIG_MAINBOARD_PART_NUMBER "\n");
--- 
-2.49.0
-

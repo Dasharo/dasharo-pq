@@ -6,12 +6,8 @@ Subject: [PATCH 43/88] src/northbridge/amd/pi/00730F01/pci_devs.h: add IOMMU
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/northbridge/amd/pi/00730F01/pci_devs.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
 diff --git a/src/northbridge/amd/pi/00730F01/pci_devs.h b/src/northbridge/amd/pi/00730F01/pci_devs.h
-index 92f6ac5c57..8762e2e32c 100644
+index 92f6ac5c577c..8762e2e32c93 100644
 --- a/src/northbridge/amd/pi/00730F01/pci_devs.h
 +++ b/src/northbridge/amd/pi/00730F01/pci_devs.h
 @@ -3,6 +3,20 @@
@@ -35,6 +31,3 @@ index 92f6ac5c57..8762e2e32c 100644
  /* Graphics and Display */
  #define GFX_DEV 0x1
  #define GFX_FUNC 0
--- 
-2.49.0
-

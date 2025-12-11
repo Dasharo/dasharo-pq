@@ -8,15 +8,11 @@ Include iPXE ROM as genroms/pxe.rom instead of a device-specific one.
 
 Upstream-Status: Inappropriate [Custom workaround for PXE ROMs in SeaBIOS]
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
----
- payloads/external/Makefile.mk | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index 149d35732e..d2961e0fec 100644
+index 95d5e9d408be..3305f333e748 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
-@@ -410,16 +410,16 @@ ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO),yy)
+@@ -414,16 +414,16 @@ ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO),yy)
  IPXE_UART=COM$(call int-add,$(CONFIG_UART_FOR_CONSOLE) 1)
  endif
  
@@ -37,6 +33,3 @@ index 149d35732e..d2961e0fec 100644
  payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
  	$(MAKE) -C payloads/external/iPXE all \
  	CROSS_COMPILE="$(CROSS_COMPILE_$(ARCH-ramstage-y))" \
--- 
-2.49.0
-

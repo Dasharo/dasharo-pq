@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Kconfig | 32 ++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 613cff69cb..823bbf11c4 100644
+index 613cff69cb8d..823bbf11c410 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -103,6 +103,38 @@ config FORCE_MPCIE2_CLK
@@ -56,6 +52,3 @@ index 613cff69cb..823bbf11c4 100644
  config AGESA_USE_1_0_0_4_HEADER
  	bool
  	default y
--- 
-2.49.0
-

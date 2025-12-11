@@ -7,16 +7,8 @@ Subject: [PATCH 87/88] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
 Upstream-Status: Inappropriate [Custom submodule]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
----
- configs/config.emulation_qemu_x86_q35_smm_tseg_seabios | 2 +-
- configs/config.pcengines_seabios_apu2                  | 2 +-
- configs/config.pcengines_seabios_apu3                  | 2 +-
- configs/config.pcengines_seabios_apu4                  | 2 +-
- configs/config.pcengines_seabios_apu6                  | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-index 37e4156d54..e8a35eb362 100644
+index 37e4156d545e..e8a35eb3621b 100644
 --- a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 @@ -7,7 +7,7 @@ CONFIG_CPU_QEMU_X86_TSEG_SMM=y
@@ -29,7 +21,7 @@ index 37e4156d54..e8a35eb362 100644
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 69eca3ee40..2d2f205416 100644
+index 69eca3ee4087..2d2f20541672 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -10,7 +10,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -42,7 +34,7 @@ index 69eca3ee40..2d2f205416 100644
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index b9f7a009ef..54fc69a673 100644
+index b9f7a009efc7..54fc69a673ff 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -55,7 +47,7 @@ index b9f7a009ef..54fc69a673 100644
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index c71e9826ee..b55a923ec2 100644
+index c71e9826eed6..b55a923ec23e 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -68,7 +60,7 @@ index c71e9826ee..b55a923ec2 100644
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 764f24f198..d7055d40f8 100644
+index 764f24f198b2..d7055d40f80b 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -80,6 +72,3 @@ index 764f24f198..d7055d40f8 100644
  CONFIG_LOCALVERSION="v24.08.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
--- 
-2.49.0
-

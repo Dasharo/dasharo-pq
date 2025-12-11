@@ -9,13 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should be payload's feature]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c                 | 9 +++++++++
- src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb | 2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 8cff46bb0c..4f8d76539c 100644
+index 8cff46bb0cd1..4f8d76539c8b 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -26,6 +26,7 @@
@@ -42,7 +37,7 @@ index 8cff46bb0c..4f8d76539c 100644
  
  /*
 diff --git a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
-index 5c169208b9..eb0777b489 100644
+index 5c169208b9cf..eb0777b489ce 100644
 --- a/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
 +++ b/src/mainboard/pcengines/apu2/variants/apu3/devicetree.cb
 @@ -3,7 +3,7 @@
@@ -54,6 +49,3 @@ index 5c169208b9..eb0777b489 100644
  		device ref gpp_bridge_0		on end	# mPCIe slot 2 (on GFX lane)
  		device ref gpp_bridge_1		on end	# LAN3
  		device ref gpp_bridge_2		on end	# LAN2
--- 
-2.49.0
-

@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 381bfcbd80..a0100209bf 100644
+index 381bfcbd8084..a0100209bff3 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -93,6 +93,12 @@ endchoice
@@ -30,6 +26,3 @@ index 381bfcbd80..a0100209bf 100644
  config AGESA_USE_1_0_0_4_HEADER
  	bool
  	default y
--- 
-2.49.0
-

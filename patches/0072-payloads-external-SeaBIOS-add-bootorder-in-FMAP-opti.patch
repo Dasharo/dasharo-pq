@@ -9,13 +9,8 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- payloads/external/Makefile.mk     | 11 +++++++++++
- payloads/external/SeaBIOS/Kconfig |  6 ++++++
- 2 files changed, 17 insertions(+)
-
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index eb6c014d46..f40fb68db1 100644
+index 4b20281d5f3e..7bb1f07c4de2 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
 @@ -99,12 +99,14 @@ img/seabios-type := payload
@@ -50,7 +45,7 @@ index eb6c014d46..f40fb68db1 100644
  ifneq ($(strip $(CONFIG_SEABIOS_BOOTORDER_DEF_FILE)),)
  cbfs-files-y += bootorder_def
 diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
-index 990923858e..bc749b04c0 100644
+index d7f6e70be0bc..d17a7ec73c13 100644
 --- a/payloads/external/SeaBIOS/Kconfig
 +++ b/payloads/external/SeaBIOS/Kconfig
 @@ -93,6 +93,12 @@ config PAYLOAD_CONFIGFILE
@@ -66,6 +61,3 @@ index 990923858e..bc749b04c0 100644
  config SEABIOS_BOOTORDER_FILE
  	string "SeaBIOS bootorder file"
  	default ""
--- 
-2.49.0
-

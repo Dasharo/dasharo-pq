@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 56 ++++++++++++++++++------
- 1 file changed, 43 insertions(+), 13 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 4f8d76539c..45c83bcf90 100644
+index 4f8d76539c8b..45c83bcf90f9 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -144,19 +144,49 @@ static void config_gpio_mux(void)
@@ -79,6 +75,3 @@ index 4f8d76539c..45c83bcf90 100644
  }
  
  /**********************************************
--- 
-2.49.0
-

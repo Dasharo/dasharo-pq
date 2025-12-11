@@ -19,12 +19,8 @@ as expected and improves system stability.
 
 Upstream-Status: Submitted [CB:79612]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 40 ++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 3d909037b1..86e8409acb 100644
+index e9548f19a431..d564e37e6a2c 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -376,6 +376,46 @@ static void mainboard_enable(struct device *dev)
@@ -74,6 +70,3 @@ index 3d909037b1..86e8409acb 100644
  	//
  	// Turn off LED 2 and LED 3
  	//
--- 
-2.49.0
-

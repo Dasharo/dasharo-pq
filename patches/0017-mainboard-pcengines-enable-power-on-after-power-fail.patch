@@ -15,12 +15,8 @@ the system in case of unexpected power outages.
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 9f5f53c263..09a6605d0a 100644
+index 9f5f53c2632c..09a6605d0a9a 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -28,8 +28,10 @@
@@ -45,6 +41,3 @@ index 9f5f53c263..09a6605d0a 100644
  
  
  
--- 
-2.49.0
-

@@ -9,13 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- src/mainboard/pcengines/apu2/bios_knobs.c | 76 ++++++++++++++++++++++-
- src/mainboard/pcengines/apu2/bios_knobs.h |  1 +
- 2 files changed, 76 insertions(+), 1 deletion(-)
-
 diff --git a/src/mainboard/pcengines/apu2/bios_knobs.c b/src/mainboard/pcengines/apu2/bios_knobs.c
-index 2dfbaccaab..1f237fc4d6 100644
+index 2dfbaccaab9c..1f237fc4d63a 100644
 --- a/src/mainboard/pcengines/apu2/bios_knobs.c
 +++ b/src/mainboard/pcengines/apu2/bios_knobs.c
 @@ -96,6 +96,79 @@ static u8 check_knob_value(const char *s)
@@ -109,7 +104,7 @@ index 2dfbaccaab..1f237fc4d6 100644
  	}
  
 diff --git a/src/mainboard/pcengines/apu2/bios_knobs.h b/src/mainboard/pcengines/apu2/bios_knobs.h
-index b611675536..1e3560b207 100644
+index b61167553605..1e3560b20755 100644
 --- a/src/mainboard/pcengines/apu2/bios_knobs.h
 +++ b/src/mainboard/pcengines/apu2/bios_knobs.h
 @@ -19,6 +19,7 @@
@@ -120,6 +115,3 @@ index b611675536..1e3560b207 100644
  u8 check_uartc(void);
  u8 check_uartd(void);
  u8 check_ehci0(void);
--- 
-2.49.0
-

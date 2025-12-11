@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/northbridge/amd/pi/00730F01/acpi/northbridge.asl | 4 ++++
- 1 file changed, 4 insertions(+)
-
 diff --git a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
-index d502af4137..c5f60b94ff 100644
+index d502af4137d2..c5f60b94ff86 100644
 --- a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
 +++ b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
 @@ -31,6 +31,10 @@ Device(AMRT) {
@@ -28,6 +24,3 @@ index d502af4137..c5f60b94ff 100644
  /* Gpp 0 */
  Device(PBR4) {
  	Name(_ADR, 0x00020001)
--- 
-2.49.0
-

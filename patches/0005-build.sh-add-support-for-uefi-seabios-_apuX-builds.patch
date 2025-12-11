@@ -8,18 +8,13 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [The script should be placed elsewhere]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- build.sh | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
- mode change 100644 => 100755 build.sh
-
 diff --git a/build.sh b/build.sh
 old mode 100644
 new mode 100755
-index 1115d4751b..bb9f7acfc6
+index c87594d39582..0723ed5f283d
 --- a/build.sh
 +++ b/build.sh
-@@ -357,16 +357,28 @@ case "$CMD" in
+@@ -359,16 +359,28 @@ case "$CMD" in
          build_v1x10 "v1610"
          ;;
      "apu2" | "APU2" )
@@ -52,6 +47,3 @@ index 1115d4751b..bb9f7acfc6
          ;;
      "optiplex_9010_uefi")
          BOARD="optiplex_9010"
--- 
-2.49.0
-

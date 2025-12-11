@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/mainboard.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index d4d751ee6d..e9548f19a4 100644
+index d4d751ee6d49..e9548f19a431 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -70,7 +70,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
@@ -35,6 +31,3 @@ index d4d751ee6d..e9548f19a4 100644
  };
  
  /*
--- 
-2.49.0
-

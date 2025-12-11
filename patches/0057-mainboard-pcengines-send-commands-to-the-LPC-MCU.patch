@@ -8,12 +8,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Inappropriate [Custom feature]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/romstage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index 5b9f9f7aa6..71b5170ce4 100644
+index 5b9f9f7aa6c3..71b5170ce422 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
 @@ -128,7 +128,7 @@ void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
@@ -25,6 +21,3 @@ index 5b9f9f7aa6..71b5170ce4 100644
  			lpc_mcu_msg();
  		}
  
--- 
-2.49.0
-

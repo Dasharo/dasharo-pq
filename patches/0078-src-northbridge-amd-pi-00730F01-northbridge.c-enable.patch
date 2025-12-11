@@ -9,15 +9,11 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/northbridge/amd/pi/00730F01/northbridge.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
 diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
-index 519c190812..f9540973b9 100644
+index 995bcf6dda62..16d85f1c6dd7 100644
 --- a/src/northbridge/amd/pi/00730F01/northbridge.c
 +++ b/src/northbridge/amd/pi/00730F01/northbridge.c
-@@ -643,6 +643,11 @@ static void fam16_finalize(void *chip_info)
+@@ -644,6 +644,11 @@ static void fam16_finalize(void *chip_info)
  	if (dev != NULL) {
  		pci_and_config32(dev, 0x60, ~(1 << 11));
  	}
@@ -29,6 +25,3 @@ index 519c190812..f9540973b9 100644
  }
  
  struct hw_mem_hole_info {
--- 
-2.49.0
-

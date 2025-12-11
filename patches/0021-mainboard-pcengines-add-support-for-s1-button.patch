@@ -11,16 +11,8 @@ SIMSWAP.
 
 Upstream-Status: Inappropriate [Should be payload's feature]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/Makefile.mk |   3 +
- src/mainboard/pcengines/apu2/s1_button.c | 115 +++++++++++++++++++++++
- src/mainboard/pcengines/apu2/s1_button.h |  16 ++++
- 3 files changed, 134 insertions(+)
- create mode 100644 src/mainboard/pcengines/apu2/s1_button.c
- create mode 100644 src/mainboard/pcengines/apu2/s1_button.h
-
 diff --git a/src/mainboard/pcengines/apu2/Makefile.mk b/src/mainboard/pcengines/apu2/Makefile.mk
-index 37ac356e33..423726ae10 100644
+index 37ac356e332a..423726ae10ee 100644
 --- a/src/mainboard/pcengines/apu2/Makefile.mk
 +++ b/src/mainboard/pcengines/apu2/Makefile.mk
 @@ -6,13 +6,16 @@ romstage-y += bios_knobs.c
@@ -42,7 +34,7 @@ index 37ac356e33..423726ae10 100644
  SPD_SOURCES  = HYNIX-2G-1333
 diff --git a/src/mainboard/pcengines/apu2/s1_button.c b/src/mainboard/pcengines/apu2/s1_button.c
 new file mode 100644
-index 0000000000..d9e52fa856
+index 000000000000..d9e52fa856f4
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/s1_button.c
 @@ -0,0 +1,115 @@
@@ -163,7 +155,7 @@ index 0000000000..d9e52fa856
 +}
 diff --git a/src/mainboard/pcengines/apu2/s1_button.h b/src/mainboard/pcengines/apu2/s1_button.h
 new file mode 100644
-index 0000000000..8ab399416c
+index 000000000000..8ab399416cb5
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/s1_button.h
 @@ -0,0 +1,16 @@
@@ -183,6 +175,3 @@ index 0000000000..8ab399416c
 + */
 +
 + void enable_console(void);
--- 
-2.49.0
-

@@ -9,16 +9,9 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
----
- configs/config.pcengines_seabios_apu2 | 24 ++++++++++++++++++++++++
- configs/config.pcengines_seabios_apu4 | 25 +++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
- create mode 100644 configs/config.pcengines_seabios_apu2
- create mode 100644 configs/config.pcengines_seabios_apu4
-
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
 new file mode 100644
-index 0000000000..7058b2c7cc
+index 000000000000..7058b2c7cc5e
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -0,0 +1,24 @@
@@ -48,7 +41,7 @@ index 0000000000..7058b2c7cc
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
 new file mode 100644
-index 0000000000..c1ad2636f1
+index 000000000000..c1ad2636f14e
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -0,0 +1,25 @@
@@ -77,6 +70,3 @@ index 0000000000..c1ad2636f1
 +CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
--- 
-2.49.0
-

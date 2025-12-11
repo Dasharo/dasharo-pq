@@ -8,21 +8,9 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- configs/config.pcengines_seabios_apu6         |  34 ++++++++++
- src/mainboard/pcengines/apu2/Kconfig          |   8 ++-
- src/mainboard/pcengines/apu2/Kconfig.name     |   3 +
- src/mainboard/pcengines/apu2/dsdt.asl         |   2 +
- .../pcengines/apu2/variants/apu6/bootorder    | Bin 0 -> 4096 bytes
- .../apu2/variants/apu6/devicetree.cb          |  60 ++++++++++++++++++
- 6 files changed, 104 insertions(+), 3 deletions(-)
- create mode 100644 configs/config.pcengines_seabios_apu6
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu6/bootorder
- create mode 100644 src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
-
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
 new file mode 100644
-index 0000000000..639811e0c8
+index 000000000000..639811e0c8e1
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -0,0 +1,34 @@
@@ -61,7 +49,7 @@ index 0000000000..639811e0c8
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
-index 823bbf11c4..ee8e8c9f47 100644
+index 823bbf11c410..ee8e8c9f47da 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig
 +++ b/src/mainboard/pcengines/apu2/Kconfig
 @@ -1,7 +1,7 @@
@@ -108,7 +96,7 @@ index 823bbf11c4..ee8e8c9f47 100644
  config APU2_PINMUX_UART_D
  	bool "UART 0x2e8"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig.name b/src/mainboard/pcengines/apu2/Kconfig.name
-index 170080396c..8ee55dbe60 100644
+index 170080396ce5..8ee55dbe6057 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig.name
 +++ b/src/mainboard/pcengines/apu2/Kconfig.name
 @@ -11,3 +11,6 @@ config BOARD_PCENGINES_APU4
@@ -119,7 +107,7 @@ index 170080396c..8ee55dbe60 100644
 +config BOARD_PCENGINES_APU6
 +	bool "APU6"
 diff --git a/src/mainboard/pcengines/apu2/dsdt.asl b/src/mainboard/pcengines/apu2/dsdt.asl
-index af979a9bcb..0a91feec58 100644
+index af979a9bcb21..0a91feec580e 100644
 --- a/src/mainboard/pcengines/apu2/dsdt.asl
 +++ b/src/mainboard/pcengines/apu2/dsdt.asl
 @@ -10,6 +10,8 @@
@@ -148,7 +136,7 @@ HcmV?d00001
 
 diff --git a/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
 new file mode 100644
-index 0000000000..911df5af96
+index 000000000000..911df5af962e
 --- /dev/null
 +++ b/src/mainboard/pcengines/apu2/variants/apu6/devicetree.cb
 @@ -0,0 +1,60 @@
@@ -212,6 +200,3 @@ index 0000000000..911df5af96
 +		end
 +	end
 +end
--- 
-2.49.0
-

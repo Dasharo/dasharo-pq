@@ -9,12 +9,8 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/mainboard/pcengines/apu2/BiosCallOuts.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
 diff --git a/src/mainboard/pcengines/apu2/BiosCallOuts.c b/src/mainboard/pcengines/apu2/BiosCallOuts.c
-index f9d419399f..cc03d1ed29 100644
+index f9d419399f2d..cc03d1ed29eb 100644
 --- a/src/mainboard/pcengines/apu2/BiosCallOuts.c
 +++ b/src/mainboard/pcengines/apu2/BiosCallOuts.c
 @@ -124,9 +124,8 @@ static AGESA_STATUS board_ReadSpd_from_cbfs(UINT32 Func, UINTN Data, VOID *Confi
@@ -29,6 +25,3 @@ index f9d419399f..cc03d1ed29 100644
  
  	return AGESA_SUCCESS;
  }
--- 
-2.49.0
-
