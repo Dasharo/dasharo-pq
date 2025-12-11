@@ -15,15 +15,11 @@ Upstream-Status: Accepted [CB:79677]
 Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 Signed-off-by: Michał Witwicki <michal.witwicki@3mdeb.com>
----
- src/northbridge/amd/pi/00730F01/northbridge.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
 diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
-index 1be9421c72..0f08cddf63 100644
+index 826c19e862e2..ab1bd5821c82 100644
 --- a/src/northbridge/amd/pi/00730F01/northbridge.c
 +++ b/src/northbridge/amd/pi/00730F01/northbridge.c
-@@ -24,6 +24,8 @@
+@@ -25,6 +25,8 @@
  #include <southbridge/amd/pi/hudson/pci_devs.h>
  #include <amdblocks/cpu.h>
  
@@ -32,27 +28,3 @@ index 1be9421c72..0f08cddf63 100644
  #define PCIE_CAP_AER		BIT(5)
  #define PCIE_CAP_ACS		BIT(6)
  
-@@ -436,12 +438,14 @@ static unsigned long agesa_write_acpi_tables(const struct device *device,
- 	current += ((acpi_header_t *)current)->length;
- 
- 	/* IVRS */
--	current = ALIGN_UP(current, 8);
--	printk(BIOS_DEBUG, "ACPI:   * IVRS at %lx\n", current);
--	ivrs = (acpi_ivrs_t *)current;
--	acpi_create_ivrs(ivrs, acpi_fill_ivrs);
--	current += ivrs->header.length;
--	acpi_add_table(rsdp, ivrs);
-+	if (check_iommu()) {
-+		current = ALIGN(current, 8);
-+		printk(BIOS_DEBUG, "ACPI:   * IVRS at %lx\n", current);
-+		ivrs = (acpi_ivrs_t *)current;
-+		acpi_create_ivrs(ivrs, acpi_fill_ivrs);
-+		current += ivrs->header.length;
-+		acpi_add_table(rsdp, ivrs);
-+	}
- 
- 	/* SRAT */
- 	current = ALIGN_UP(current, 8);
--- 
-2.49.0
-

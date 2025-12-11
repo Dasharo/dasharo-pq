@@ -8,28 +8,23 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Submitted [CB:5155157981]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- src/commonlib/include/commonlib/coreboot_tables.h | 1 +
- src/lib/coreboot_table.c                          | 1 +
- 2 files changed, 2 insertions(+)
-
 diff --git a/src/commonlib/include/commonlib/coreboot_tables.h b/src/commonlib/include/commonlib/coreboot_tables.h
-index a9e14c7bff..9699139a76 100644
+index ab57ed0270b8..3991e2ca48e2 100644
 --- a/src/commonlib/include/commonlib/coreboot_tables.h
 +++ b/src/commonlib/include/commonlib/coreboot_tables.h
-@@ -88,6 +88,7 @@ enum {
- 	LB_TAG_ACPI_RSDP		= 0x0043,
- 	LB_TAG_PCIE			= 0x0044,
+@@ -90,6 +90,7 @@ enum {
  	LB_TAG_EFI_FW_INFO		= 0x0045,
-+	LB_TAG_DRTM_LOG			= 0x0046,
+ 	LB_TAG_CAPSULE			= 0x0046,
+ 	LB_TAG_CFR_ROOT			= 0x0047,
++	LB_TAG_DRTM_LOG			= 0x0048,
  	/* The following options are CMOS-related */
  	LB_TAG_CMOS_OPTION_TABLE	= 0x00c8,
  	LB_TAG_OPTION			= 0x00c9,
 diff --git a/src/lib/coreboot_table.c b/src/lib/coreboot_table.c
-index 913588feb6..bb5d6498cc 100644
+index d8ecdce868e6..5878782099b6 100644
 --- a/src/lib/coreboot_table.c
 +++ b/src/lib/coreboot_table.c
-@@ -270,6 +270,7 @@ static void add_cbmem_pointers(struct lb_header *header)
+@@ -271,6 +271,7 @@ static void add_cbmem_pointers(struct lb_header *header)
  		{CBMEM_ID_VPD, LB_TAG_VPD},
  		{CBMEM_ID_WIFI_CALIBRATION, LB_TAG_WIFI_CALIBRATION},
  		{CBMEM_ID_TPM_CB_LOG, LB_TAG_TPM_CB_LOG},
@@ -37,6 +32,3 @@ index 913588feb6..bb5d6498cc 100644
  		{CBMEM_ID_FMAP, LB_TAG_FMAP},
  		{CBMEM_ID_VBOOT_WORKBUF, LB_TAG_VBOOT_WORKBUF},
  		{CBMEM_ID_TYPE_C_INFO, LB_TAG_TYPE_C_INFO},
--- 
-2.49.0
-

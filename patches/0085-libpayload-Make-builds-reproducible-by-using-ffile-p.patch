@@ -6,22 +6,15 @@ Subject: [PATCH 85/88] libpayload: Make builds reproducible by using
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
----
- payloads/libpayload/Makefile.mk | 1 +
- 1 file changed, 1 insertion(+)
-
 diff --git a/payloads/libpayload/Makefile.mk b/payloads/libpayload/Makefile.mk
-index 6dd33e1197..0a41408238 100644
+index 08249c26488c..2d1d379bdb80 100644
 --- a/payloads/libpayload/Makefile.mk
 +++ b/payloads/libpayload/Makefile.mk
 @@ -80,6 +80,7 @@ CFLAGS += -ffunction-sections -fdata-sections
  CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wmissing-prototypes -Wvla
- CFLAGS += -Wwrite-strings -Wredundant-decls -Wno-trigraphs -Wimplicit-fallthrough
- CFLAGS += -Wstrict-aliasing -Wshadow -Werror
+ CFLAGS += -Wwrite-strings -Wredundant-decls -Wimplicit-fallthrough
+ CFLAGS += -Wstrict-aliasing -Wshadow -Wno-address-of-packed-member -Werror
 +CFLAGS += -ffile-prefix-map=$(coreboottop)=.
  
  ifeq ($(CONFIG_LP_LTO),y)
  CFLAGS += -flto
--- 
-2.49.0
-
