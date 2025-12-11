@@ -10,7 +10,7 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 45c83bcf90f9..5d25eb3839ba 100644
+index f6760068767f..ac71cde7b77c 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -21,6 +21,8 @@
@@ -42,7 +42,7 @@ index 45c83bcf90f9..5d25eb3839ba 100644
  /**********************************************
   * enable the dedicated function in mainboard.
   **********************************************/
-@@ -305,6 +320,12 @@ static void mainboard_enable(struct device *dev)
+@@ -305,6 +320,11 @@ static void mainboard_enable(struct device *dev)
  	//
  	pm_write16(PM_RTC_CONTROL, pm_read16(PM_RTC_CONTROL) | (1 << 11));
  
@@ -50,7 +50,6 @@ index 45c83bcf90f9..5d25eb3839ba 100644
 +		/* Measure AGESA and PSPDIR */
 +		measure_amd_blobs();
 +	}
-+
 +
  	//
  	// Enable power on from WAKE#

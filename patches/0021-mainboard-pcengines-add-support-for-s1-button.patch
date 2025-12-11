@@ -32,6 +32,33 @@ index 37ac356e332a..423726ae10ee 100644
  
  # Order of names in SPD_SOURCES is important!
  SPD_SOURCES  = HYNIX-2G-1333
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 8cff46bb0cd1..bc17eb71b3b9 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -26,6 +26,7 @@
+ #include <spi_flash.h>
+ #include "gpio_ftns.h"
+ #include "bios_knobs.h"
++#include "s1_button.h"
+ 
+ #define SPD_SIZE  128
+ #define PM_RTC_CONTROL		0x56
+@@ -299,6 +300,14 @@ static void mainboard_final(void *chip_info)
+ 	//
+ 	gpio_set(GPIO_58, 1);
+ 	gpio_set(GPIO_59, 1);
++
++	/* The console is disabled, check if S1 is pressed and enable if so */
++	if (!check_console()) {
++		if (!gpio_get(GPIO_32)) {
++			printk(BIOS_INFO, "S1 PRESSED\n");
++			enable_console();
++		}
++	}
+ }
+ 
+ /*
 diff --git a/src/mainboard/pcengines/apu2/s1_button.c b/src/mainboard/pcengines/apu2/s1_button.c
 new file mode 100644
 index 000000000000..d9e52fa856f4

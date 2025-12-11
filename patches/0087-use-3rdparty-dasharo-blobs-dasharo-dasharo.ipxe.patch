@@ -7,67 +7,38 @@ Subject: [PATCH 87/88] use 3rdparty/dasharo-blobs/dasharo/dasharo.ipxe
 Upstream-Status: Inappropriate [Custom submodule]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
-diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-index e5444d9485fe..1aef92abc55d 100644
---- a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-+++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-@@ -7,7 +7,7 @@ CONFIG_CPU_QEMU_X86_TSEG_SMM=y
- CONFIG_DEFAULT_CONSOLE_LOGLEVEL_0=y
- CONFIG_IPXE_ADD_SCRIPT=y
- CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
--CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
-+CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v25.09.00.01"
- CONFIG_MEMTEST86PLUS_V5=y
- CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 79b01462516e..c4a9f32f5bf7 100644
+index 776a24011ca8..22f0f399deec 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
-@@ -10,7 +10,7 @@ CONFIG_HUDSON_SATA_MODE=2
+@@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
- CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
--CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
  CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 6e336bf6bf37..1a38ed9920b5 100644
+index 290d27872723..a15c2bab503d 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
-@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
- CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
--CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
  CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 07e86446b955..71b04365b109 100644
+index ca8d340f47c1..04188f82bb42 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
-@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
+@@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ CONFIG_HUDSON_SATA_MODE=2
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
- CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
--CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
-+CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v25.09.00.01"
- CONFIG_MEMTEST86PLUS_V5=y
- CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
-diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 0df441b539e0..ba4c30bdf858 100644
---- a/configs/config.pcengines_seabios_apu6
-+++ b/configs/config.pcengines_seabios_apu6
-@@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
- CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
- CONFIG_IPXE_ADD_SCRIPT=y
- CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
--CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
  CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y

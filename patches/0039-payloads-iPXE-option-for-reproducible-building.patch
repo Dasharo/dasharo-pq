@@ -6,7 +6,7 @@ Subject: [PATCH 39/88] payloads/iPXE: option for reproducible building
 Upstream-Status: Submitted [CB:82039]
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 12535e5357e3..572900c4bb2f 100644
+index 22f0f399deec..f9a56df1833b 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -9,6 +9,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -14,11 +14,11 @@ index 12535e5357e3..572900c4bb2f 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 752b4ab0c682..0c36d4813b11 100644
+index a15c2bab503d..0dce59d87706 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -26,11 +26,11 @@ index 752b4ab0c682..0c36d4813b11 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 8b77bd859b7d..7b737175e6be 100644
+index 04188f82bb42..d375627e2cdd 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -10,6 +10,7 @@ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
@@ -38,8 +38,8 @@ index 8b77bd859b7d..7b737175e6be 100644
  CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
- CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
 index 3305f333e748..4b20281d5f3e 100644

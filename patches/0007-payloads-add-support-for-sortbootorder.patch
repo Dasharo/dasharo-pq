@@ -9,12 +9,12 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Custom payload]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 27614f10dcd5..e407412979ff 100644
+index 2607b0fa19a0..53760ef7996c 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
 +CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
@@ -23,13 +23,13 @@ index 27614f10dcd5..e407412979ff 100644
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
  CONFIG_TPM2=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index fc513d5c4321..f0ea77b8a7c8 100644
+index 2251ec94b89a..95427d9a1446 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -20,6 +20,9 @@ CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 +CONFIG_SORTBOOTORDER_REVISION=y
 +CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"
 +CONFIG_SORTBOOTORDER_SECONDARY_PAYLOAD=y
@@ -37,12 +37,12 @@ index fc513d5c4321..f0ea77b8a7c8 100644
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index b4610152ef2d..3a8b61cca668 100644
+index a9dd32db596b..31f45c156804 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,9 @@ CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
 +CONFIG_SORTBOOTORDER_REVISION=y
 +CONFIG_SORTBOOTORDER_REVISION_ID="v24.08.00.01"

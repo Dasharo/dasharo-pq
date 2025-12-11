@@ -9,7 +9,7 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 7058b2c7cc5e..27614f10dcd5 100644
+index bb5a319be7c3..2607b0fa19a0 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -17,6 +17,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -17,12 +17,12 @@ index 7058b2c7cc5e..27614f10dcd5 100644
  CONFIG_PXE_ROM_ID="8086,157b"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 91758066ac02..fc513d5c4321 100644
+index 464bb55c06bd..2251ec94b89a 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -30,12 +30,12 @@ index 91758066ac02..fc513d5c4321 100644
  CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index c1ad2636f14e..b4610152ef2d 100644
+index 2896f018dbac..a9dd32db596b 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -18,6 +18,8 @@ CONFIG_POST_IO_PORT=0x80
@@ -43,7 +43,7 @@ index c1ad2636f14e..b4610152ef2d 100644
  CONFIG_PXE_ROM_ID="8086,1539"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
 +CONFIG_SEABIOS_REVISION=y
-+CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
++CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
  CONFIG_SEABIOS_SERCON_PORT_ADDR=0x3f8
  CONFIG_SUBSYSTEM_DEVICE_ID=0x0000
  CONFIG_SUBSYSTEM_VENDOR_ID=0x0000
