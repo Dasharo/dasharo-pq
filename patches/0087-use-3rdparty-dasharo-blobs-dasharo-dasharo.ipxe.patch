@@ -8,7 +8,7 @@ Upstream-Status: Inappropriate [Custom submodule]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
-index 37e4156d545e..e8a35eb3621b 100644
+index e5444d9485fe..1aef92abc55d 100644
 --- a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 @@ -7,7 +7,7 @@ CONFIG_CPU_QEMU_X86_TSEG_SMM=y
@@ -17,11 +17,11 @@ index 37e4156d545e..e8a35eb3621b 100644
  CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 -CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 69eca3ee4087..2d2f20541672 100644
+index 79b01462516e..c4a9f32f5bf7 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -10,7 +10,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -30,11 +30,11 @@ index 69eca3ee4087..2d2f20541672 100644
  CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 -CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index b9f7a009efc7..54fc69a673ff 100644
+index 6e336bf6bf37..1a38ed9920b5 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -43,11 +43,11 @@ index b9f7a009efc7..54fc69a673ff 100644
  CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 -CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index c71e9826eed6..b55a923ec23e 100644
+index 07e86446b955..71b04365b109 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -56,11 +56,11 @@ index c71e9826eed6..b55a923ec23e 100644
  CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 -CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 764f24f198b2..d7055d40f80b 100644
+index 0df441b539e0..ba4c30bdf858 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -11,7 +11,7 @@ CONFIG_HUDSON_SATA_MODE=2
@@ -69,6 +69,6 @@ index 764f24f198b2..d7055d40f80b 100644
  CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 -CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
 +CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v24.08.00.01"
+ CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
  CONFIG_MEMTEST_SECONDARY_PAYLOAD=y

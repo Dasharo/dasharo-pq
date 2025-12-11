@@ -11,7 +11,7 @@ Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
 new file mode 100644
-index 000000000000..7058b2c7cc5e
+index 000000000000..bb5a319be7c3
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -0,0 +1,24 @@
@@ -26,7 +26,7 @@ index 000000000000..7058b2c7cc5e
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
 +CONFIG_IPXE_ADD_SCRIPT=y
-+CONFIG_LOCALVERSION="v24.08.00.01"
++CONFIG_LOCALVERSION="v25.09.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_NO_GFX_INIT=y
@@ -41,7 +41,7 @@ index 000000000000..7058b2c7cc5e
 +CONFIG_VENDOR_PCENGINES=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
 new file mode 100644
-index 000000000000..c1ad2636f14e
+index 000000000000..2896f018dbac
 --- /dev/null
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -0,0 +1,25 @@
@@ -57,7 +57,7 @@ index 000000000000..c1ad2636f14e
 +CONFIG_HUDSON_SATA_MODE=2
 +CONFIG_I2C_TRANSFER_TIMEOUT_US=500000
 +CONFIG_IPXE_ADD_SCRIPT=y
-+CONFIG_LOCALVERSION="v24.08.00.01"
++CONFIG_LOCALVERSION="v25.09.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_NO_GFX_INIT=y

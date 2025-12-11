@@ -72,7 +72,7 @@ index 0723ed5f283d..97528dbbeebf 100755
          BOARD="odroid_h4"
 diff --git a/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 new file mode 100644
-index 000000000000..37e4156d545e
+index 000000000000..e5444d9485fe
 --- /dev/null
 +++ b/configs/config.emulation_qemu_x86_q35_smm_tseg_seabios
 @@ -0,0 +1,30 @@
@@ -86,7 +86,7 @@ index 000000000000..37e4156d545e
 +CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
 +CONFIG_IPXE_SCRIPT="payloads/external/iPXE/menu.ipxe"
-+CONFIG_LOCALVERSION="v24.08.00.01"
++CONFIG_LOCALVERSION="v25.09.00.01"
 +CONFIG_MEMTEST86PLUS_V5=y
 +CONFIG_MEMTEST_SECONDARY_PAYLOAD=y
 +CONFIG_OPTION_BACKEND_NONE=y
