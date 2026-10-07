@@ -15,7 +15,7 @@ index 22f0f399deec..f9a56df1833b 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v25.09.00.01"
+ CONFIG_LOCALVERSION="v26.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
 index a15c2bab503d..0dce59d87706 100644
@@ -27,7 +27,7 @@ index a15c2bab503d..0dce59d87706 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v25.09.00.01"
+ CONFIG_LOCALVERSION="v26.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
 index 04188f82bb42..d375627e2cdd 100644
@@ -39,7 +39,7 @@ index 04188f82bb42..d375627e2cdd 100644
  CONFIG_IPXE_ADD_SCRIPT=y
 +CONFIG_IPXE_CUSTOM_BUILD_ID="12345678"
  CONFIG_IPXE_SCRIPT="3rdparty/dasharo-blobs/dasharo/dasharo.ipxe"
- CONFIG_LOCALVERSION="v25.09.00.01"
+ CONFIG_LOCALVERSION="v26.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
 index eabbc5067453..67cd2366e50e 100644
