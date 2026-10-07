@@ -9,7 +9,7 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index e407412979ff..e967f28613d4 100644
+index 24e8731af512..1f9a68ba9cfa 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -16,6 +16,7 @@ CONFIG_NO_GFX_INIT=y
@@ -19,9 +19,9 @@ index e407412979ff..e967f28613d4 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index f0ea77b8a7c8..2aa97943af98 100644
+index 747b0a03c9f9..eeea0feeee96 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -31,9 +31,9 @@ index f0ea77b8a7c8..2aa97943af98 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 3a8b61cca668..28bc2bb00dd8 100644
+index f03f6f3a1800..2e561d324e82 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -17,6 +17,7 @@ CONFIG_NO_GFX_INIT=y
@@ -43,7 +43,7 @@ index 3a8b61cca668..28bc2bb00dd8 100644
 +CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/src/mainboard/pcengines/apu2/variants/apu3/bootorder b/src/mainboard/pcengines/apu2/variants/apu3/bootorder
 new file mode 100644
 index 0000000000000000000000000000000000000000..51b0fea1741238d986b4b47ac678fb344312d04b

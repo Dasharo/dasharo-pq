@@ -15,7 +15,7 @@ pcengines_apu4, pcengines_apu5, and pcengines_apu6. A new file
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 572900c4bb2f..69eca3ee4087 100644
+index 0bd75114caff..da4fd71f9193 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
 @@ -20,6 +20,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -25,9 +25,9 @@ index 572900c4bb2f..69eca3ee4087 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 0c36d4813b11..b9f7a009efc7 100644
+index 54a25048f9f3..1b58b1bf7ebf 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -37,9 +37,9 @@ index 0c36d4813b11..b9f7a009efc7 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 7b737175e6be..c71e9826eed6 100644
+index cc9c846481ec..ad687dbe34af 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -49,9 +49,9 @@ index 7b737175e6be..c71e9826eed6 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index 639811e0c8e1..764f24f198b2 100644
+index 2c7a29bbd3a8..410a8ed69545 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
 @@ -21,6 +21,7 @@ CONFIG_POST_IO_PORT=0x80
@@ -61,7 +61,7 @@ index 639811e0c8e1..764f24f198b2 100644
 +CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
  CONFIG_SEABIOS_DEBUG_LEVEL=0
  CONFIG_SEABIOS_REVISION=y
- CONFIG_SEABIOS_REVISION_ID="ac9eb800566194692fa094375703359dc66b1491"
+ CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.1"
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
 index ee8e8c9f47da..0561dcdfa90c 100644
 --- a/src/mainboard/pcengines/apu2/Kconfig

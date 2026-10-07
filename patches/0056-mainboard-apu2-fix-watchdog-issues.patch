@@ -98,7 +98,7 @@ index 3fa35af0ad88..464b3c6035a4 100644
 +		nuvoton_enable_serial(SERIAL2_DEV, 0x2f8);
  }
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index 9492ede87932..df1a88a0d8cc 100644
+index 9492ede87932..22579fce0c3b 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
 @@ -1,16 +1,26 @@
@@ -179,7 +179,7 @@ index 9492ede87932..df1a88a0d8cc 100644
 +		if (!(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status)) {
 +			if (check_console())
 +				print_sign_of_life();
-+			
++
 +			lpc_mcu_msg();
 +		}
 +

@@ -10,11 +10,11 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Microcode is not official]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/Makefile.mk b/Makefile.mk
-index 1c5b8f05d5be..0931a3a65012 100644
+index d08295f179e6..b6bd029a3716 100644
 --- a/Makefile.mk
 +++ b/Makefile.mk
-@@ -1317,6 +1317,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
- 	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r COREBOOT
+@@ -1386,6 +1386,9 @@ ifeq ($(CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK),y)
+ 	$(IFITTOOL) -f $@.tmp -D $(TS_OPTIONS) -r $(TS_FIT_REGION)
  endif # CONFIG_INTEL_ADD_TOP_SWAP_BOOTBLOCK
  endif # CONFIG_CPU_INTEL_FIRMWARE_INTERFACE_TABLE
 +ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
