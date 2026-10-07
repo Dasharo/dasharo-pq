@@ -107,10 +107,10 @@ index 000000000000..b2743363d06c
 +CONFIG_TPM2=y
 +CONFIG_VENDOR_EMULATION=y
 diff --git a/src/device/pciexp_device.c b/src/device/pciexp_device.c
-index f07ef652a988..a25ccfbdf9aa 100644
+index a50857ae4b7e..25e91317a3d5 100644
 --- a/src/device/pciexp_device.c
 +++ b/src/device/pciexp_device.c
-@@ -720,7 +720,7 @@ static void pciexp_tune_dev(struct device *dev)
+@@ -788,7 +788,7 @@ static void pciexp_tune_dev(struct device *dev)
  	if (!root_cap)
  		return;
  
@@ -120,13 +120,13 @@ index f07ef652a988..a25ccfbdf9aa 100644
  		if (CONFIG(PCIEXP_COMMON_CLOCK))
  			pciexp_enable_common_clock(root, root_cap, dev, cap);
 diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
-index 2671f6f7c8fd..02d71f88c993 100644
+index 0c88a7d06ecb..27981ba277b7 100644
 --- a/src/drivers/uart/uart8250io.c
 +++ b/src/drivers/uart/uart8250io.c
-@@ -94,7 +94,7 @@ void uart_init(unsigned int idx)
- 		unsigned int div;
- 		div = uart_baudrate_divisor(get_uart_baudrate(),
- 			uart_platform_refclk(), uart_input_clock_divider());
+@@ -92,7 +92,7 @@ void uart_init(unsigned int idx)
+ {
+ 	if (!CONFIG(DRIVERS_UART_8250IO_SKIP_INIT)) {
+ 		unsigned int div = uart_get_baudrate_divisor();
 -		if (check_com2())
 +		if (CONFIG(VENDOR_PCENGINES) && check_com2())
  			port_index = 1;

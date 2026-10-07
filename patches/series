@@ -1,6 +1,4 @@
 0086-add-dasharo-blobs-submodule.patch
-0001-payloads-ipxe-bump-iPXE-to-2024.08.patch
-fix-amdfw-position-in-cbfs
 0082-Makefile.mk-Use-git-describe-for-KERNELVERSION-if-in.patch
 0083-gitignore-add-memtest86plu_v5-and-sortbootorder-payl.patch
 0085-libpayload-Make-builds-reproducible-by-using-ffile-p.patch

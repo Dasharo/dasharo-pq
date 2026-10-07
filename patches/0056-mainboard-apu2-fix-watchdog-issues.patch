@@ -98,10 +98,10 @@ index 3fa35af0ad88..464b3c6035a4 100644
 +		nuvoton_enable_serial(SERIAL2_DEV, 0x2f8);
  }
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index 2509031f3e5f..5b9f9f7aa6c3 100644
+index 9492ede87932..df1a88a0d8cc 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
-@@ -1,17 +1,27 @@
+@@ -1,16 +1,26 @@
  /* SPDX-License-Identifier: GPL-2.0-only */
  
  #include <stdint.h>
@@ -110,7 +110,6 @@ index 2509031f3e5f..5b9f9f7aa6c3 100644
  #include <amdblocks/acpimmio.h>
  #include <amdblocks/gpio.h>
  #include <amdblocks/gpio_defs.h>
- #include <device/pci_def.h>
  #include <device/pci_ops.h>
 +#include <console/uart.h>
  #include <gpio.h>
@@ -129,7 +128,7 @@ index 2509031f3e5f..5b9f9f7aa6c3 100644
  
  void board_BeforeAgesa(struct sysinfo *cb)
  {
-@@ -71,3 +81,125 @@ static void early_lpc_init(void)
+@@ -70,3 +80,125 @@ static void early_lpc_init(void)
  	if (CONFIG(BOARD_PCENGINES_APU5))
  		gpio_configure_pads(gpio_apu5, ARRAY_SIZE(gpio_apu5));
  }

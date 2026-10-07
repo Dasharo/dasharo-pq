@@ -11,7 +11,7 @@ Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/drivers/uart/uart8250io.c b/src/drivers/uart/uart8250io.c
-index 89ec229dfc9b..2671f6f7c8fd 100644
+index ba5c723fa6c5..0c88a7d06ecb 100644
 --- a/src/drivers/uart/uart8250io.c
 +++ b/src/drivers/uart/uart8250io.c
 @@ -8,6 +8,8 @@
@@ -32,10 +32,10 @@ index 89ec229dfc9b..2671f6f7c8fd 100644
  static int uart8250_can_tx_byte(unsigned int base_port)
  {
  	return inb(base_port + UART8250_LSR) & UART8250_LSR_THRE;
-@@ -90,29 +94,34 @@ void uart_init(unsigned int idx)
- 		unsigned int div;
- 		div = uart_baudrate_divisor(get_uart_baudrate(),
- 			uart_platform_refclk(), uart_input_clock_divider());
+@@ -88,29 +92,34 @@ void uart_init(unsigned int idx)
+ {
+ 	if (!CONFIG(DRIVERS_UART_8250IO_SKIP_INIT)) {
+ 		unsigned int div = uart_get_baudrate_divisor();
 -		uart8250_init(uart_platform_base(idx), div);
 +		if (check_com2())
 +			port_index = 1;

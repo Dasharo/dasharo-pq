@@ -9,27 +9,19 @@ Include iPXE ROM as genroms/pxe.rom instead of a device-specific one.
 Upstream-Status: Inappropriate [Custom workaround for PXE ROMs in SeaBIOS]
 Signed-off-by: Kamil Wcislo <kamil.wcislo@3mdeb.com>
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index 95d5e9d408be..3305f333e748 100644
+index cfb67a6b1c36..eabbc5067453 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
-@@ -414,16 +414,16 @@ ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO),yy)
- IPXE_UART=COM$(call int-add,$(CONFIG_UART_FOR_CONSOLE) 1)
+@@ -438,9 +438,9 @@ IPXE_SERIAL_CONSOLE = n
  endif
  
-+cbfs-files-$(CONFIG_PXE_ROM)$(CONFIG_BUILD_IPXE) += genroms/pxe.rom
-+genroms/pxe.rom-file = $(PXE_ROM_FILE)
-+genroms/pxe.rom-type := raw
-+
- ifeq ($(CONFIG_IPXE_SERIAL_CONSOLE),y)
- IPXE_SERIAL_CONSOLE = $(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO)
- else
- IPXE_SERIAL_CONSOLE = n
- endif
- 
+ ifneq ($(CONFIG_EDK2_ENABLE_IPXE),y)
 -cbfs-files-$(CONFIG_PXE_ROM)$(CONFIG_BUILD_IPXE) += pci$(CONFIG_PXE_ROM_ID).rom
 -pci$(CONFIG_PXE_ROM_ID).rom-file := $(PXE_ROM_FILE)
 -pci$(CONFIG_PXE_ROM_ID).rom-type := raw
--
- payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
- 	$(MAKE) -C payloads/external/iPXE all \
- 	CROSS_COMPILE="$(CROSS_COMPILE_$(ARCH-ramstage-y))" \
++cbfs-files-$(CONFIG_PXE_ROM)$(CONFIG_BUILD_IPXE) += genroms/pxe.rom
++genroms/pxe.rom-file = $(PXE_ROM_FILE)
++genroms/pxe.rom-type := raw
+ IPXE_CROSS_COMPILE:="$(CROSS_COMPILE_$(ARCH-ramstage-y))"
+ else
+ IPXE_CROSS_COMPILE:=$(CROSS_COMPILE_x86_64)

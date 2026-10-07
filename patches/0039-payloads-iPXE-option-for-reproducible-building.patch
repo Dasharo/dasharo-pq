@@ -42,10 +42,10 @@ index 04188f82bb42..d375627e2cdd 100644
  CONFIG_LOCALVERSION="v25.09.00.01"
  CONFIG_MEMTEST86PLUS_V5=y
 diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
-index 3305f333e748..4b20281d5f3e 100644
+index eabbc5067453..67cd2366e50e 100644
 --- a/payloads/external/Makefile.mk
 +++ b/payloads/external/Makefile.mk
-@@ -435,6 +435,7 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
+@@ -457,6 +457,7 @@ payloads/external/iPXE/ipxe/ipxe.rom ipxe: $(DOTCONFIG) $(IPXE_CONFIG_SCRIPT)
  	CONFIG_TTYS0_BAUD=$(CONFIG_TTYS0_BAUD) \
  	CONFIG_PXE_CUSTOM_GENERAL_H=$(CONFIG_PXE_CUSTOM_GENERAL_H) \
  	CONFIG_PXE_CUSTOM_BOOTMENU_FILE=$(CONFIG_PXE_CUSTOM_BOOTMENU_FILE) \
@@ -54,10 +54,10 @@ index 3305f333e748..4b20281d5f3e 100644
  	CONFIG_HAS_SCRIPT=$(CONFIG_IPXE_ADD_SCRIPT) \
  	CONFIG_IPXE_NO_PROMPT=$(CONFIG_IPXE_NO_PROMPT) \
 diff --git a/payloads/external/iPXE/Kconfig b/payloads/external/iPXE/Kconfig
-index 3f0107374350..b8c30d6c0307 100644
+index e96fe371fe0c..db9b93c7a460 100644
 --- a/payloads/external/iPXE/Kconfig
 +++ b/payloads/external/iPXE/Kconfig
-@@ -83,6 +83,13 @@ config IPXE_SERIAL_CONSOLE
+@@ -85,6 +85,13 @@ config IPXE_SERIAL_CONSOLE
  
  	  Unselect to let only SeaBIOS handle printing output.
  
@@ -72,26 +72,17 @@ index 3f0107374350..b8c30d6c0307 100644
  	bool "Do not show prompt to boot from PXE"
  	default n
 diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
-index 83fa6b911b10..75aab39074b4 100644
+index 1f7da62dcc2a..d1a65d0a4d9c 100644
 --- a/payloads/external/iPXE/Makefile
 +++ b/payloads/external/iPXE/Makefile
-@@ -18,6 +18,10 @@ unexport KCONFIG_SPLITCONFIG
+@@ -26,6 +26,10 @@ unexport KCONFIG_SPLITCONFIG
  unexport KCONFIG_TRISTATE
  unexport KCONFIG_NEGATIVES
  
 +ifneq ($(CONFIG_IPXE_CUSTOM_BUILD_ID),)
-+PXE_MAKE_OPTS := BUILD_ID_CMD="echo 0x$(CONFIG_IPXE_CUSTOM_BUILD_ID)"
++PXE_MAKE_OPTS += BUILD_ID_CMD="echo 0x$(CONFIG_IPXE_CUSTOM_BUILD_ID)"
 +endif
 +
  all: build
  
  $(project_dir):
-@@ -74,7 +78,7 @@ endif
- build: config $(CONFIG_SCRIPT)
- ifeq ($(CONFIG_HAS_SCRIPT),y)
- 	echo "    MAKE       $(project_name) $(TAG-y) EMBED=$(CONFIG_SCRIPT)"
--	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom EMBED=$(CONFIG_SCRIPT)
-+	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom EMBED=$(CONFIG_SCRIPT) $(PXE_MAKE_OPTS)
- else
- 	echo "    MAKE       $(project_name) $(TAG-y)"
- 	$(MAKE) -C $(project_dir)/src bin/$(PXE_ROM_PCI_ID).rom $(PXE_MAKE_OPTS)

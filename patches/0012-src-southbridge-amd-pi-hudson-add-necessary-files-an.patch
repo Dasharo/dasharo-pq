@@ -9,8 +9,21 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+diff --git a/src/soc/amd/common/block/include/amdblocks/psp.h b/src/soc/amd/common/block/include/amdblocks/psp.h
+index 004082a6eb28..0ef6e911c2d5 100644
+--- a/src/soc/amd/common/block/include/amdblocks/psp.h
++++ b/src/soc/amd/common/block/include/amdblocks/psp.h
+@@ -96,7 +96,7 @@ bool psp_ftpm_is_active(void);
+ void psp_ftpm_needs_recovery(bool *psp_rpmc_nvram,
+ 			     bool *psp_nvram,
+ 			     bool *psp_dir);
+-#if ENV_RAMSTAGE || ENV_SMM
++#if (ENV_RAMSTAGE || ENV_SMM) && CONFIG(SOC_AMD_COMMON_BLOCK_PSP)
+ bool psp_get_hsti_state_rom_armor_enforced(void);
+ #else
+ /* ROM Armor might get activated after SMM has been set up. It's safe to return false here. */
 diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
-index 9d71df5efca1..57adf82b089e 100644
+index c7b969856c66..efb9cadce99a 100644
 --- a/src/southbridge/amd/pi/hudson/Makefile.mk
 +++ b/src/southbridge/amd/pi/hudson/Makefile.mk
 @@ -15,6 +15,8 @@ romstage-y += smbus_spd.c
