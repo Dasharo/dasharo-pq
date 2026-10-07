@@ -12,6 +12,9 @@ Code for enabling watchdog is now in board_BeforeInitEarly, as hardware
 is not enabled before InitReset. It didn't work on first boot after
 power cycle.
 
+Force the cold boot path in board_BeforeInitReset if the cold reset
+was requested.
+
 Upstream-Status: Pending
 Signed-off-by: Krystian Hebel <krystian.hebel@3mdeb.com>
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
@@ -67,98 +70,18 @@ index 0a2b68529f4b..2f837fd9d832 100644
  }
  
  void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
-diff --git a/src/mainboard/pcengines/apu2/bootblock.c b/src/mainboard/pcengines/apu2/bootblock.c
-index 3fa35af0ad88..464b3c6035a4 100644
---- a/src/mainboard/pcengines/apu2/bootblock.c
-+++ b/src/mainboard/pcengines/apu2/bootblock.c
-@@ -6,6 +6,8 @@
- #include <superio/nuvoton/common/nuvoton.h>
- #include <superio/nuvoton/nct5104d/nct5104d.h>
- 
-+#include "bios_knobs.h"
-+
- #define SIO_PORT 0x2e
- #define SERIAL1_DEV PNP_DEV(SIO_PORT, NCT5104D_SP1)
- #define SERIAL2_DEV PNP_DEV(SIO_PORT, NCT5104D_SP2)
-@@ -15,10 +17,10 @@ void bootblock_mainboard_early_init(void)
- 	hudson_lpc_port80();
- 	hudson_clk_output_48Mhz();
- 
--	/* COM2 on apu5 is reserved so only COM1 should be supported */
--	if ((CONFIG_UART_FOR_CONSOLE == 1) &&
--		!CONFIG(BOARD_PCENGINES_APU5))
--		nuvoton_enable_serial(SERIAL2_DEV, CONFIG_TTYS0_BASE);
--	else if (CONFIG_UART_FOR_CONSOLE == 0)
--		nuvoton_enable_serial(SERIAL1_DEV, CONFIG_TTYS0_BASE);
-+	/* Enable UARTB for LPC MCU */
-+	if (CONFIG(BOARD_PCENGINES_APU5))
-+		nuvoton_enable_serial(SERIAL2_DEV, 0x2f8);
-+
-+	if ((check_com2() || (CONFIG_UART_FOR_CONSOLE == 1)))
-+		nuvoton_enable_serial(SERIAL2_DEV, 0x2f8);
- }
 diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
-index 9492ede87932..22579fce0c3b 100644
+index b51ea4d5b33f..e98d763b4f98 100644
 --- a/src/mainboard/pcengines/apu2/romstage.c
 +++ b/src/mainboard/pcengines/apu2/romstage.c
-@@ -1,16 +1,26 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
+@@ -101,9 +101,25 @@ static void print_sign_of_life(void)
  
- #include <stdint.h>
-+#include <string.h>
-+#include <delay.h>
- #include <amdblocks/acpimmio.h>
- #include <amdblocks/gpio.h>
- #include <amdblocks/gpio_defs.h>
- #include <device/pci_ops.h>
-+#include <console/uart.h>
- #include <gpio.h>
- #include <northbridge/amd/agesa/state_machine.h>
-+#include <Fch/Fch.h>
-+#include <smp/node.h>
- 
-+#include "bios_knobs.h"
- #include "gpio_ftns.h"
- 
- static void early_lpc_init(void);
-+static void print_sign_of_life(void);
-+static void lpc_mcu_msg(void);
-+extern char coreboot_dmi_date[];
-+extern char coreboot_version[];
- 
- void board_BeforeAgesa(struct sysinfo *cb)
+ void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
  {
-@@ -70,3 +80,125 @@ static void early_lpc_init(void)
- 	if (CONFIG(BOARD_PCENGINES_APU5))
- 		gpio_configure_pads(gpio_apu5, ARRAY_SIZE(gpio_apu5));
- }
-+
-+static const char *mainboard_bios_version(void)
-+{
-+	if (strlen(CONFIG_LOCALVERSION))
-+		return CONFIG_LOCALVERSION;
-+	else
-+		return coreboot_version;
-+}
-+
-+static void print_sign_of_life(void)
-+{
-+	char tmp[9];
-+	strncpy(tmp,   coreboot_dmi_date+6, 4);
-+	strncpy(tmp+4, coreboot_dmi_date+3, 2);
-+	strncpy(tmp+6, coreboot_dmi_date,   2);
-+	tmp[8] = '\0';
-+	printk(BIOS_ALERT, CONFIG_MAINBOARD_VENDOR " "
-+	                   CONFIG_MAINBOARD_PART_NUMBER "\n");
-+	printk(BIOS_ALERT, "coreboot build %s\n", tmp);
-+	printk(BIOS_ALERT, "BIOS version %s\n", mainboard_bios_version());
-+}
-+
-+void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
-+{
+-	u32 data;
 +	u32 val, data;
-+
-+	if (boot_cpu()) {
+ 
+ 	if (boot_cpu()) {
 +		pm_write8(FCH_PMIOA_REGC5, 0);
 +
 +		/* Check if cold boot was requested */
@@ -175,82 +98,6 @@ index 9492ede87932..22579fce0c3b 100644
 +			printk(BIOS_ALERT, "Did not reset (yet)\n");
 +		}
 +
-+		// do not print SOL if reset will take place in FchInit
-+		if (!(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status)) {
-+			if (check_console())
-+				print_sign_of_life();
-+
-+			lpc_mcu_msg();
-+		}
-+
-+		if ((check_mpcie2_clk() || CONFIG(FORCE_MPCIE2_CLK)) &&
-+		     CONFIG(BOARD_PCENGINES_APU2)) {
-+			// make GFXCLK to ignore CLKREQ# input
-+			// force it to be always on
-+			data = misc_read32(FCH_MISC_REG04);
-+			data &= 0xFFFFFF0F;
-+			data |= 0xF << (1 * 4); // CLKREQ GFX to GFXCLK
-+			misc_write32(FCH_MISC_REG04, data);
-+			printk(BIOS_DEBUG, "force mPCIe clock enabled\n");
-+		}
-+	}
-+}
-+
-+static void lpc_mcu_msg(void)
-+{
-+	unsigned int i, timeout;
-+	const char *post_msg = "BIOSBOOT";
-+	unsigned char sync_byte = 0;
-+
-+	if (!CONFIG(BOARD_PCENGINES_APU5))
-+		return;
-+
-+	uart_init(1);
-+
-+	for (i = 0; i < 4; i++) {
-+		uart_tx_byte(1, 0xe1);
-+		uart_tx_flush(1);
-+		timeout = 10;
-+		while (sync_byte != 0xe1) {
-+			sync_byte = uart_rx_byte(1);
-+			if (timeout == 0) {
-+				uart_init(CONFIG_UART_FOR_CONSOLE);
-+				udelay(10000);
-+				printk(BIOS_ERR, "Failed to sync with LPC"
-+				       " MCU, number of retries %d\n", 3 - i);
-+				udelay(10000);
-+				uart_init(1);
-+				udelay(10000);
-+				break;
-+			}
-+			udelay(100);
-+			timeout--;
-+		}
-+		if (sync_byte == 0xe1)
-+			break;
-+	}
-+
-+	if (sync_byte != 0xe1)
-+		return;
-+
-+	uart_init(1);
-+	timeout = 10;
-+
-+	for (i = 0; i < strlen(post_msg); i++)
-+		uart_tx_byte(1, *(post_msg + i));
-+
-+	uart_tx_byte(1, 0xe1);
-+	uart_tx_flush(1);
-+
-+	while (uart_rx_byte(1) != 0xe1) {
-+		if (timeout == 0) {
-+			uart_init(CONFIG_UART_FOR_CONSOLE);
-+			printk(BIOS_ERR, "Did not receive response to BIOSBOOT\n");
-+			return;
-+		}
-+		udelay(100);
-+		timeout--;
-+	}
-+
-+	uart_init(CONFIG_UART_FOR_CONSOLE);
-+}
+ 		// do not print SOL if reset will take place in FchInit
+ 		if (check_console() &&
+ 		    !(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status))

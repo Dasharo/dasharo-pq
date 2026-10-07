@@ -15,10 +15,14 @@ as well. This additional logging will assist in debugging and system
 analysis, and ensure that the boot process is compatible with legacy
 systems and meets customer expectations.
 
+It also prints the sign of life (board name, coreboot build date and
+BIOS version) in romstage before AGESA InitReset, if the console is
+enabled.
+
 Upstream-Status: Inappropriate [Custom prints that are not necessary]
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/lib/Makefile.mk b/src/lib/Makefile.mk
-index d9792dbea4cf..d6ae3661072b 100644
+index d4da2e32aee6..4ebbcbc96d86 100644
 --- a/src/lib/Makefile.mk
 +++ b/src/lib/Makefile.mk
 @@ -368,6 +368,7 @@ $(foreach stage,$(libhwbase-stages), \
@@ -89,3 +93,66 @@ index 1c3f80acb891..9f5f53c2632c 100644
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
  #if CONFIG(GENERATE_SMBIOS_TABLES)
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 9492ede87932..0d9ad9ed6d81 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -1,16 +1,23 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ 
+ #include <stdint.h>
++#include <string.h>
+ #include <amdblocks/acpimmio.h>
+ #include <amdblocks/gpio.h>
+ #include <amdblocks/gpio_defs.h>
+ #include <device/pci_ops.h>
+ #include <gpio.h>
+ #include <northbridge/amd/agesa/state_machine.h>
++#include <Fch/Fch.h>
++#include <smp/node.h>
+ 
++#include "bios_knobs.h"
+ #include "gpio_ftns.h"
+ 
+ static void early_lpc_init(void);
++static void print_sign_of_life(void);
++extern char coreboot_dmi_date[];
++extern char coreboot_version[];
+ 
+ void board_BeforeAgesa(struct sysinfo *cb)
+ {
+@@ -70,3 +77,34 @@ static void early_lpc_init(void)
+ 	if (CONFIG(BOARD_PCENGINES_APU5))
+ 		gpio_configure_pads(gpio_apu5, ARRAY_SIZE(gpio_apu5));
+ }
++
++static const char *mainboard_bios_version(void)
++{
++	if (strlen(CONFIG_LOCALVERSION))
++		return CONFIG_LOCALVERSION;
++	else
++		return coreboot_version;
++}
++
++static void print_sign_of_life(void)
++{
++	char tmp[9];
++	strncpy(tmp,   coreboot_dmi_date+6, 4);
++	strncpy(tmp+4, coreboot_dmi_date+3, 2);
++	strncpy(tmp+6, coreboot_dmi_date,   2);
++	tmp[8] = '\0';
++	printk(BIOS_ALERT, CONFIG_MAINBOARD_VENDOR " "
++	                   CONFIG_MAINBOARD_PART_NUMBER "\n");
++	printk(BIOS_ALERT, "coreboot build %s\n", tmp);
++	printk(BIOS_ALERT, "BIOS version %s\n", mainboard_bios_version());
++}
++
++void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
++{
++	if (boot_cpu()) {
++		// do not print SOL if reset will take place in FchInit
++		if (check_console() &&
++		    !(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status))
++			print_sign_of_life();
++	}
++}

@@ -53,6 +53,7 @@
 0054-src-mainboard-pcengines-apu2-acpi-add-GPIOs-LEDS-and.patch
 0055-mainboard-pcengines-add-IOMMU-status-to-bootorder_de.patch
 0056-mainboard-apu2-fix-watchdog-issues.patch
+0057-mainboard-pcengines-send-commands-to-the-LPC-MCU.patch
 0058-src-northbridge-amd-pi-00730F01-acpi-northbridge.asl.patch
 0059-src-southbridge-amd-pi-hudson-sd.c-move-SD-3.0-check.patch
 0060-mainboard-pcengines-add-pciepm-runtime-option.patch

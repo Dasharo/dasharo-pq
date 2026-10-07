@@ -7,6 +7,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Keep the GPP3 PCIe clock (mPCIe2 slot) always on, ignoring CLKREQ#,
+if FORCE_MPCIE2_CLK is selected or the mpcie2_clk runtime option is
+enabled.
+
 Upstream-Status: Pending
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/Kconfig b/src/mainboard/pcengines/apu2/Kconfig
@@ -26,3 +30,31 @@ index 381bfcbd8084..a0100209bff3 100644
  config AGESA_USE_1_0_0_4_HEADER
  	bool
  	default y
+diff --git a/src/mainboard/pcengines/apu2/romstage.c b/src/mainboard/pcengines/apu2/romstage.c
+index 0d9ad9ed6d81..b51ea4d5b33f 100644
+--- a/src/mainboard/pcengines/apu2/romstage.c
++++ b/src/mainboard/pcengines/apu2/romstage.c
+@@ -101,10 +101,23 @@ static void print_sign_of_life(void)
+ 
+ void board_BeforeInitReset(struct sysinfo *cb, AMD_RESET_PARAMS *Reset)
+ {
++	u32 data;
++
+ 	if (boot_cpu()) {
+ 		// do not print SOL if reset will take place in FchInit
+ 		if (check_console() &&
+ 		    !(pm_read32(0xc0) & FCH_PMIOxC0_S5ResetStatus_All_Status))
+ 			print_sign_of_life();
++
++		if ((check_mpcie2_clk() || CONFIG(FORCE_MPCIE2_CLK)) &&
++		     CONFIG(BOARD_PCENGINES_APU2)) {
++			// make GFXCLK to ignore CLKREQ# input
++			// force it to be always on
++			data = misc_read32(FCH_MISC_REG04);
++			data &= 0xFFFFFF0F;
++			data |= 0xF << (1 * 4); // CLKREQ GFX to GFXCLK
++			misc_write32(FCH_MISC_REG04, data);
++			printk(BIOS_DEBUG, "force mPCIe clock enabled\n");
++		}
+ 	}
+ }
