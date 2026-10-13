@@ -20,11 +20,15 @@ serial number in the NIC is not set.
 The commit also includes necessary includes and defines for the new
 functionality. The obtained information is exposed in SMBIOS tables.
 
+The SMBIOS system UUID is set to the "PC Engines" string followed by
+the unmodified 6-byte MAC address of the same NIC that is used for the
+serial number.
+
 Upstream-Status: Pending
 Signed-off-by: Maciej Pijanowski <maciej.pijanowski@3mdeb.com>
 Signed-off-by: Piotr Król <piotr.krol@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 242ad9d932ed..1c3f80acb891 100644
+index 242ad9d932ed..30e8ad9f6d0b 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
 @@ -1,5 +1,9 @@
@@ -37,7 +41,15 @@ index 242ad9d932ed..1c3f80acb891 100644
  #include <amdblocks/acpimmio.h>
  #include <device/mmio.h>
  #include <device/pci_ops.h>
-@@ -17,12 +21,15 @@
+@@ -8,6 +12,7 @@
+ #include <device/pci_def.h>
+ #include <gpio.h>
+ #include <identity.h>
++#include <string.h>
+ #include <southbridge/amd/pi/hudson/hudson.h>
+ #include <southbridge/amd/pi/hudson/pci_devs.h>
+ #include <southbridge/amd/pi/hudson/amd_pci_int_defs.h>
+@@ -17,12 +22,18 @@
  #include <superio/nuvoton/nct5104d/nct5104d.h>
  #include <smbios.h>
  #include <stdio.h>
@@ -51,20 +63,23 @@ index 242ad9d932ed..1c3f80acb891 100644
  #define PM_S_STATE_CONTROL  0xBA
 +#define SEC_REG_SERIAL_ADDR	0x1000
 +#define MAX_SERIAL_LEN		10
++
++#define NIC_MAC_LEN		6
++#define UUID_PREFIX		"PC Engines"
  
  /***********************************************************
   * These arrays set up the FCH PCI_INTR registers 0xC00/0xC01.
-@@ -263,23 +270,21 @@ static void mainboard_final(void *chip_info)
+@@ -263,40 +274,103 @@ static void mainboard_final(void *chip_info)
   * We will stuff a modified version of the first NICs (BDF 1:0.0) MAC address
   * into the smbios serial number location.
   */
 -const char *smbios_mainboard_serial_number(void)
-+static int read_serial_from_nic(char *serial, size_t len)
++static int read_mac_from_nic(u8 mac[NIC_MAC_LEN])
  {
 -	static char serial[10];
  	struct device *dev;
  	uintptr_t bar10;
- 	u32 mac_addr = 0;
+-	u32 mac_addr = 0;
  	int i;
 +	if (check_pciereverse())
 +		dev = pcidev_on_root(2, 3);
@@ -82,9 +97,31 @@ index 242ad9d932ed..1c3f80acb891 100644
 -		return serial;
 +		return -1;
  
- 	/* Read in the last 3 bytes of NIC's MAC address. */
+-	/* Read in the last 3 bytes of NIC's MAC address. */
  	bar10 = pci_read_config32(dev, PCI_BASE_ADDRESS_0);
-@@ -293,7 +298,45 @@ const char *smbios_mainboard_serial_number(void)
+ 	bar10 &= 0xFFFE0000;
+ 	bar10 += 0x5400;
+-	for (i = 3; i < 6; i++) {
+-		mac_addr <<= 8;
+-		mac_addr |= read8((u8 *)bar10 + i);
+-	}
+-	mac_addr &= 0x00FFFFFF;
++	for (i = 0; i < NIC_MAC_LEN; i++)
++		mac[i] = read8((u8 *)bar10 + i);
++
++	return 0;
++}
++
++static int read_serial_from_nic(char *serial, size_t len)
++{
++	u8 mac[NIC_MAC_LEN];
++	u32 mac_addr;
++
++	if (read_mac_from_nic(mac))
++		return -1;
++
++	/* Use the last 3 bytes of NIC's MAC address. */
++	mac_addr = (mac[3] << 16) | (mac[4] << 8) | mac[5];
  	mac_addr /= 4;
  	mac_addr -= 64;
  
@@ -131,3 +168,24 @@ index 242ad9d932ed..1c3f80acb891 100644
  	return serial;
  }
  
++/*
++ * Build the system UUID from the "PC Engines" string followed by the
++ * unmodified MAC address of the first NIC.
++ */
++void smbios_system_set_uuid(u8 *uuid)
++{
++	u8 mac[NIC_MAC_LEN];
++
++	_Static_assert(sizeof(UUID_PREFIX) - 1 + NIC_MAC_LEN == 16,
++		       "UUID must be 16 bytes");
++
++	if (read_mac_from_nic(mac))
++		return;
++
++	memcpy(uuid, UUID_PREFIX, sizeof(UUID_PREFIX) - 1);
++	memcpy(uuid + sizeof(UUID_PREFIX) - 1, mac, NIC_MAC_LEN);
++}
++
+ /*
+  * We will stuff the memory size into the smbios sku location.
+  */
