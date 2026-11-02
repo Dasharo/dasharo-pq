@@ -1,0 +1,73 @@
+From 8ec2fdb514d97a8ebfc72ac651425ad55eb59310 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Fri, 12 Dec 2025 21:20:37 +0200
+Subject: [PATCH 097/107] security/tpm/tss/tcg-2.0: enable extending multiple
+ PCR banks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The marshaling code was already there.  This change only increases
+maximum number of hashes and initializes `tpm2_pcr_extend_cmd` with all
+digests that were passed in.
+
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit e7c961eba1c8799681793dcf0aba0a24c0a21dd7)
+---
+ src/security/tpm/tss/tcg-2.0/tss.c            | 23 ++++++++++++-------
+ src/security/tpm/tss/tcg-2.0/tss_structures.h |  2 +-
+ 2 files changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/src/security/tpm/tss/tcg-2.0/tss.c b/src/security/tpm/tss/tcg-2.0/tss.c
+index a62c6a3321..04e35739c7 100644
+--- a/src/security/tpm/tss/tcg-2.0/tss.c
++++ b/src/security/tpm/tss/tcg-2.0/tss.c
+@@ -144,18 +144,25 @@ tpm_result_t tlcl2_extend(int pcr_num, const struct tpm_digest *digests)
+ {
+ 	struct tpm2_pcr_extend_cmd pcr_ext_cmd;
+ 	struct tpm2_response *response;
+-	TPM_ALG_ID alg;
++	int i;
+ 
+-	alg = tpmalg_from_vb2_hash(digests[0].hash_type);
+-	if (alg == TPM_ALG_ERROR)
++	for (i = 0; digests[i].hash_type != VB2_HASH_INVALID; ++i) {
++		TPM_ALG_ID alg = tpmalg_from_vb2_hash(digests[i].hash_type);
++		if (alg == TPM_ALG_ERROR)
++			return TPM_CB_HASH_ERROR;
++
++		pcr_ext_cmd.digests.digests[i].hashAlg = alg;
++
++		/* Always copying to sha512 as it's the largest one. */
++		memcpy(pcr_ext_cmd.digests.digests[i].digest.sha512, digests[i].hash,
++		       vb2_digest_size(digests[i].hash_type));
++	}
++
++	if (i == 0)
+ 		return TPM_CB_HASH_ERROR;
+ 
+ 	pcr_ext_cmd.pcrHandle = HR_PCR + pcr_num;
+-	pcr_ext_cmd.digests.count = 1;
+-	pcr_ext_cmd.digests.digests[0].hashAlg = alg;
+-	/* Always copying to sha512 as it's the largest one */
+-	memcpy(pcr_ext_cmd.digests.digests[0].digest.sha512, digests[0].hash,
+-	       vb2_digest_size(digests[0].hash_type));
++	pcr_ext_cmd.digests.count = i;
+ 
+ 	response = tlcl2_process_command(TPM2_PCR_Extend, &pcr_ext_cmd);
+ 
+diff --git a/src/security/tpm/tss/tcg-2.0/tss_structures.h b/src/security/tpm/tss/tcg-2.0/tss_structures.h
+index 0c8f9f90db..23615ffd7d 100644
+--- a/src/security/tpm/tss/tcg-2.0/tss_structures.h
++++ b/src/security/tpm/tss/tcg-2.0/tss_structures.h
+@@ -17,7 +17,7 @@
+ #define TPM2_RC_SUCCESS    0
+ #define TPM2_RC_NV_DEFINED 0x14c
+ 
+-#define HASH_COUNT 2 /* SHA-1 and SHA-256 are supported */
++#define HASH_COUNT 4 /* SHA-1, SHA-256, SHA384, SHA512 */
+ 
+ /* Basic TPM2 types. */
+ typedef uint16_t TPM_SU;

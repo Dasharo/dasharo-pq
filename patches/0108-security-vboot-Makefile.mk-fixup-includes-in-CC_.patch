@@ -1,0 +1,33 @@
+From 4487a4059f17ef86c7af23d8d425c4ca8687cf09 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Fri, 1 Mar 2024 20:35:03 +0200
+Subject: [PATCH] security/vboot/Makefile.mk: fixup includes in $(CC_*)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Files like src/cpu/x86/lapic/Makefile.mk add compiler flags to these
+variables but security/vboot/Makefile.mk doesn't expect this.
+
+Upstream-Status: Pending
+Change-Id: I0381a75779f2a339a7e2b29791e48db408279c8d
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit c13bc92e10f488f6a3028e280730bf5c17cce569)
+---
+ src/security/vboot/Makefile.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/security/vboot/Makefile.mk b/src/security/vboot/Makefile.mk
+index 16afe527c0..22a976b68d 100644
+--- a/src/security/vboot/Makefile.mk
++++ b/src/security/vboot/Makefile.mk
+@@ -27,7 +27,7 @@ VBOOT_CFLAGS_$(1) += -DVBOOT_DEBUG
+ $$(VBOOT_LIB_$(1)): $(obj)/config.h
+ 	printf "    MAKE       $(subst $(obj)/,,$(@))\n"
+ 	+FIRMWARE_ARCH=$$(ARCHDIR-$$(ARCH-$(1)-y)) \
+-	CC="$$(CC_$(1))" \
++	CC="$$(call vboot-fixup-includes,$$(CC_$(1)))" \
+ 	CFLAGS="$$(VBOOT_CFLAGS_$(1))" VBOOT2="y" \
+ 	EC_EFS="$(CONFIG_VBOOT_EC_EFS)" \
+ 	X86_SHA_EXT="$(if $(CONFIG_ARCH_$(call toupper,$(1))_X86_32)$(CONFIG_ARCH_$(call toupper,$(1))_X86_64),$\

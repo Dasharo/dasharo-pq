@@ -1,0 +1,157 @@
+From 6656f5033a767f5b25683c5152f7f9ea79e6c508 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Mon, 1 Dec 2025 00:51:50 +0200
+Subject: [PATCH 095/107] security/tpm/tss/tcg-2.0/tss: move
+ tpm2_get_capability_pcrs() here
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Out of vendorcode/eltan/security/mboot/mboot.c to not duplicate the
+implementation.
+
+Upstream-Status: Pending
+Change-Id: I833d6692b98376314c10e15f286be66056fc5fdf
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 6e378a54c1c1cbde926a698f0f940cfa4db6847c)
+---
+ src/security/tpm/tss/tcg-2.0/tss.c          | 28 +++++++++++++++
+ src/security/tpm/tss2.h                     | 15 ++++++++
+ src/vendorcode/eltan/security/mboot/mboot.c | 40 +--------------------
+ src/vendorcode/eltan/security/mboot/mboot.h |  2 --
+ 4 files changed, 44 insertions(+), 41 deletions(-)
+
+diff --git a/src/security/tpm/tss/tcg-2.0/tss.c b/src/security/tpm/tss/tcg-2.0/tss.c
+index 282845e44c..571405a859 100644
+--- a/src/security/tpm/tss/tcg-2.0/tss.c
++++ b/src/security/tpm/tss/tcg-2.0/tss.c
+@@ -466,3 +466,31 @@ tpm_result_t tlcl2_get_capability(TPM_CAP capability, uint32_t property,
+ 	memcpy(capability_data, &response->gc.cd, sizeof(TPMS_CAPABILITY_DATA));
+ 	return TPM_SUCCESS;
+ }
++
++tpm_result_t tlcl2_get_capability_pcrs(TPML_PCR_SELECTION *pcrs)
++{
++	TPMS_CAPABILITY_DATA TpmCap;
++	tpm_result_t rc;
++	int index;
++
++	rc = tlcl2_get_capability(TPM_CAP_PCRS, 0, 1, &TpmCap);
++	if (rc != TPM_SUCCESS)
++		return rc;
++
++	pcrs->count = TpmCap.data.assignedPCR.count;
++	printk(BIOS_DEBUG, "%s(): pcrs->count = %d\n", __func__, pcrs->count);
++
++	for (index = 0; index < pcrs->count; index++) {
++		pcrs->pcrSelections[index].hash =
++			be16toh(TpmCap.data.assignedPCR.pcrSelections[index].hash);
++		printk(BIOS_DEBUG, "%s(): pcrs->pcrSelections[%d].hash = %#x\n",
++		       __func__, index, pcrs->pcrSelections[index].hash);
++		pcrs->pcrSelections[index].sizeofSelect =
++			TpmCap.data.assignedPCR.pcrSelections[index].sizeofSelect;
++		memcpy(pcrs->pcrSelections[index].pcrSelect,
++			TpmCap.data.assignedPCR.pcrSelections[index].pcrSelect,
++			pcrs->pcrSelections[index].sizeofSelect);
++	}
++
++	return TPM_SUCCESS;
++}
+diff --git a/src/security/tpm/tss2.h b/src/security/tpm/tss2.h
+index 16ccf5db6f..8fa475004d 100644
+--- a/src/security/tpm/tss2.h
++++ b/src/security/tpm/tss2.h
+@@ -35,6 +35,21 @@ tpm_result_t tlcl2_get_capability(TPM_CAP capability, uint32_t property,
+ 				  uint32_t property_count,
+ 				  TPMS_CAPABILITY_DATA *capability_data);
+ 
++/*
++ * tlcl2_get_capability_pcrs
++ *
++ * Return the TPM PCR information.
++ *
++ * This function parses the data got from tlcl2_get_capability and returns the
++ * PcrSelection.
++ *
++ * @param[out] pcrs		The Pcr Selection
++ *
++ * @retval TPM_SUCCESS		Operation completed successfully.
++ * @retval TPM_IOERROR		The command was unsuccessful.
++ */
++tpm_result_t tlcl2_get_capability_pcrs(TPML_PCR_SELECTION *pcrs);
++
+ /* Issue TPM2_NV_SetBits command */
+ tpm_result_t tlcl2_set_bits(uint32_t index, uint64_t bits);
+ 
+diff --git a/src/vendorcode/eltan/security/mboot/mboot.c b/src/vendorcode/eltan/security/mboot/mboot.c
+index fa513007cc..e6eb8ee76d 100644
+--- a/src/vendorcode/eltan/security/mboot/mboot.c
++++ b/src/vendorcode/eltan/security/mboot/mboot.c
+@@ -20,7 +20,7 @@ EFI_TCG2_EVENT_ALGORITHM_BITMAP tpm2_get_active_pcrs(void)
+ 	uint32_t activePcrBanks = 0;
+ 	uint32_t index;
+ 
+-	rc = tpm2_get_capability_pcrs(&Pcrs);
++	rc = tlcl2_get_capability_pcrs(&Pcrs);
+ 	if (rc != TPM_SUCCESS) {
+ 		tpmHashAlgorithmBitmap = EFI_TCG2_BOOT_HASH_ALG_SHA1;
+ 		activePcrBanks = EFI_TCG2_BOOT_HASH_ALG_SHA1;
+@@ -63,44 +63,6 @@ EFI_TCG2_EVENT_ALGORITHM_BITMAP tpm2_get_active_pcrs(void)
+ 	return activePcrBanks;
+ }
+ 
+-/*
+- * tpm2_get_capability_pcrs
+- *
+- * Return the TPM PCR information.
+- *
+- * This function parses the data got from tlcl2_get_capability and returns the
+- * PcrSelection.
+- *
+- * @param[out] Pcrs		The Pcr Selection
+- *
+- * @retval TPM_SUCCESS		Operation completed successfully.
+- * @retval TPM_IOERROR		The command was unsuccessful.
+- */
+-tpm_result_t tpm2_get_capability_pcrs(TPML_PCR_SELECTION *Pcrs)
+-{
+-	TPMS_CAPABILITY_DATA TpmCap;
+-	tpm_result_t rc;
+-	int index;
+-
+-	rc = tlcl2_get_capability(TPM_CAP_PCRS, 0, 1, &TpmCap);
+-	if (rc == TPM_SUCCESS) {
+-		Pcrs->count = TpmCap.data.assignedPCR.count;
+-		printk(BIOS_DEBUG, "Pcrs->count = %d\n", Pcrs->count);
+-		for (index = 0; index < Pcrs->count; index++) {
+-			Pcrs->pcrSelections[index].hash =
+-				be16toh(TpmCap.data.assignedPCR.pcrSelections[index].hash);
+-			printk(BIOS_DEBUG, "Pcrs->pcrSelections[%d].hash = %#x\n", index,
+-			       Pcrs->pcrSelections[index].hash);
+-			Pcrs->pcrSelections[index].sizeofSelect =
+-				TpmCap.data.assignedPCR.pcrSelections[index].sizeofSelect;
+-			memcpy(Pcrs->pcrSelections[index].pcrSelect,
+-				TpmCap.data.assignedPCR.pcrSelections[index].pcrSelect,
+-				Pcrs->pcrSelections[index].sizeofSelect);
+-		}
+-	}
+-	return rc;
+-}
+-
+ /*
+  * mboot_hash_extend_log
+  *
+diff --git a/src/vendorcode/eltan/security/mboot/mboot.h b/src/vendorcode/eltan/security/mboot/mboot.h
+index b8510ac47e..e0a027dd8f 100644
+--- a/src/vendorcode/eltan/security/mboot/mboot.h
++++ b/src/vendorcode/eltan/security/mboot/mboot.h
+@@ -98,8 +98,6 @@ void invalidate_pcrs(void);
+ 
+ EFI_TCG2_EVENT_ALGORITHM_BITMAP tpm2_get_active_pcrs(void);
+ 
+-tpm_result_t tpm2_get_capability_pcrs(TPML_PCR_SELECTION *Pcrs);
+-
+ tpm_result_t mb_measure(int wake_from_s3);
+ tpm_result_t mb_entry(int wake_from_s3);
+ 

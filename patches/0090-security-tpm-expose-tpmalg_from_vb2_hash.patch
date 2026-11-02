@@ -1,0 +1,100 @@
+From 46335109d04082fd4eefdac96f858c788f10b483 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Sun, 8 Jun 2025 21:22:40 +0300
+Subject: [PATCH 090/107] security/tpm: expose tpmalg_from_vb2_hash()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+It is useful for more than event log management.
+
+Upstream-Status: Pending
+Change-Id: I779f948115af786ecda873cd01c9ef1506252c7d
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit c30772a6c8eebe0a4993de681837e57f6dd2b1dc)
+---
+ src/security/tpm/tspi/log-tpm2.c | 21 ++-------------------
+ src/security/tpm/tspi/logs.h     | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+), 19 deletions(-)
+
+diff --git a/src/security/tpm/tspi/log-tpm2.c b/src/security/tpm/tspi/log-tpm2.c
+index a69c5159b5..46ce4f0d19 100644
+--- a/src/security/tpm/tspi/log-tpm2.c
++++ b/src/security/tpm/tspi/log-tpm2.c
+@@ -22,23 +22,6 @@
+ #include <cbmem.h>
+ #include <vb2_sha.h>
+ 
+-static uint16_t tpmalg_from_vb2_hash(enum vb2_hash_algorithm hash_type)
+-{
+-	switch (hash_type) {
+-	case VB2_HASH_SHA1:
+-		return TPM2_ALG_SHA1;
+-	case VB2_HASH_SHA256:
+-		return TPM2_ALG_SHA256;
+-	case VB2_HASH_SHA384:
+-		return TPM2_ALG_SHA384;
+-	case VB2_HASH_SHA512:
+-		return TPM2_ALG_SHA512;
+-
+-	default:
+-		return 0xFF;
+-	}
+-}
+-
+ void *tpm2_log_cbmem_init(void)
+ {
+ 	static struct tpm_2_log_table *tclt;
+@@ -71,7 +54,7 @@ void *tpm2_log_cbmem_init(void)
+ 		hdr->spec_errata = 0x00;
+ 		hdr->uintn_size = 0x02; // 64-bit UINT
+ 		hdr->num_of_algorithms = htole32(1);
+-		hdr->digest_sizes[0].alg_id = htole16(tpmalg_from_vb2_hash(tpm_log_alg()));
++		hdr->digest_sizes[0].alg_id = htole16(tpm2_alg_from_vb2_hash(tpm_log_alg()));
+ 		hdr->digest_sizes[0].digest_size = htole16(vb2_digest_size(tpm_log_alg()));
+ 
+ 		tclt->vendor_info_size = sizeof(tclt->vendor);
+@@ -158,7 +141,7 @@ void tpm2_log_add_table_entry(const char *name, const uint32_t pcr,
+ 	tce->event_type = htole32(EV_ACTION);
+ 
+ 	tce->digest_count = htole32(1);
+-	tce->digest_type = htole16(tpmalg_from_vb2_hash(tpm_log_alg()));
++	tce->digest_type = htole16(tpm2_alg_from_vb2_hash(tpm_log_alg()));
+ 	memcpy(tce->digest, digest, vb2_digest_size(tpm_log_alg()));
+ 
+ 	tce->data_length = htole32(sizeof(tce->data));
+diff --git a/src/security/tpm/tspi/logs.h b/src/security/tpm/tspi/logs.h
+index 2d802f0bc5..1015295b20 100644
+--- a/src/security/tpm/tspi/logs.h
++++ b/src/security/tpm/tspi/logs.h
+@@ -3,6 +3,7 @@
+ #ifndef LOGS_H_
+ #define LOGS_H_
+ 
++#include <commonlib/bsd/tpm_log_defs.h>
+ #include <stdint.h>
+ #include <vb2_api.h>
+ 
+@@ -51,4 +52,21 @@ void tpm2_log_add_table_entry(const char *name, const uint32_t pcr,
+ 			      const size_t digest_len);
+ void tpm2_log_dump(void);
+ 
++static inline uint16_t tpm2_alg_from_vb2_hash(enum vb2_hash_algorithm hash_type)
++{
++	switch (hash_type) {
++	case VB2_HASH_SHA1:
++		return TPM2_ALG_SHA1;
++	case VB2_HASH_SHA256:
++		return TPM2_ALG_SHA256;
++	case VB2_HASH_SHA384:
++		return TPM2_ALG_SHA384;
++	case VB2_HASH_SHA512:
++		return TPM2_ALG_SHA512;
++
++	default:
++		return 0xFF;
++	}
++}
++
+ #endif /* LOGS_H_ */

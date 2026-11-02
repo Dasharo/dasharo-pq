@@ -1,0 +1,147 @@
+From e67e73fc3d1b559210c056f593098fe94551f951 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
+Date: Wed, 4 Mar 2026 15:34:56 +0100
+Subject: [PATCH 106/107] src/security/tpm: add support for getting the type of
+ event from log
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Inappropriate [Dasharo downstream]
+Change-Id: I77883e9f48da6e9941373bef3b4f2387b0d47102
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+(cherry picked from commit eea22d97e191ca25504b5fd4e64da5be4d918ee7)
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+(cherry picked from commit 99c3dcfe37aa941234f97f4c8bd9bb1ac7fa7ddf)
+---
+ src/security/tpm/tspi.h          | 8 ++++----
+ src/security/tpm/tspi/log-tpm1.c | 4 +++-
+ src/security/tpm/tspi/log-tpm2.c | 4 +++-
+ src/security/tpm/tspi/log.c      | 5 ++++-
+ src/security/tpm/tspi/logs.h     | 9 ++++++---
+ 5 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/src/security/tpm/tspi.h b/src/security/tpm/tspi.h
+index 4ec2d2859a..9ffa8e1db4 100644
+--- a/src/security/tpm/tspi.h
++++ b/src/security/tpm/tspi.h
+@@ -125,14 +125,14 @@ static inline void tpm_log_copy_entries(const void *from, void *to)
+  * Retrieves an entry from a log. Returns non-zero on invalid index or error.
+  */
+ static inline int tpm_log_get(int entry_idx, int *pcr, struct tpm_digest *digests,
+-			      const char **event_name)
++			      const char **event_name, uint32_t *event_type)
+ {
+ 	if (CONFIG(TPM_LOG_CB))
+-		return tpm_cb_log_get(entry_idx, pcr, digests, event_name);
++		return tpm_cb_log_get(entry_idx, pcr, digests, event_name, event_type);
+ 	if (tpm_log_use_tpm1_format())
+-		return tpm1_log_get(entry_idx, pcr, digests, event_name);
++		return tpm1_log_get(entry_idx, pcr, digests, event_name, event_type);
+ 	if (tpm_log_use_tpm2_format())
+-		return tpm2_log_get(entry_idx, pcr, digests, event_name);
++		return tpm2_log_get(entry_idx, pcr, digests, event_name, event_type);
+ 	return 1;
+ }
+ 
+diff --git a/src/security/tpm/tspi/log-tpm1.c b/src/security/tpm/tspi/log-tpm1.c
+index 7052425a9e..50e7f49f87 100644
+--- a/src/security/tpm/tspi/log-tpm1.c
++++ b/src/security/tpm/tspi/log-tpm1.c
+@@ -140,7 +140,8 @@ void tpm1_preram_log_clear(void)
+ 	tclt->vendor.num_entries = htole16(0);
+ }
+ 
+-int tpm1_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name)
++int tpm1_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		 uint32_t *event_type)
+ {
+ 	struct tpm_1_log_table *tclt;
+ 	struct tpm_1_log_entry *tce;
+@@ -160,6 +161,7 @@ int tpm1_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char
+ 
+ 	*pcr = le32toh(tce->pcr);
+ 	*event_name = (char *)tce->data;
++	*event_type = le32toh(tce->event_type);
+ 	return 0;
+ }
+ 
+diff --git a/src/security/tpm/tspi/log-tpm2.c b/src/security/tpm/tspi/log-tpm2.c
+index aaab41b989..5e62e4dbde 100644
+--- a/src/security/tpm/tspi/log-tpm2.c
++++ b/src/security/tpm/tspi/log-tpm2.c
+@@ -455,7 +455,8 @@ void tpm2_log_startup_locality(int locality)
+ 	add_log_table_entry(tclt, &event_data, sizeof(event_data), 0, EV_NO_ACTION, digests);
+ }
+ 
+-int tpm2_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name)
++int tpm2_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		 uint32_t *event_type)
+ {
+ 	uint16_t offset;
+ 	struct log_event ev;
+@@ -486,6 +487,7 @@ int tpm2_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char
+ 
+ 		*pcr = ev.pcr;
+ 		*event_name = ev.name;
++		*event_type = ev.event_type;
+ 		return 0;
+ 	}
+ 
+diff --git a/src/security/tpm/tspi/log.c b/src/security/tpm/tspi/log.c
+index 70482cf29d..544ab003b1 100644
+--- a/src/security/tpm/tspi/log.c
++++ b/src/security/tpm/tspi/log.c
+@@ -112,7 +112,8 @@ void tpm_cb_preram_log_clear(void)
+ 	tclt->num_entries = 0;
+ }
+ 
+-int tpm_cb_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name)
++int tpm_cb_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		   uint32_t *event_type)
+ {
+ 	struct tpm_cb_log_table *tclt;
+ 	struct tpm_cb_log_entry *tce;
+@@ -129,6 +130,8 @@ int tpm_cb_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const ch
+ 
+ 	*pcr = tce->pcr;
+ 	*event_name = tce->name;
++	/* The coreboot-specific log format doesn't use EV_NO_ACTION. */
++	*event_type = EV_ACTION;
+ 
+ 	digests[0].hash = tce->digest;
+ 	digests[0].hash_type = VB2_HASH_INVALID;
+diff --git a/src/security/tpm/tspi/logs.h b/src/security/tpm/tspi/logs.h
+index f8b537576f..c4d5510c8b 100644
+--- a/src/security/tpm/tspi/logs.h
++++ b/src/security/tpm/tspi/logs.h
+@@ -16,7 +16,8 @@ void *tpm_cb_log_cbmem_init(void);
+ void tpm_cb_preram_log_clear(void);
+ uint16_t tpm_cb_log_get_size(const void *log_table);
+ void tpm_cb_log_copy_entries(const void *from, void *to);
+-int tpm_cb_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name);
++int tpm_cb_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		   uint32_t *event_type);
+ void tpm_cb_log_add_table_entry(const char *name, const uint32_t pcr,
+ 				const struct tpm_digest *digests);
+ void tpm_cb_log_dump(void);
+@@ -28,7 +29,8 @@ void *tpm1_log_cbmem_init(void);
+ void tpm1_preram_log_clear(void);
+ uint16_t tpm1_log_get_size(const void *log_table);
+ void tpm1_log_copy_entries(const void *from, void *to);
+-int tpm1_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name);
++int tpm1_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		 uint32_t *event_type);
+ void tpm1_log_add_table_entry(const char *name, const uint32_t pcr,
+ 			      const struct tpm_digest *digests);
+ void tpm1_log_dump(void);
+@@ -40,7 +42,8 @@ void *tpm2_log_cbmem_init(void);
+ void tpm2_preram_log_clear(void);
+ uint16_t tpm2_log_get_size(const void *log_table);
+ void tpm2_log_copy_entries(const void *from, void *to);
+-int tpm2_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name);
++int tpm2_log_get(int entry_idx, int *pcr, struct tpm_digest *digests, const char **event_name,
++		 uint32_t *event_type);
+ void tpm2_log_add_table_entry(const char *name, const uint32_t pcr,
+ 			      const struct tpm_digest *digests);
+ void tpm2_log_startup_locality(int locality);

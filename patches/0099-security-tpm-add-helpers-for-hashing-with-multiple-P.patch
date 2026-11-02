@@ -1,0 +1,129 @@
+From 40b652041147027cd8725135877b29018bc78fdf Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Tue, 16 Dec 2025 00:44:15 +0200
+Subject: [PATCH 099/107] security/tpm: add helpers for hashing with multiple
+ PCR banks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Updates the code to support hashing for more than one digest algorithm
+when that's available, the code should work as before at this point.
+
+Ported without the Intel CBNT part (src/security/intel/cbnt/measurement.c
+is not present in this tree), only the generic tpm_log_alg_active() and
+tpm_make_digests() helpers are kept.
+
+Change-Id: I4e0ea97946e6c8cafbc21a6418b8cb5e7d087df0
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 6878f83c77008709cfb64fbd4326f10e16660d02)
+---
+ src/security/tpm/tspi.h      | 48 ++++++++++++++++++++++++++++++++++++
+ src/security/tpm/tspi/tspi.c | 30 ++++++++++++++++++++++
+ 2 files changed, 78 insertions(+)
+
+diff --git a/src/security/tpm/tspi.h b/src/security/tpm/tspi.h
+index a1a9375bc9..3d406ef76b 100644
+--- a/src/security/tpm/tspi.h
++++ b/src/security/tpm/tspi.h
+@@ -67,6 +67,14 @@ static inline enum vb2_hash_algorithm tpm_log_alg(void)
+ 	return VB2_HASH_INVALID;
+ }
+ 
++/**
++ * Checks whether a PCR banks corresponding to a hash algorithm is active.
++ */
++static inline bool tpm_log_alg_active(enum vb2_hash_algorithm alg)
++{
++	return alg == tpm_log_alg();
++}
++
+ /**
+  * Get the pointer to the single instance of global
+  * TPM log data, and initialize it when necessary
+@@ -206,4 +214,44 @@ tpm_result_t tpm_setup(int s3flag);
+ tpm_result_t tpm_measure_region(const struct region_device *rdev, uint8_t pcr,
+ 				const char *rname);
+ 
++/*
++ * Arrays of tpm_digest structures should generally have `ENABLED_TPM_ALGS_NUM + 1` entries.
++ * The extra entry terminates the list.  Functions that fill such arrays rely on this
++ * assumption.
++ */
++#define ENABLED_TPM_ALGS_NUM  ARRAY_SIZE(enabled_tpm_algs)
++
++/*
++ * This is a list of supported digests to be used in loops.
++ */
++static const enum vb2_hash_algorithm enabled_tpm_algs[] __maybe_unused = {
++#if CONFIG(TPM_HASH_SHA1) || CONFIG(TPM_LOG_CB)
++	VB2_HASH_SHA1,
++#endif
++#if CONFIG(TPM_HASH_SHA256) || CONFIG(TPM_LOG_CB)
++	VB2_HASH_SHA256,
++#endif
++#if CONFIG(TPM_HASH_SHA384)
++	VB2_HASH_SHA384,
++#endif
++#if CONFIG(TPM_HASH_SHA512)
++	VB2_HASH_SHA512,
++#endif
++};
++
++_Static_assert(ENABLED_TPM_ALGS_NUM <= HASH_COUNT,
++	       "Marshalling code of TSS 2.0 can't accommodate all enabled hashes.");
++
++struct tpm_digests {
++	struct vb2_hash hashes[ENABLED_TPM_ALGS_NUM];
++	struct tpm_digest values[ENABLED_TPM_ALGS_NUM + 1];
++};
++
++/**
++ * Compute all supported hashes of a buffer.  hash_hint can be passed in to avoid recomputing
++ * the digest if it's already known.
++ */
++bool tpm_make_digests(const void *buffer, size_t size, const struct vb2_hash *hash_hint,
++		      struct tpm_digests *digests);
++
+ #endif /* TSPI_H_ */
+diff --git a/src/security/tpm/tspi/tspi.c b/src/security/tpm/tspi/tspi.c
+index 2309ee95bf..6b9e79b87a 100644
+--- a/src/security/tpm/tspi/tspi.c
++++ b/src/security/tpm/tspi/tspi.c
+@@ -311,4 +311,34 @@ tpm_result_t tpm_measure_region(const struct region_device *rdev, uint8_t pcr,
+ 	};
+ 	return tpm_extend_pcr(pcr, digests, rname);
+ }
++
++bool tpm_make_digests(const void *buffer, size_t size, const struct vb2_hash *hash_hint,
++		      struct tpm_digests *digests)
++{
++	int i, j;
++	for (i = 0, j = 0; i < ENABLED_TPM_ALGS_NUM; ++i) {
++		enum vb2_hash_algorithm alg = enabled_tpm_algs[i];
++		if (!tpm_log_alg_active(alg))
++			continue;
++
++		digests->values[j].hash_type = alg;
++
++		if (hash_hint != NULL && hash_hint->algo == alg) {
++			digests->values[j++].hash = hash_hint->raw;
++			continue;
++		}
++
++		if (vb2_hash_calculate(vboot_hwcrypto_allowed(), buffer, size,
++				       alg, &digests->hashes[i])) {
++			printk(BIOS_ERR, "%s: failed to compute %s hash.\n", __func__,
++			       vb2_get_hash_algorithm_name(alg));
++			return false;
++		}
++
++		digests->values[j++].hash = digests->hashes[i].raw;
++	}
++
++	digests->values[j].hash_type = VB2_HASH_INVALID;
++	return true;
++}
+ #endif /* VBOOT_LIB */

@@ -1,0 +1,154 @@
+From 726e2ecce2926c7bbcd3aaa38127b804966aea8e Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Thu, 14 Aug 2025 00:26:19 +0300
+Subject: [PATCH 094/107] security/tpm/tspi: initialize TPM log in
+ tpm_extend_pcr()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+That is the function which all code related to measurements ends up
+calling.  For this reason it must be responsible for initializing the
+log.
+
+Without this change, vboot_extend_pcr() may invoke tpm_extend_pcr()
+before the log is being initialized indirectly by a call to
+tspi_cbfs_measurement() resulting in a failure to log VBOOT
+measurements.
+
+Change-Id: I98fdb4cdab72ae23ad895898eac11dd6c864a20e
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit ebd75ff197354b140771566c81ffd90346734732)
+---
+ src/security/tpm/tspi/crtm.c | 39 ++++++------------------------------
+ src/security/tpm/tspi/crtm.h | 19 ++++++++++++++++++
+ src/security/tpm/tspi/tspi.c | 10 +++++++++
+ 3 files changed, 35 insertions(+), 33 deletions(-)
+
+diff --git a/src/security/tpm/tspi/crtm.c b/src/security/tpm/tspi/crtm.c
+index 899b73f7b1..d6bff8aefa 100644
+--- a/src/security/tpm/tspi/crtm.c
++++ b/src/security/tpm/tspi/crtm.c
+@@ -10,35 +10,19 @@
+ #include <string.h>
+ 
+ static int tpm_log_initialized;
+-static inline int tpm_log_available(void)
++bool tspi_tpm_log_available(void)
+ {
+ 	if (ENV_BOOTBLOCK)
+-		return tpm_log_initialized;
++		return tpm_log_initialized != 0;
+ 
+-	return 1;
++	return true;
+ }
+ 
+-/*
+- * Initializes the Core Root of Trust for Measurements
+- * in coreboot. The initial code in a chain of trust must measure
+- * itself.
+- *
+- * Summary:
+- *  + Measures the FMAP FMAP partition.
+- *  + Measures bootblock in CBFS or BOOTBLOCK FMAP partition.
+- *  + If vboot starts in romstage, it measures the romstage
+- *    in CBFS.
+- *  + Measure the verstage if it is compiled as separate
+- *    stage.
+- *
+- * Takes the current vboot context as parameter for s3 checks.
+- * returns on success TPM_SUCCESS, else a TPM error.
+- */
+-static tpm_result_t tspi_init_crtm(void)
++tpm_result_t tspi_init_crtm(void)
+ {
+ 	tpm_result_t rc = TPM_SUCCESS;
+ 	/* Initialize TPM PRERAM log. */
+-	if (!tpm_log_available()) {
++	if (!tspi_tpm_log_available()) {
+ 		tpm_preram_log_clear();
+ 		tpm_log_initialized = 1;
+ 	} else {
+@@ -128,19 +112,8 @@ static bool is_runtime_data(const char *name)
+ tpm_result_t tspi_cbfs_measurement(const char *name, uint32_t type, const struct vb2_hash *hash)
+ {
+ 	uint32_t pcr_index;
+-	tpm_result_t rc = TPM_SUCCESS;
+ 	char tpm_log_metadata[TPM_CB_LOG_PCR_HASH_NAME];
+ 
+-	if (!tpm_log_available()) {
+-		rc = tspi_init_crtm();
+-		if (rc) {
+-			printk(BIOS_WARNING,
+-			       "Initializing CRTM failed!\n");
+-			return rc;
+-		}
+-		printk(BIOS_DEBUG, "CRTM initialized.\n");
+-	}
+-
+ 	switch (type) {
+ 	case CBFS_TYPE_MRC_CACHE:
+ 		pcr_index = CONFIG_PCR_RUNTIME_DATA;
+@@ -198,7 +171,7 @@ tpm_result_t tspi_measure_cache_to_pcr(void)
+ 	enum vb2_hash_algorithm digest_algo;
+ 
+ 	/* This means the table is empty. */
+-	if (!tpm_log_available())
++	if (!tspi_tpm_log_available())
+ 		return TPM_SUCCESS;
+ 
+ 	if (tpm_log_init() == NULL) {
+diff --git a/src/security/tpm/tspi/crtm.h b/src/security/tpm/tspi/crtm.h
+index c699cc9a98..cd20e81b64 100644
+--- a/src/security/tpm/tspi/crtm.h
++++ b/src/security/tpm/tspi/crtm.h
+@@ -9,6 +9,25 @@
+ #include <types.h>
+ #include <vb2_sha.h>
+ 
++/**
++ * Checks whether TPM log was already initialized.
++ */
++bool tspi_tpm_log_available(void);
++
++/**
++ * Initializes the Core Root of Trust for Measurements in coreboot.  The initial code in a
++ * chain of trust must measure itself.
++ *
++ * Summary:
++ *  - measures the FMAP FMAP partition
++ *  - measures bootblock in CBFS or BOOTBLOCK FMAP partition
++ *  - if vboot starts in romstage, it measures the romstage in CBFS
++ *  - measures the verstage if it is compiled as a separate stage
++ *
++ * On success returns TPM_SUCCESS, otherwise returns a TPM error.
++ */
++tpm_result_t tspi_init_crtm(void);
++
+ /**
+  * Measure digests cached in TPM log entries into PCRs
+  */
+diff --git a/src/security/tpm/tspi/tspi.c b/src/security/tpm/tspi/tspi.c
+index 10b883e2ac..ddc5339d4d 100644
+--- a/src/security/tpm/tspi/tspi.c
++++ b/src/security/tpm/tspi/tspi.c
+@@ -227,6 +227,16 @@ tpm_result_t tpm_extend_pcr(int pcr, enum vb2_hash_algorithm digest_algo,
+ 	if (!digest)
+ 		return TPM_IOERROR;
+ 
++	if (!tspi_tpm_log_available()) {
++		rc = tspi_init_crtm();
++		if (rc) {
++			printk(BIOS_WARNING, "Initializing CRTM failed!\n");
++			return rc;
++		}
++
++		printk(BIOS_DEBUG, "CRTM initialized.\n");
++	}
++
+ 	if (tspi_tpm_is_setup()) {
+ 		rc = tlcl_lib_init();
+ 		if (rc != TPM_SUCCESS) {

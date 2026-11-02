@@ -1,0 +1,125 @@
+From 3aeddcc22928283aa1d44aa5b04650c12a02b9d7 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Thu, 17 Jul 2025 00:27:02 +0300
+Subject: [PATCH 093/107] security/tpm/tspi: allocate 64 KiB for TCG logs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+That's the minimum log size for client platforms per "TCG PC Client
+Platform Firmware Profile Specification" [0].
+
+[0]: https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
+
+Upstream-Status: Pending
+Change-Id: Ifed85a91d5e2cf28fcc40262710e0ec688479a62
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit f5cd1946c2d65db22082b87a5242db18a07329aa)
+---
+ src/security/tpm/tspi.h          |  1 -
+ src/security/tpm/tspi/log-tpm1.c | 10 ++++++----
+ src/security/tpm/tspi/log-tpm2.c | 11 ++++++-----
+ src/security/tpm/tspi/log.c      |  2 ++
+ 4 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/src/security/tpm/tspi.h b/src/security/tpm/tspi.h
+index ec805942f6..bf85ce497a 100644
+--- a/src/security/tpm/tspi.h
++++ b/src/security/tpm/tspi.h
+@@ -13,7 +13,6 @@
+ 
+ #define TPM_PCR_MAX_LEN 64
+ #define HASH_DATA_CHUNK_SIZE 1024
+-#define MAX_TPM_LOG_ENTRIES 50
+ /* Assumption of 2K TCPA log size reserved for CAR/SRAM */
+ #define MAX_PRERAM_TPM_LOG_ENTRIES 15
+ 
+diff --git a/src/security/tpm/tspi/log-tpm1.c b/src/security/tpm/tspi/log-tpm1.c
+index 453e74b4e8..0fbfa5ab50 100644
+--- a/src/security/tpm/tspi/log-tpm1.c
++++ b/src/security/tpm/tspi/log-tpm1.c
+@@ -14,6 +14,10 @@
+ #include <cbmem.h>
+ #include <vb2_sha.h>
+ 
++#define TPM_LOG_SIZE         (64 * KiB)
++#define MAX_TPM_LOG_ENTRIES  ((TPM_LOG_SIZE - sizeof(struct tpm_1_log_table)) /  \
++			      sizeof(struct tpm_1_log_entry))
++
+ void *tpm1_log_cbmem_init(void)
+ {
+ 	static struct tpm_1_log_table *tclt;
+@@ -21,19 +25,17 @@ void *tpm1_log_cbmem_init(void)
+ 		return tclt;
+ 
+ 	if (ENV_HAS_CBMEM) {
+-		size_t tpm_log_len;
+ 		struct spec_id_event_data *hdr;
+ 
+ 		tclt = cbmem_find(CBMEM_ID_TCPA_TCG_LOG);
+ 		if (tclt)
+ 			return tclt;
+ 
+-		tpm_log_len = sizeof(*tclt) + MAX_TPM_LOG_ENTRIES * sizeof(tclt->entries[0]);
+-		tclt = cbmem_add(CBMEM_ID_TCPA_TCG_LOG, tpm_log_len);
++		tclt = cbmem_add(CBMEM_ID_TCPA_TCG_LOG, TPM_LOG_SIZE);
+ 		if (!tclt)
+ 			return NULL;
+ 
+-		memset(tclt, 0, tpm_log_len);
++		memset(tclt, 0, TPM_LOG_SIZE);
+ 		hdr = &tclt->spec_id;
+ 
+ 		/* Fill in first "header" entry. */
+diff --git a/src/security/tpm/tspi/log-tpm2.c b/src/security/tpm/tspi/log-tpm2.c
+index 10df239994..3e26970a88 100644
+--- a/src/security/tpm/tspi/log-tpm2.c
++++ b/src/security/tpm/tspi/log-tpm2.c
+@@ -22,6 +22,10 @@
+ #include <cbmem.h>
+ #include <vb2_sha.h>
+ 
++#define TPM_LOG_SIZE         (64 * KiB)
++#define MAX_TPM_LOG_ENTRIES  ((TPM_LOG_SIZE - sizeof(struct tpm_2_log_table)) /  \
++			      sizeof(struct tpm_2_log_entry))
++
+ struct startup_locality_event {
+ 	char signature[16];       /* "StartupLocality" (NUL-terminated) */
+ 	uint8_t startup_locality; /* 0 or 3 */
+@@ -34,20 +38,17 @@ void *tpm2_log_cbmem_init(void)
+ 		return tclt;
+ 
+ 	if (ENV_HAS_CBMEM) {
+-		size_t tpm_log_len;
+ 		struct tcg_efi_spec_id_event *hdr;
+ 
+ 		tclt = cbmem_find(CBMEM_ID_TPM2_TCG_LOG);
+ 		if (tclt)
+ 			return tclt;
+ 
+-		tpm_log_len = sizeof(struct tpm_2_log_table) +
+-			MAX_TPM_LOG_ENTRIES * sizeof(struct tpm_2_log_entry);
+-		tclt = cbmem_add(CBMEM_ID_TPM2_TCG_LOG, tpm_log_len);
++		tclt = cbmem_add(CBMEM_ID_TPM2_TCG_LOG, TPM_LOG_SIZE);
+ 		if (!tclt)
+ 			return NULL;
+ 
+-		memset(tclt, 0, tpm_log_len);
++		memset(tclt, 0, TPM_LOG_SIZE);
+ 		hdr = &tclt->header;
+ 
+ 		hdr->event_type = htole32(EV_NO_ACTION);
+diff --git a/src/security/tpm/tspi/log.c b/src/security/tpm/tspi/log.c
+index ea4e9197a2..a04f4070bf 100644
+--- a/src/security/tpm/tspi/log.c
++++ b/src/security/tpm/tspi/log.c
+@@ -9,6 +9,8 @@
+ #include <cbmem.h>
+ #include <vb2_sha.h>
+ 
++#define MAX_TPM_LOG_ENTRIES  50
++
+ void *tpm_cb_log_cbmem_init(void)
+ {
+ 	static struct tpm_cb_log_table *tclt;

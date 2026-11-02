@@ -1,0 +1,207 @@
+From 6358079b57f0bfb98991706bfa9739954b29431d Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Tue, 16 Dec 2025 01:02:48 +0200
+Subject: [PATCH 101/107] lib/cbfs.c,security/tpm/tspi: support multiple banks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Updates the code to support hashing for more than one digest algorithm
+when that's available, the code should work as before at this point.
+
+Change-Id: I6a89d8d430986bda7ee77053ca3768a292e1b53b
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 21c9942412e4029fe698a2920cd06f3398f92423)
+---
+ src/lib/cbfs.c               | 21 ++++--------
+ src/security/tpm/tspi/crtm.c | 16 +++++----
+ src/security/tpm/tspi/crtm.h |  6 ++--
+ src/security/tpm/tspi/tspi.c | 66 ++++++++++++++++++++----------------
+ 4 files changed, 55 insertions(+), 54 deletions(-)
+
+diff --git a/src/lib/cbfs.c b/src/lib/cbfs.c
+index c1fc78116d..297aba7ae3 100644
+--- a/src/lib/cbfs.c
++++ b/src/lib/cbfs.c
+@@ -197,21 +197,12 @@ static bool cbfs_file_hash_mismatch(const void *buffer, size_t size,
+ 	}
+ 
+ 	if (CONFIG(TPM_MEASURED_BOOT) && !ENV_SMM) {
+-		struct vb2_hash calculated_hash;
+-
+-		/* No need to re-hash file if we already have it from verification. */
+-		if (!hash || hash->algo != tpm_log_alg()) {
+-			if (vb2_hash_calculate(vboot_hwcrypto_allowed(), buffer, size,
+-					       tpm_log_alg(), &calculated_hash))
+-				hash = NULL;
+-			else
+-				hash = &calculated_hash;
+-		}
+-
+-		if (!hash ||
+-		    tspi_cbfs_measurement(mdata->h.filename, be32toh(mdata->h.type), hash))
+-			ERROR("failed to measure '%s' into TPM log\n", mdata->h.filename);
+-			/* We intentionally continue to boot on measurement errors. */
++		tpm_result_t rc = tspi_cbfs_measurement(mdata->h.filename, buffer, size,
++							be32toh(mdata->h.type), hash);
++		if (rc != TPM_SUCCESS)
++			ERROR("failed to measure '%s' into TPM log, error %#x\n",
++			      mdata->h.filename, rc);
++		/* We intentionally continue to boot on measurement errors. */
+ 	}
+ 
+ 	return false;
+diff --git a/src/security/tpm/tspi/crtm.c b/src/security/tpm/tspi/crtm.c
+index a2b52453b9..343359ad41 100644
+--- a/src/security/tpm/tspi/crtm.c
++++ b/src/security/tpm/tspi/crtm.c
+@@ -109,7 +109,8 @@ static bool is_runtime_data(const char *name)
+ 	return !strcmp(allowlist, name);
+ }
+ 
+-tpm_result_t tspi_cbfs_measurement(const char *name, uint32_t type, const struct vb2_hash *hash)
++tpm_result_t tspi_cbfs_measurement(const char *name, const void *buffer, size_t size,
++				   uint32_t type, const struct vb2_hash *hash_hint)
+ {
+ 	uint32_t pcr_index;
+ 	char tpm_log_metadata[TPM_CB_LOG_PCR_HASH_NAME];
+@@ -136,14 +137,15 @@ tpm_result_t tspi_cbfs_measurement(const char *name, uint32_t type, const struct
+ 		break;
+ 	}
+ 
+-	struct tpm_digest digests[] = {
+-		{ .hash_type = hash->algo, .hash = hash->raw },
+-		{ .hash_type = VB2_HASH_INVALID }
+-	};
++	struct tpm_digests digests;
++	if (!tpm_make_digests(buffer, size, hash_hint, &digests)) {
++		printk(BIOS_ERR, "%s: failed to fill digests!\n", __func__);
++		return TPM_FAIL;
++	}
+ 
+ 	snprintf(tpm_log_metadata, TPM_CB_LOG_PCR_HASH_NAME, "CBFS: %s", name);
+ 
+-	return tpm_extend_pcr(pcr_index, digests, tpm_log_metadata);
++	return tpm_extend_pcr(pcr_index, digests.values, tpm_log_metadata);
+ }
+ 
+ void *tpm_log_init(void)
+@@ -171,7 +173,7 @@ tpm_result_t tspi_measure_cache_to_pcr(void)
+ 	int i;
+ 	int pcr;
+ 	const char *event_name;
+-	struct tpm_digest digests[2];
++	struct tpm_digest digests[ENABLED_TPM_ALGS_NUM + 1];
+ 
+ 	/* This means the table is empty. */
+ 	if (!tspi_tpm_log_available())
+diff --git a/src/security/tpm/tspi/crtm.h b/src/security/tpm/tspi/crtm.h
+index cd20e81b64..04ee46a75f 100644
+--- a/src/security/tpm/tspi/crtm.h
++++ b/src/security/tpm/tspi/crtm.h
+@@ -34,9 +34,11 @@ tpm_result_t tspi_init_crtm(void);
+ tpm_result_t tspi_measure_cache_to_pcr(void);
+ 
+ /**
+- * Extend a measurement hash taken for a CBFS file into the appropriate PCR.
++ * Extend a measurement hash of a CBFS file into the appropriate PCR.  hash_hint can be passed
++ * in to avoid recomputing the digest if it's already known.
+  */
+-tpm_result_t tspi_cbfs_measurement(const char *name, uint32_t type, const struct vb2_hash *hash);
++tpm_result_t tspi_cbfs_measurement(const char *name, const void *buffer, size_t size,
++				   uint32_t type, const struct vb2_hash *hash_hint);
+ 
+ /*
+  * Provide a function on SoC level to measure the bootblock for cases where bootblock is
+diff --git a/src/security/tpm/tspi/tspi.c b/src/security/tpm/tspi/tspi.c
+index 6b9e79b87a..cec9cbae82 100644
+--- a/src/security/tpm/tspi/tspi.c
++++ b/src/security/tpm/tspi/tspi.c
+@@ -267,49 +267,55 @@ tpm_result_t tpm_extend_pcr(int pcr, const struct tpm_digest *digests, const cha
+ tpm_result_t tpm_measure_region(const struct region_device *rdev, uint8_t pcr,
+ 			    const char *rname)
+ {
+-	uint8_t digest[TPM_PCR_MAX_LEN], digest_len;
+ 	uint8_t buf[HASH_DATA_CHUNK_SIZE];
+ 	uint32_t offset;
++	int i, j;
+ 	size_t len;
+ 	struct vb2_digest_context ctx;
++	struct tpm_digests digests;
+ 
+ 	if (!rdev || !rname)
+ 		return TPM_CB_INVALID_ARG;
+ 
+-	digest_len = vb2_digest_size(tpm_log_alg());
+-	assert(digest_len <= sizeof(digest));
+-	if (vb2_digest_init(&ctx, vboot_hwcrypto_allowed(), tpm_log_alg(),
+-			    region_device_sz(rdev))) {
+-		printk(BIOS_ERR, "TPM: Error initializing hash.\n");
+-		return TPM_CB_HASH_ERROR;
+-	}
+-	/*
+-	 * Though one can mmap the full needed region on x86 this is not the
+-	 * case for e.g. ARM. In order to make this code as universal as
+-	 * possible across different platforms read the data to hash in chunks.
+-	 */
+-	for (offset = 0; offset < region_device_sz(rdev); offset += len) {
+-		len = MIN(sizeof(buf), region_device_sz(rdev) - offset);
+-		if (rdev_readat(rdev, buf, offset, len) < 0) {
+-			printk(BIOS_ERR, "TPM: Not able to read region %s.\n",
+-			       rname);
+-			return TPM_CB_READ_FAILURE;
++	for (i = 0, j = 0; i < ENABLED_TPM_ALGS_NUM; ++i) {
++		enum vb2_hash_algorithm alg = enabled_tpm_algs[i];
++		if (!tpm_log_alg_active(alg))
++			continue;
++
++		if (vb2_digest_init(&ctx, vboot_hwcrypto_allowed(), alg,
++				    region_device_sz(rdev))) {
++			printk(BIOS_ERR, "TPM: Error initializing hash.\n");
++			return TPM_CB_HASH_ERROR;
+ 		}
+-		if (vb2_digest_extend(&ctx, buf, len)) {
+-			printk(BIOS_ERR, "TPM: Error extending hash.\n");
++		/*
++		 * Though one can mmap the full needed region on x86 this is not the
++		 * case for e.g. ARM. In order to make this code as universal as
++		 * possible across different platforms read the data to hash in chunks.
++		 */
++		for (offset = 0; offset < region_device_sz(rdev); offset += len) {
++			len = MIN(sizeof(buf), region_device_sz(rdev) - offset);
++			if (rdev_readat(rdev, buf, offset, len) < 0) {
++				printk(BIOS_ERR, "TPM: Not able to read region %s.\n",
++				       rname);
++				return TPM_CB_READ_FAILURE;
++			}
++			if (vb2_digest_extend(&ctx, buf, len)) {
++				printk(BIOS_ERR, "TPM: Error extending hash.\n");
++				return TPM_CB_HASH_ERROR;
++			}
++		}
++		if (vb2_digest_finalize(&ctx, digests.hashes[j].raw, vb2_digest_size(alg))) {
++			printk(BIOS_ERR, "TPM: Error finalizing hash.\n");
+ 			return TPM_CB_HASH_ERROR;
+ 		}
+-	}
+-	if (vb2_digest_finalize(&ctx, digest, digest_len)) {
+-		printk(BIOS_ERR, "TPM: Error finalizing hash.\n");
+-		return TPM_CB_HASH_ERROR;
++
++		digests.values[j].hash = digests.hashes[j].raw;
++		digests.values[j].hash_type = alg;
++		++j;
+ 	}
+ 
+-	struct tpm_digest digests[] = {
+-		{ .hash_type = tpm_log_alg(), .hash = digest },
+-		{ .hash_type = VB2_HASH_INVALID }
+-	};
+-	return tpm_extend_pcr(pcr, digests, rname);
++	digests.values[j].hash_type = VB2_HASH_INVALID;
++	return tpm_extend_pcr(pcr, digests.values, rname);
+ }
+ 
+ bool tpm_make_digests(const void *buffer, size_t size, const struct vb2_hash *hash_hint,

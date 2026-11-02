@@ -1,0 +1,47 @@
+From b688e57950379c083bcd8448494f9d82d41c3541 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 8 May 2026 15:04:36 +0200
+Subject: [PATCH 105/107] util/cbmem: Fix missing size parameter in TCG log
+ dumps
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Change-Id: I0ab522f0ee613781b3bbec1d79804f7364ec6891
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit c55adb74ca22be9a95837955931e4537a3b1c125)
+---
+ util/cbmem/cbmem.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/util/cbmem/cbmem.c b/util/cbmem/cbmem.c
+index 4f9b085bb9..96e4084ebc 100644
+--- a/util/cbmem/cbmem.c
++++ b/util/cbmem/cbmem.c
+@@ -640,7 +640,7 @@ static void parse_tpm2_log(const struct tcg_efi_spec_id_event *tpm2_log)
+ }
+ 
+ /* Dump the TPM log table in format defined by specifications */
+-static void dump_tpm_std_log(void *buf)
++static void dump_tpm_std_log(void *buf, size_t size)
+ {
+ 	const struct tcpa_spec_entry *tspec_entry;
+ 	const struct tcg_efi_spec_id_event *tcg_spec_entry;
+@@ -698,10 +698,13 @@ static void dump_tpm_cb_log(void)
+ static void dump_tpm_log(void)
+ {
+ 	uint8_t *buf;
++	size_t size;
+ 
+-	if (cbmem_drv_get_cbmem_entry(CBMEM_ID_TCPA_TCG_LOG, &buf, NULL, NULL) ||
+-	    cbmem_drv_get_cbmem_entry(CBMEM_ID_TPM2_TCG_LOG, &buf, NULL, NULL)) {
+-		dump_tpm_std_log(buf);
++	if (cbmem_drv_get_cbmem_entry(CBMEM_ID_TCPA_TCG_LOG, &buf, &size, NULL)) {
++		dump_tpm_std_log(buf, size);
++		free(buf);
++	} else if (cbmem_drv_get_cbmem_entry(CBMEM_ID_TPM2_TCG_LOG, &buf,  &size, NULL)) {
++		dump_tpm_std_log(buf, size);
+ 		free(buf);
+ 	} else
+ 		dump_tpm_cb_log();

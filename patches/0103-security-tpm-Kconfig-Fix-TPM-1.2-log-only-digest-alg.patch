@@ -1,0 +1,66 @@
+From d2ea801ae0403f477b3b739af595df1e9105b5d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sun, 22 Mar 2026 23:15:47 +0100
+Subject: [PATCH 103/107] security/tpm/Kconfig: Fix TPM 1.2 log only digest
+ algorithms
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Due to the incorrect Kconfig rules the TPM_LOG_TPM1 option did not
+enable any PCR hash algorithms to be compiled into the build. This
+resulted in PCR extend operation error 0x1f (IOERROR). By tracing
+back possible places where such error code is returned and veryfing
+the coreboot config, it became obvious that the SHA1 is compiled
+out and there are no available digests to extend.
+
+TEST=Dell Precision T1650 extends the PCRs withotu errors when
+TPM_LOG_TPM1 is enabled.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit ce660455c1575b6f8a3a09524e9d0a129a5f9b13)
+---
+ src/security/tpm/Kconfig | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/security/tpm/Kconfig b/src/security/tpm/Kconfig
+index 596f8f3e2a..2d587cacd8 100644
+--- a/src/security/tpm/Kconfig
++++ b/src/security/tpm/Kconfig
+@@ -107,6 +107,7 @@ config TPM_LOG_TCG
+ config TPM_LOG_TPM1
+ 	bool "TPM 1.2 format"
+ 	depends on TPM1 && !TPM2
++	select TPM_HASH_SHA1
+ 	help
+ 	  Log per TPM 1.2 specification.
+ 	  See "TCG PC Client Specific Implementation Specification for Conventional BIOS".
+@@ -119,18 +120,26 @@ config TPM_LOG_TPM2
+ 
+ endchoice
+ 
+-if TPM_MEASURED_BOOT && (TPM_LOG_TCG || TPM_LOG_TPM2)
++if TPM_MEASURED_BOOT && !TPM_LOG_CB
+ 
+ config TPM_HASH_SHA1
+ 	bool "SHA1 PCR hashing"
+ 	default y if TPM1 || TPM2
++
++endif
++
++if TPM_MEASURED_BOOT && (TPM_LOG_TCG || TPM_LOG_TPM2)
++
+ config TPM_HASH_SHA256
+ 	bool "SHA256 PCR hashing"
+ 	default y if TPM2
++	depends on !TPM_LOG_TPM1
+ config TPM_HASH_SHA384
+ 	bool "SHA384 PCR hashing"
++	depends on !TPM_LOG_TPM1
+ config TPM_HASH_SHA512
+ 	bool "SHA512 PCR hashing"
++	depends on !TPM_LOG_TPM1
+ 
+ endif
+ 

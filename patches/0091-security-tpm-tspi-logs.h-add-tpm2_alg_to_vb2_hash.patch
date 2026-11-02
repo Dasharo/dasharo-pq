@@ -1,0 +1,50 @@
+From 903942ea3dbe66fa379a816ed8bc432745c5de79 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Thu, 19 Jun 2025 01:27:10 +0300
+Subject: [PATCH 091/107] security/tpm/tspi/logs.h: add tpm2_alg_to_vb2_hash()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add the reverse of tpm2_alg_from_vb2_hash() which converts TPM 2.0
+algorithm IDs into vboot hash types. It is needed by the TPM 2.0 log
+code handling multiple PCR banks.
+
+Ported from the Dasharo coreboot commit "security/intel/cbnt: synthesize
+PCR-7 measurement" without the Intel CBNT specific changes.
+
+(cherry picked from commit 736ddd903d756ce5c3512c62c0dcc792c1004801)
+Upstream-Status: Pending
+Change-Id: Ic1bfb016600f9f00b8f2fa1965aedfa99647a8e0
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/security/tpm/tspi/logs.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/src/security/tpm/tspi/logs.h b/src/security/tpm/tspi/logs.h
+index 1015295b20..e4960c2405 100644
+--- a/src/security/tpm/tspi/logs.h
++++ b/src/security/tpm/tspi/logs.h
+@@ -69,4 +69,21 @@ static inline uint16_t tpm2_alg_from_vb2_hash(enum vb2_hash_algorithm hash_type)
+ 	}
+ }
+ 
++static inline enum vb2_hash_algorithm tpm2_alg_to_vb2_hash(uint16_t hash_type)
++{
++	switch (hash_type) {
++	case TPM2_ALG_SHA1:
++		return VB2_HASH_SHA1;
++	case TPM2_ALG_SHA256:
++		return VB2_HASH_SHA256;
++	case TPM2_ALG_SHA384:
++		return VB2_HASH_SHA384;
++	case TPM2_ALG_SHA512:
++		return VB2_HASH_SHA512;
++
++	default:
++		return VB2_HASH_INVALID;
++	}
++}
++
+ #endif /* LOGS_H_ */

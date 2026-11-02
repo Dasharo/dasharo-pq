@@ -1,0 +1,49 @@
+From ad617c1698f5f2c8a672b76fdb3eb348c37cf5af Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
+Date: Wed, 4 Mar 2026 15:35:53 +0100
+Subject: [PATCH 107/107] src/security/tpm/tspi/crtm.c: skip EV_NO_ACTION
+ events when measuring cache to PCR
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+EV_NO_ACTION must not be measured.
+
+Fixes reconstruction of PCR-0 if redundancy and boot guard are enabled
+at the same time.
+
+Upstream-Status: Inappropriate [Dasharo downstream]
+Change-Id: I4792ebfe37cdfd532e868cfffd0f628de2bb053f
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+(cherry picked from commit 5db5cf9d6ba3d75f2166ad97ec7b85e1be3d98f0)
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+(cherry picked from commit af692bf77d45103580dfd38b5e7c479015e3fefb)
+---
+ src/security/tpm/tspi/crtm.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/src/security/tpm/tspi/crtm.c b/src/security/tpm/tspi/crtm.c
+index 9fa171cf1d..00acef9dab 100644
+--- a/src/security/tpm/tspi/crtm.c
++++ b/src/security/tpm/tspi/crtm.c
+@@ -193,7 +193,19 @@ tpm_result_t tspi_measure_cache_to_pcr(void)
+ 
+ 	printk(BIOS_DEBUG, "TPM: Write digests cached in TPM log to PCR\n");
+ 	i = 0;
+-	while (!tpm_log_get(i++, &pcr, digests, &event_name)) {
++	uint32_t event_type;
++	while (!tpm_log_get(i++, &pcr, digests, &event_name, &event_type)) {
++		/*
++		 * EV_NO_ACTION events (e.g. the StartupLocality event logged by
++		 * tspi_init_crtm()) must never be extended into any PCR per the TCG spec.
++		 * They carry all-zero digests and are informational-only.  This can happen
++		 * when CBFS files are loaded before tpm_setup() is called (e.g. due to
++		 * CMOS option reads), which triggers tspi_init_crtm() early and buffers
++		 * these events in the pre-RAM log.
++		 */
++		if (event_type == EV_NO_ACTION)
++			continue;
++
+ 		printk(BIOS_DEBUG, "TPM: Write digest for %s into PCR %d\n", event_name, pcr);
+ 
+ 		tpm_result_t rc = tlcl_extend(pcr, digests);

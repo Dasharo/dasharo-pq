@@ -1,0 +1,201 @@
+From ab2d697cf56bce30153d873e1e22524b9835c34f Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Fri, 5 Jul 2024 00:45:52 +0300
+Subject: [PATCH 088/107] security/tpm: replace TPM_MEASURE_ALGO with
+ tpm_log_alg()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+No functional changes.  This replaces a macro with an inline function to
+make code more readable and more convenient to extend in the future.
+
+Upstream-Status: Pending
+Change-Id: I456bc3bb749a9b58fba72f5562195525e55290bf
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 9b2da25e07ec4540ae3b88d5cd46b2b35df8f13e)
+---
+ src/lib/cbfs.c                   |  4 ++--
+ src/security/tpm/tspi.h          | 25 +++++++++++++++++++++++++
+ src/security/tpm/tspi/crtm.h     | 27 ---------------------------
+ src/security/tpm/tspi/log-tpm2.c | 18 +++++++++---------
+ src/security/tpm/tspi/tspi.c     |  6 +++---
+ 5 files changed, 39 insertions(+), 41 deletions(-)
+
+diff --git a/src/lib/cbfs.c b/src/lib/cbfs.c
+index 4db3113eee..c1fc78116d 100644
+--- a/src/lib/cbfs.c
++++ b/src/lib/cbfs.c
+@@ -200,9 +200,9 @@ static bool cbfs_file_hash_mismatch(const void *buffer, size_t size,
+ 		struct vb2_hash calculated_hash;
+ 
+ 		/* No need to re-hash file if we already have it from verification. */
+-		if (!hash || hash->algo != TPM_MEASURE_ALGO) {
++		if (!hash || hash->algo != tpm_log_alg()) {
+ 			if (vb2_hash_calculate(vboot_hwcrypto_allowed(), buffer, size,
+-					       TPM_MEASURE_ALGO, &calculated_hash))
++					       tpm_log_alg(), &calculated_hash))
+ 				hash = NULL;
+ 			else
+ 				hash = &calculated_hash;
+diff --git a/src/security/tpm/tspi.h b/src/security/tpm/tspi.h
+index 3e7e5f10f5..80cafd5e09 100644
+--- a/src/security/tpm/tspi.h
++++ b/src/security/tpm/tspi.h
+@@ -17,6 +17,31 @@
+ /* Assumption of 2K TCPA log size reserved for CAR/SRAM */
+ #define MAX_PRERAM_TPM_LOG_ENTRIES 15
+ 
++/**
++ * Retrieves hash algorithm used by TPM event log or VB2_HASH_INVALID.
++ */
++static inline enum vb2_hash_algorithm tpm_log_alg(void)
++{
++	if (CONFIG(TPM_LOG_CB))
++		return (tlcl_get_family() == TPM_1 ? VB2_HASH_SHA1 : VB2_HASH_SHA256);
++
++	if (CONFIG(TPM_LOG_TPM1))
++		return VB2_HASH_SHA1;
++
++	if (CONFIG(TPM_LOG_TPM2)) {
++		if (CONFIG(TPM_HASH_SHA1))
++			return VB2_HASH_SHA1;
++		if (CONFIG(TPM_HASH_SHA256))
++			return VB2_HASH_SHA256;
++		if (CONFIG(TPM_HASH_SHA384))
++			return VB2_HASH_SHA384;
++		if (CONFIG(TPM_HASH_SHA512))
++			return VB2_HASH_SHA512;
++	}
++
++	return VB2_HASH_INVALID;
++}
++
+ /**
+  * Get the pointer to the single instance of global
+  * TPM log data, and initialize it when necessary
+diff --git a/src/security/tpm/tspi/crtm.h b/src/security/tpm/tspi/crtm.h
+index 69043e233a..c699cc9a98 100644
+--- a/src/security/tpm/tspi/crtm.h
++++ b/src/security/tpm/tspi/crtm.h
+@@ -9,33 +9,6 @@
+ #include <types.h>
+ #include <vb2_sha.h>
+ 
+-#if CONFIG(TPM_LOG_CB)
+-#  define TPM_MEASURE_ALGO (tlcl_get_family() == TPM_1 ? VB2_HASH_SHA1 : VB2_HASH_SHA256)
+-#elif CONFIG(TPM_LOG_TPM1)
+-#  define TPM_MEASURE_ALGO VB2_HASH_SHA1
+-#elif CONFIG(TPM_LOG_TPM2)
+-#  if CONFIG(TPM_HASH_SHA1)
+-#    define TPM_MEASURE_ALGO VB2_HASH_SHA1
+-#  endif
+-#  if CONFIG(TPM_HASH_SHA256)
+-#    define TPM_MEASURE_ALGO VB2_HASH_SHA256
+-#  endif
+-#  if CONFIG(TPM_HASH_SHA384)
+-#    define TPM_MEASURE_ALGO VB2_HASH_SHA384
+-#  endif
+-#  if CONFIG(TPM_HASH_SHA512)
+-#    define TPM_MEASURE_ALGO VB2_HASH_SHA512
+-#  endif
+-#endif
+-
+-#if !defined(TPM_MEASURE_ALGO)
+-#  if !CONFIG(TPM_MEASURED_BOOT)
+-#    define TPM_MEASURE_ALGO VB2_HASH_INVALID
+-#  else
+-#    error "Misconfiguration: failed to determine TPM hashing algorithm"
+-#  endif
+-#endif
+-
+ /**
+  * Measure digests cached in TPM log entries into PCRs
+  */
+diff --git a/src/security/tpm/tspi/log-tpm2.c b/src/security/tpm/tspi/log-tpm2.c
+index 56799a7e94..a69c5159b5 100644
+--- a/src/security/tpm/tspi/log-tpm2.c
++++ b/src/security/tpm/tspi/log-tpm2.c
+@@ -71,8 +71,8 @@ void *tpm2_log_cbmem_init(void)
+ 		hdr->spec_errata = 0x00;
+ 		hdr->uintn_size = 0x02; // 64-bit UINT
+ 		hdr->num_of_algorithms = htole32(1);
+-		hdr->digest_sizes[0].alg_id = htole16(tpmalg_from_vb2_hash(TPM_MEASURE_ALGO));
+-		hdr->digest_sizes[0].digest_size = htole16(vb2_digest_size(TPM_MEASURE_ALGO));
++		hdr->digest_sizes[0].alg_id = htole16(tpmalg_from_vb2_hash(tpm_log_alg()));
++		hdr->digest_sizes[0].digest_size = htole16(vb2_digest_size(tpm_log_alg()));
+ 
+ 		tclt->vendor_info_size = sizeof(tclt->vendor);
+ 		tclt->vendor.reserved = 0;
+@@ -98,8 +98,8 @@ void tpm2_log_dump(void)
+ 	if (!tclt)
+ 		return;
+ 
+-	hash_size = vb2_digest_size(TPM_MEASURE_ALGO);
+-	alg_name = vb2_get_hash_algorithm_name(TPM_MEASURE_ALGO);
++	hash_size = vb2_digest_size(tpm_log_alg());
++	alg_name = vb2_get_hash_algorithm_name(tpm_log_alg());
+ 
+ 	printk(BIOS_INFO, "coreboot TPM 2.0 measurements:\n\n");
+ 	for (i = 0; i < le16toh(tclt->vendor.num_entries); i++) {
+@@ -134,13 +134,13 @@ void tpm2_log_add_table_entry(const char *name, const uint32_t pcr,
+ 		return;
+ 	}
+ 
+-	if (digest_algo != TPM_MEASURE_ALGO) {
++	if (digest_algo != tpm_log_alg()) {
+ 		printk(BIOS_WARNING, "TPM LOG: digest is of unsupported type: %s\n",
+ 		       vb2_get_hash_algorithm_name(digest_algo));
+ 		return;
+ 	}
+ 
+-	if (digest_len != vb2_digest_size(TPM_MEASURE_ALGO)) {
++	if (digest_len != vb2_digest_size(tpm_log_alg())) {
+ 		printk(BIOS_WARNING, "TPM LOG: digest has invalid length: %d\n",
+ 		       (int)digest_len);
+ 		return;
+@@ -158,8 +158,8 @@ void tpm2_log_add_table_entry(const char *name, const uint32_t pcr,
+ 	tce->event_type = htole32(EV_ACTION);
+ 
+ 	tce->digest_count = htole32(1);
+-	tce->digest_type = htole16(tpmalg_from_vb2_hash(TPM_MEASURE_ALGO));
+-	memcpy(tce->digest, digest, vb2_digest_size(TPM_MEASURE_ALGO));
++	tce->digest_type = htole16(tpmalg_from_vb2_hash(tpm_log_alg()));
++	memcpy(tce->digest, digest, vb2_digest_size(tpm_log_alg()));
+ 
+ 	tce->data_length = htole32(sizeof(tce->data));
+ 	strncpy((char *)tce->data, name, sizeof(tce->data) - 1);
+@@ -183,7 +183,7 @@ int tpm2_log_get(int entry_idx, int *pcr, const uint8_t **digest_data,
+ 
+ 	*pcr = le32toh(tce->pcr);
+ 	*digest_data = tce->digest;
+-	*digest_algo = TPM_MEASURE_ALGO; /* We validate algorithm on addition */
++	*digest_algo = tpm_log_alg(); /* We validate algorithm on addition */
+ 	*event_name = (char *)tce->data;
+ 	return 0;
+ }
+diff --git a/src/security/tpm/tspi/tspi.c b/src/security/tpm/tspi/tspi.c
+index 56b8fa8ede..10b883e2ac 100644
+--- a/src/security/tpm/tspi/tspi.c
++++ b/src/security/tpm/tspi/tspi.c
+@@ -265,9 +265,9 @@ tpm_result_t tpm_measure_region(const struct region_device *rdev, uint8_t pcr,
+ 	if (!rdev || !rname)
+ 		return TPM_CB_INVALID_ARG;
+ 
+-	digest_len = vb2_digest_size(TPM_MEASURE_ALGO);
++	digest_len = vb2_digest_size(tpm_log_alg());
+ 	assert(digest_len <= sizeof(digest));
+-	if (vb2_digest_init(&ctx, vboot_hwcrypto_allowed(), TPM_MEASURE_ALGO,
++	if (vb2_digest_init(&ctx, vboot_hwcrypto_allowed(), tpm_log_alg(),
+ 			    region_device_sz(rdev))) {
+ 		printk(BIOS_ERR, "TPM: Error initializing hash.\n");
+ 		return TPM_CB_HASH_ERROR;
+@@ -293,6 +293,6 @@ tpm_result_t tpm_measure_region(const struct region_device *rdev, uint8_t pcr,
+ 		printk(BIOS_ERR, "TPM: Error finalizing hash.\n");
+ 		return TPM_CB_HASH_ERROR;
+ 	}
+-	return tpm_extend_pcr(pcr, TPM_MEASURE_ALGO, digest, digest_len, rname);
++	return tpm_extend_pcr(pcr, tpm_log_alg(), digest, digest_len, rname);
+ }
+ #endif /* VBOOT_LIB */
