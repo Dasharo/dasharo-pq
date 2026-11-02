@@ -1,0 +1,94 @@
+From 8537f3379fa50021e22ca2d2cadbe16cc73f2614 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Go=C5=82a=C5=9B?= <filip.golas@3mdeb.com>
+Date: Thu, 16 Jul 2026 13:52:18 +0200
+Subject: [PATCH 133/158] src/sbom/Makefile.mk: Separate microcode binaries and
+ add more details to them
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The two binaries were merged together because all microcode binaries
+used the same tag-id hardcoded in the json.
+By using goswid to generate the tag-id fields from filename
+we get deterministic ids for every ucode binary in a firmare.
+It won't change as cpuid doesn't change.
+
+cpuid output, revision and date of the ucode binary are added to
+oswid sbom for more details.
+
+Upstream-Status: Pending
+Change-Id: I1424392092798fb39eb9caf9fd6d312de1d6b661
+Signed-off-by: Filip Gołaś <filip.golas@3mdeb.com>
+(cherry picked from commit 1613857f1a271c7dd1cbc900d42be3a571104e3e)
+---
+ src/sbom/Makefile.mk          | 25 ++++++++++++++++++-------
+ src/sbom/intel-microcode.json |  7 +++++--
+ 2 files changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index e238bb1784..0c82c6e6c0 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -121,7 +121,6 @@ endif
+ endif
+ swid-files-$(CONFIG_SBOM_PAYLOAD) += $(if $(CONFIG_SBOM_PAYLOAD_GENERATE),$(payload-swid),$(if $(CONFIG_PAYLOAD_EDK2),$(payload-swid),$(CONFIG_SBOM_PAYLOAD_PATH)))
+ swid-files-$(CONFIG_SBOM_EDK2_PLATFORMS) += $(if $(CONFIG_SBOM_EDK2_PLATFORMS_GENERATE),$(build-dir)/payload-edk2-platforms.json,$(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
+-# TODO think about just using one CoSWID tag for all intel-microcode instead of one for each. maybe put each microcode into files entity of CoSWID tag?
+ swid-files-$(CONFIG_SBOM_INTEL_MICROCODE) += $(patsubst 3rdparty/intel-microcode/intel-ucode/%, $(build-dir)/intel-microcode-%.json, $(filter 3rdparty/intel-microcode/intel-ucode/%, $(cpu_microcode_bins)))
+ swid-files-$(CONFIG_SBOM_AMD_MICROCODE) += $(foreach ucode,$(amd_microcode_bins),$(build-dir)/amd-microcode-$(basename $(notdir $(ucode))).json)
+ swid-files-$(CONFIG_SBOM_INTEL_FSP) += $(if $(CONFIG_SBOM_INTEL_FSP_GENERATE), $(build-dir)/intel-fsp.json, $(CONFIG_SBOM_INTEL_FSP_PATH))
+@@ -519,13 +518,25 @@ $(build-dir)/amd-opensil.json: $(src-dir)/amd-opensil.json $(CONFIG_AMD_OPENSIL_
+ 		sed -i "/software-version/d" $@; \
+ 	fi
+ 
+-$(build-dir)/intel-microcode-%.json: $(src-dir)/intel-microcode.json 3rdparty/intel-microcode/intel-ucode/% | $(build-dir)
++
++# Each ucode file gets its own CoSWID tag, deterministic UUIDv5 generated
++# using gowswid from the microcode fileneame
++$(build-dir)/intel-microcode-%.json: $(src-dir)/intel-microcode.json 3rdparty/intel-microcode/intel-ucode/% | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+-	year=$$(hexdump --skip 8 --length 2 --format '"%04x"' $(word 2,$^));\
+-	day=$$(hexdump --skip 10 --length 1 --format '"%02x"' $(word 2,$^));\
+-	month=$$(hexdump --skip 11 --length 1 --format '"%02x"' $(word 2,$^));\
+-	sed -i "s/<software_version>/$$year-$$month-$$day/" $@
+-	#TODO add cpuid (processor family, model, stepping) as extra attribute
++	set -e; \
++	rev=$$(hexdump --skip 4 --length 4 --format '"0x%x"' $(word 2,$^)); \
++	year=$$(hexdump --skip 8 --length 2 --format '"%04x"' $(word 2,$^)); \
++	day=$$(hexdump --skip 10 --length 1 --format '"%02x"' $(word 2,$^)); \
++	month=$$(hexdump --skip 11 --length 1 --format '"%02x"' $(word 2,$^)); \
++	cpuid=$$(hexdump --skip 12 --length 4 --format '"0x%x"' $(word 2,$^)); \
++	tag_id=$$($(build-dir)/goswid generate-tag-id -n "Intel-Microcode-$*"); \
++	sed -i \
++		-e "s/<tag_id>/$$tag_id/" \
++		-e "s/<ucode_name>/$*/" \
++		-e "s/<software_version>/$$rev/" \
++		-e "s/<colloquial_version>/$$year-$$month-$$day/" \
++		-e "s/<cpuid>/$$cpuid/" \
++		$@
+ 	if [ -s "$(word 2,$^)" ]; then \
+ 		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
+ 			--name "$(notdir $(word 2,$^))" \
+diff --git a/src/sbom/intel-microcode.json b/src/sbom/intel-microcode.json
+index 7fc06501a8..728fcb09a3 100644
+--- a/src/sbom/intel-microcode.json
++++ b/src/sbom/intel-microcode.json
+@@ -1,13 +1,16 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ {
+   "lang": "en-US",
+-  "tag-id": "23edb84c-5d68-544e-b389-8a67f6c80247",
++  "tag-id": "<tag_id>",
+   "tag-version": 0,
+-  "software-name": "Intel-Microcode",
++  "software-name": "Intel-Microcode-<ucode_name>",
+   "software-version": "<software_version>",
+   "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
++      "product": "Intel Microcode",
++      "edition": "<cpuid>",
++      "colloquial-version": "<colloquial_version>",
+       "persistent-id": "com.intel.microcode",
+       "summary": "Microcode Updates for Intel Processors"
+     }

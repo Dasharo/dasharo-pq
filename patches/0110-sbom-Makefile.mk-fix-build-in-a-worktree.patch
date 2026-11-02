@@ -1,0 +1,32 @@
+From b7f6d157d53e080f32b020266a9a3e2b75caa4e0 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Sat, 14 Mar 2026 16:22:25 +0200
+Subject: [PATCH 110/158] sbom/Makefile.mk: fix build in a worktree
+
+Change-Id: Ie13b9226dd174e151605e283093a0e84aa18eada
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+(cherry picked from commit bb6a4dcc12f09cfb14303294ee29ec8aa3253e52)
+---
+ src/sbom/Makefile.mk | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index ed93d28998..a0143c7686 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -166,10 +166,11 @@ $(build-dir)/compiler-%.json: $(src-dir)/compiler-%.json | $(build-dir)/goswid
+ 		$(build-dir)/goswid add-payload-file -o $@ -i $@ --name "$$name" --version "$$version"; \
+ 	done
+ 
+-$(build-dir)/coreboot.json: $(src-dir)/coreboot.json $(obj)/build.h | $(build-dir)/goswid
++coreboot-gitdir := $(shell git rev-parse --git-dir)
++$(build-dir)/coreboot.json: $(src-dir)/coreboot.json $(coreboot-gitdir)/HEAD | $(build-dir)/goswid
+ 	cp $< $@
+-	git_tree_hash=$$(grep 'COREBOOT_ORIGIN_TREE_REVISION' $(obj)/build.h | sed 's/.*"\(.*\)".*/\1/');\
+-	git_comm_hash=$$(grep 'COREBOOT_ORIGIN_GIT_REVISION' $(obj)/build.h | sed 's/.*"\(.*\)".*/\1/');\
++	git_tree_hash=$$(git log -n 1 --format=%T);\
++	git_comm_hash=$$(git log -n 1 --format=%H);\
+ 	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@;\
+ 	$(build-dir)/goswid add-license -o $@ -i $@ $(coreboot-licenses)
+ 

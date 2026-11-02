@@ -1,0 +1,107 @@
+From a97367d290aaee3d2466077442247427bde0b4b7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 22 Oct 2026 13:25:43 +0200
+Subject: [PATCH 149/158] src/sbom: Add the ACM product family to the ACM SBOM
+ entries
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Record the platform an ACM is released for as the product-family of
+the BIOS ACM and SINIT ACM entries, as the FSP entry does. Add the
+SBOM_ACM_PRODUCT_FAMILY option for it, with defaults from the SoCs
+whose ACM platform is known, e.g. EagleStream for Sapphire Rapids.
+
+Replace all template placeholders before goswid adds the ACM hash,
+since goswid escapes '<' and '>' when it rewrites the file.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit f0b05ae66e416d8cc69d9e9dcf4cb0d8c5e535f3)
+---
+ src/sbom/Kconfig              |  9 +++++++++
+ src/sbom/Makefile.mk          | 11 ++++++++++-
+ src/sbom/intel-bios-acm.json  |  1 +
+ src/sbom/intel-sinit-acm.json |  1 +
+ 4 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 89219fe96a..4538ede811 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -251,6 +251,15 @@ config SBOM_BIOS_ACM_PATH
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+ 
++config SBOM_ACM_PRODUCT_FAMILY
++	string "Product family of the ACMs in SBOM"
++	depends on SBOM_BIOS_ACM_GENERATE || SBOM_SINIT_ACM_GENERATE
++	help
++	  The platform the BIOS ACM and SINIT ACM are released for, recorded as
++	  the product-family of their SBOM entries, for example "EagleStream"
++	  for Sapphire Rapids. The SoC provides the default. Leave it empty to
++	  omit the product-family.
++
+ config SBOM_INTEL_MICROCODE
+ 	bool "Include Intel microcode metadata in SBOM"
+ 	default n
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index efc9019db5..57a77d8a64 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -38,6 +38,7 @@ CONFIG_INTEL_TXT_CBFS_SINIT_ACM  := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS
+ # so keep them intact and use local copies without quotes.
+ sbom-bios-acm-file               := $(call strip_quotes, $(CONFIG_INTEL_TXT_BIOSACM_FILE))
+ sbom-sinit-acm-file              := $(call strip_quotes, $(CONFIG_INTEL_TXT_SINITACM_FILE))
++CONFIG_SBOM_ACM_PRODUCT_FAMILY   := $(call strip_quotes, $(CONFIG_SBOM_ACM_PRODUCT_FAMILY))
+ CONFIG_SBOM_COMPILER_PATH  := $(call strip_quotes, $(CONFIG_SBOM_COMPILER_PATH))
+ CONFIG_EDK2_REPOSITORY     := $(call strip_quotes, $(CONFIG_EDK2_REPOSITORY))
+ CONFIG_SBOM_EDK2_PLATFORMS_PATH := $(call strip_quotes, $(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
+@@ -420,7 +421,10 @@ $(build-dir)/generic-ec.json: $(src-dir)/generic-ec.json $(CONFIG_SBOM_EC_BIN_PA
+ # 16-bit]=year.  This mirrors the Intel microcode date layout (same BCD
+ # encoding, different offsets).  The ACM revision is the software version and
+ # the date the colloquial version, as for FSP; when the ACM carries no revision,
+-# the date is the software version too.  The SHA-256 of the ACM, as Intel
++# the date is the software version too.  The product family is the platform the
++# ACM is released for (SBOM_ACM_PRODUCT_FAMILY, set by the SoC).  All template
++# placeholders are replaced before goswid rewrites the file, because goswid
++# escapes '<' and '>' in its JSON output.  The SHA-256 of the ACM, as Intel
+ # ships it (uncompressed), is added to the entry so the component carries
+ # integrity info.
+ #
+@@ -456,6 +460,11 @@ $(build-dir)/generic-ec.json: $(src-dir)/generic-ec.json $(CONFIG_SBOM_EC_BIN_PA
+ #
+ # $(1): CBFS name of the ACM, $(2): ACM file given in the build (may be empty)
+ intel-acm-sbom = \
++	if [ -n "$(CONFIG_SBOM_ACM_PRODUCT_FAMILY)" ]; then \
++		sed -i "s|<acm_product_family>|$(CONFIG_SBOM_ACM_PRODUCT_FAMILY)|" $@; \
++	else \
++		sed -i "/<acm_product_family>/d" $@; \
++	fi; \
+ 	acm_tmp=$$(mktemp); \
+ 	acm_src=; \
+ 	if [ "$(filter sbom,$(MAKECMDGOALS))" = "sbom" ] || [ -z "$(2)" ]; then \
+diff --git a/src/sbom/intel-bios-acm.json b/src/sbom/intel-bios-acm.json
+index e828830c6a..57b2328d38 100644
+--- a/src/sbom/intel-bios-acm.json
++++ b/src/sbom/intel-bios-acm.json
+@@ -8,6 +8,7 @@
+   "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
++      "product-family": "<acm_product_family>",
+       "colloquial-version": "<colloquial_version>",
+       "summary": "Intel BIOS Authenticated Code Module (Boot Guard / TXT startup ACM)"
+     }
+diff --git a/src/sbom/intel-sinit-acm.json b/src/sbom/intel-sinit-acm.json
+index 9a87d985cc..432482d561 100644
+--- a/src/sbom/intel-sinit-acm.json
++++ b/src/sbom/intel-sinit-acm.json
+@@ -8,6 +8,7 @@
+   "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
++      "product-family": "<acm_product_family>",
+       "colloquial-version": "<colloquial_version>",
+       "summary": "Intel TXT SINIT Authenticated Code Module"
+     }

@@ -1,0 +1,39 @@
+From f5e15e798e031c7e19bbab898d9f13f04ed70578 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Wed, 18 Mar 2026 16:41:15 +0200
+Subject: [PATCH 114/158] Makefile,sbom/Makefile.mk: note that `make sbom` is
+ problematic
+
+Change-Id: Ic7cf27b77cf400470e986959fcca3de076817207
+Upstream-Status: Inappropriate [Dasharo downstream]
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+(cherry picked from commit 68c395a2e6641ecf03ff08fec08626afc2b5f969)
+---
+ Makefile             | 2 +-
+ src/sbom/Makefile.mk | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 985122fdb4..508c830785 100644
+--- a/Makefile
++++ b/Makefile
+@@ -90,7 +90,7 @@ help_coreboot help::
+ 	@echo  '*** coreboot platform targets ***'
+ 	@echo  '  Use "make [target] V=1" for extra build debug information'
+ 	@echo  '  all                     - Build coreboot'
+-	@echo  '  sbom                    - Rebuild SBOM (sbom.uswid) from existing build artifacts'
++	@echo  '  sbom                    - Rebuild SBOM (sbom.uswid) from existing build artifacts (FIXME)'
+ 	@echo  '  clean                   - Remove coreboot build artifacts'
+ 	@echo  '  distclean               - Remove build artifacts and config files'
+ 	@echo  '  sphinx                  - Build sphinx documentation for coreboot'
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 413e4186d9..e2b693b59b 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -405,4 +405,6 @@ sbom-acm-clean:
+ 	$(if $(CONFIG_SBOM_BIOS_ACM_GENERATE),rm -f $(build-dir)/intel-bios-acm.json,)
+ 	$(if $(CONFIG_SBOM_SINIT_ACM_GENERATE),rm -f $(build-dir)/intel-sinit-acm.json,)
+ 
++## FIXME: this target doesn't reliably trigger regeneration of sbom.uswid, which
++##        is easy to see by running `make --debug=b sbom` once or twice
+ sbom: $(build-dir)/sbom.uswid

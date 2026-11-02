@@ -1,0 +1,43 @@
+From d214195ca2f409b2ccafcb3806bfd304da00ec95 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Fri, 10 Jul 2026 13:01:42 +0200
+Subject: [PATCH 126/158] util/goswid: bump to pull in `add-payload-file
+ --sha256`
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Pulls the goswid change that records a SHA-256 file hash in the CoSWID
+payload, used by the src/sbom rules below to carry per-component
+integrity data. Changes .gitmodules to point to Dasharo fork containing
+the patch.
+
+Squashed with the following bump to the newest revision (Dasharo commit
+166e41289c7 "util/goswid/: bump to newest revision"), which pulls the SHA
+hashing and early exit error fix, so the submodule is updated once from
+the upstream revision.
+
+Upstream-Status: Inappropriate [Dasharo downstream]
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit a6354b637c448d62ee4ee103857c9c6a4382f3d9)
+(cherry picked from commit 166e41289c7eba8cc6c83da5115a5ae02665e902)
+diff --git a/.gitmodules b/.gitmodules
+index 3c9d0b1253e5..1876f4791d8e 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -61,7 +61,7 @@
+ 	branch = stmpe
+ [submodule "util/goswid"]
+ 	path = util/goswid
+-	url = https://review.coreboot.org/goswid
++	url = https://github.com/Dasharo/goswid
+ 	branch = trunk
+ 	ignore = dirty
+ [submodule "src/vendorcode/amd/opensil/genoa_poc/opensil"]
+diff --git a/util/goswid b/util/goswid
+index 567a1c99b0c0..a8a285beb98f 160000
+--- a/util/goswid
++++ b/util/goswid
+@@ -1 +1 @@
+-Subproject commit 567a1c99b0c05136b2685ff14d893f85ba16e988
++Subproject commit a8a285beb98f710743b3f277d1858d1a05cfc89d

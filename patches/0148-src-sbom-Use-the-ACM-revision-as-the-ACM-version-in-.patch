@@ -1,0 +1,137 @@
+From a882dab40281e1d50e32cc03b9828c3fde14a70d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 22 Oct 2026 13:17:30 +0200
+Subject: [PATCH 148/158] src/sbom: Use the ACM revision as the ACM version in
+ the SBOM
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Read the AcmRevision field of the Chipset AC Module Information Table
+and use it as the software version of the BIOS ACM and SINIT ACM
+entries. Move the ACM build date to the colloquial version, as for
+FSP. When the ACM carries no revision, keep the date as the software
+version.
+
+The table starts the ACM User Area, whose offset depends on the header
+version. The revision is used only when the table carries its UUID and
+is at least version 6, which added the revision field.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 889acc9dce34aa79096beded2548fdba061f1370)
+---
+ src/sbom/Makefile.mk          | 51 ++++++++++++++++++++++++++++++-----
+ src/sbom/intel-bios-acm.json  |  7 +++++
+ src/sbom/intel-sinit-acm.json |  7 +++++
+ 3 files changed, 58 insertions(+), 7 deletions(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index c9bc56a565..efc9019db5 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -415,11 +415,28 @@ $(build-dir)/generic-ec.json: $(src-dir)/generic-ec.json $(CONFIG_SBOM_EC_BIN_PA
+ 		sed -i "/software-version/d" $@; \
+ 	fi
+ 
+-# Extract the ACM version and hash.  The ACM header has a BCD date field
+-# at offset 0x14: byte[20]=day, byte[21]=month, bytes[22-23 LE 16-bit]=year.
+-# This mirrors the Intel microcode date layout (same BCD encoding, different
+-# offsets).  The SHA-256 of the ACM, as Intel ships it (uncompressed), is
+-# added to the entry so the component carries integrity info.
++# Extract the ACM revision, date and hash.  The ACM header has a BCD date
++# field at offset 0x14: byte[20]=day, byte[21]=month, bytes[22-23 LE
++# 16-bit]=year.  This mirrors the Intel microcode date layout (same BCD
++# encoding, different offsets).  The ACM revision is the software version and
++# the date the colloquial version, as for FSP; when the ACM carries no revision,
++# the date is the software version too.  The SHA-256 of the ACM, as Intel
++# ships it (uncompressed), is added to the entry so the component carries
++# integrity info.
++#
++# The ACM revision is the AcmRevision field (offset 37, 3 bytes:
++# major.minor.build, shown as hexadecimal XX.YY.ZZ) of the Chipset AC Module
++# Information Table, present from table version 6.  The table starts the User
++# Area, which follows the header and the scratch area.  Per the Intel TXT MLE
++# Developer's Guide (315168), "Authenticated Code Module Format":
++#   header version 0.0: 128 + KeySize*4 (RSAPubKey) + 4 (RSAPubExp)
++#                           + KeySize*4 (RSASig) + ScratchSize*4
++#   header version 3.0: 128 + KeySize*4 (RSAPubKey) + KeySize*4 (RSASig)
++#                           + ScratchSize*4 (no exponent, fixed to 0x10001)
++# with HeaderVersion at offset 8, KeySize at 120 and ScratchSize at 124, both
++# in dwords.  The table is accepted only if it carries the information table
++# UUID; otherwise, for other header versions, or for table versions below 6,
++# there is no revision.
+ #
+ # The ACM is read from the ROM image when running 'make sbom', so the SBOM
+ # reflects any post-build ACM swap, or when the build does not provide the ACM
+@@ -454,12 +471,32 @@ intel-acm-sbom = \
+ 		year=$$(hexdump --skip 22 --length 2 --format '"%04x"' "$$acm_src"); \
+ 		month=$$(hexdump --skip 21 --length 1 --format '"%02x"' "$$acm_src"); \
+ 		day=$$(hexdump   --skip 20 --length 1 --format '"%02x"' "$$acm_src"); \
+-		sed -i "s/<software_version>/$$year-$$month-$$day/" $@; \
++		hdr_ver=$$(od -An -tx4 -j8 -N4 "$$acm_src" | tr -d ' '); \
++		key_size=$$(od -An -tu4 -j120 -N4 "$$acm_src" | tr -d ' '); \
++		scratch_size=$$(od -An -tu4 -j124 -N4 "$$acm_src" | tr -d ' '); \
++		case "$$hdr_ver" in \
++		00000000) exp_size=4 ;; \
++		00030000) exp_size=0 ;; \
++		*) exp_size= ;; \
++		esac; \
++		acm_rev=; \
++		if [ -n "$$exp_size" ]; then \
++			info=$$((128 + key_size * 4 + exp_size + key_size * 4 + scratch_size * 4)); \
++			uuid=$$(od -An -tx4 -j$$info -N16 "$$acm_src" | tr -d ' \n'); \
++			info_ver=$$(od -An -tu1 -j$$((info + 17)) -N1 "$$acm_src" | tr -d ' '); \
++			if [ "$$uuid" = "7fc03aaa18db46a78f69ac2e5a7f418d" ] && \
++			   [ "$${info_ver:-0}" -ge 6 ]; then \
++				acm_rev=$$(od -An -tx1 -j$$((info + 37)) -N3 "$$acm_src" | \
++					tr 'a-f' 'A-F' | awk '{ print $$1 "." $$2 "." $$3 }'); \
++			fi; \
++		fi; \
++		sed -i -e "s/<software_version>/$${acm_rev:-$$year-$$month-$$day}/" \
++			-e "s/<colloquial_version>/$$year-$$month-$$day/" $@; \
+ 		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
+ 			--name "$(1)" \
+ 			--hash "$$(sha256sum "$$acm_src" | cut -d' ' -f1)"; \
+ 	else \
+-		sed -i "/software-version/d" $@; \
++		sed -i -e "/software-version/d" -e "/<colloquial_version>/d" $@; \
+ 	fi; \
+ 	rm -f $$acm_tmp
+ 
+diff --git a/src/sbom/intel-bios-acm.json b/src/sbom/intel-bios-acm.json
+index b4e077035f..e828830c6a 100644
+--- a/src/sbom/intel-bios-acm.json
++++ b/src/sbom/intel-bios-acm.json
+@@ -5,6 +5,13 @@
+   "tag-version": 0,
+   "software-name": "Intel BIOS ACM",
+   "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "summary": "Intel BIOS Authenticated Code Module (Boot Guard / TXT startup ACM)"
++    }
++  ],
+   "entity": [
+     {
+       "entity-name": "coreboot",
+diff --git a/src/sbom/intel-sinit-acm.json b/src/sbom/intel-sinit-acm.json
+index 64df53a891..9a87d985cc 100644
+--- a/src/sbom/intel-sinit-acm.json
++++ b/src/sbom/intel-sinit-acm.json
+@@ -5,6 +5,13 @@
+   "tag-version": 0,
+   "software-name": "Intel SINIT ACM",
+   "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "summary": "Intel TXT SINIT Authenticated Code Module"
++    }
++  ],
+   "entity": [
+     {
+       "entity-name": "coreboot",

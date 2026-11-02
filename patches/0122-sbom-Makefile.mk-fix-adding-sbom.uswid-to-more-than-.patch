@@ -1,0 +1,42 @@
+From 2bc4102c25f923e629865369ac38f12b332c4bf5 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Wed, 27 May 2026 21:02:01 +0300
+Subject: [PATCH 122/158] sbom/Makefile.mk: fix adding sbom.uswid to more than
+ one CBFS
+
+cbfstool invocations were concatenated one after another with no
+separators resulting in an invocation error.
+
+Add an empty line at the end of each invocation.
+
+Change-Id: Ie6be3eb2264756500296f614896e170afc1c9cf0
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+(cherry picked from commit f6c25bc04b2da128e348115c0c8105c1763e04e4)
+---
+ src/sbom/Makefile.mk | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index f155ade709..7ab8fbdbca 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -142,12 +142,17 @@ coreboot-licenses = $(foreach license, $(patsubst %.txt, %, $(filter-out retaine
+ 
+ # only include CBFS SBOM section if there is any data for it
+ ifeq ($(CONFIG_SBOM),y)
++# This captures newline in a variable for use as a separator of recipe lines.
++define newline
++
++
++endef
+ # Use intermediate so that $(build-dir)/sbom.uswid will be evaluated
+ # after all files are built, so all repos should be available
+ $(call add_intermediate, add_sbom_cbfs, $(CBFSTOOL) $(build-dir)/sbom.uswid)
+ 	$(foreach region,$(all-regions), \
+ 		$(if $(CONFIG_UPDATE_IMAGE),-$(CBFSTOOL) $< remove -n sbom 2>/dev/null) \
+-		$(CBFSTOOL) $< add -r $(region) -n sbom -t raw -f $(build-dir)/sbom.uswid)
++		$(CBFSTOOL) $< add -r $(region) -n sbom -t raw -f $(build-dir)/sbom.uswid $(newline))
+ endif
+ 
+ ## Build final SBOM (Software Bill of Materials) file in uswid format

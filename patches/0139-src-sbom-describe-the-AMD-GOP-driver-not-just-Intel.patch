@@ -1,0 +1,112 @@
+From a179a792cde40db735fb39803f77dd3aad14dafa Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Fri, 24 Jul 2026 09:19:03 +0000
+Subject: [PATCH 139/158] src/sbom: describe the AMD GOP driver, not just Intel
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+SBOM_EDK2_GOP could only ever be enabled on Intel boards: it depended on
+EDK2_GOP_DRIVER, the Intel GOP symbol (INTEL_GMA_ADD_VBT && NO_GFX_INIT).
+AMD boards provide the GOP driver through EDK2_AMD_GOP_DRIVER (VGA_BIOS
+&& NO_GFX_INIT) instead, so on e.g. the MSI PRO B850-P WIFI (ms7e56) the
+dependency was unsatisfiable and the AMD GOP driver was silently omitted
+from the SBOM even though the blob was built into the image.
+
+Depend on (EDK2_GOP_DRIVER || EDK2_AMD_GOP_DRIVER) and drop the
+Intel-only wording from the option prompts and help. The Makefile rule
+and edk2-gop.json template already keyed off the shared EDK2_GOP_FILE,
+so only the component label was Intel-specific; fill a <gop_vendor>
+placeholder ("AMD" when EDK2_AMD_GOP_DRIVER, else "Intel") so the CoSWID
+tag names the driver that was actually built.
+
+Turning the component on for a board is still a separate defconfig change
+(CONFIG_SBOM_EDK2_GOP=y, plus SBOM_VGA_BIOS / SBOM_EDK2_LAN_ROM); this
+change only makes it reachable on AMD boards.
+
+Ref: https://github.com/Dasharo/dasharo-issues/issues/1879
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 7d05309915779bc69c8e99de83c5a25494f0e3a0)
+(cherry picked from commit 007e27799f8f8eeebef1ba803f31b9099971dad7)
+---
+ src/sbom/Kconfig       | 13 +++++++------
+ src/sbom/Makefile.mk   |  5 +++++
+ src/sbom/edk2-gop.json |  6 +++---
+ 3 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index cf9997df8e..8cc1c414f9 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -530,17 +530,18 @@ config SBOM_VGA_BIOS_DGPU_PATH
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+ 
+ config SBOM_EDK2_GOP
+-	bool "Include Intel GOP driver metadata in SBOM"
+-	depends on SBOM_PAYLOAD && EDK2_GOP_DRIVER
++	bool "Include GOP driver metadata in SBOM"
++	depends on SBOM_PAYLOAD && (EDK2_GOP_DRIVER || EDK2_AMD_GOP_DRIVER)
+ 	default n
+ 	help
+ 	  Select this option if you want to include a
+-	  coswid (Concise Software Identification Tag) of the external Intel GOP
++	  coswid (Concise Software Identification Tag) of the external GOP
+ 	  (Graphics Output Protocol) driver (EDK2_GOP_FILE) compiled into the
+-	  edk2 payload into the SBOM (Software Bill of Materials) File.
++	  edk2 payload into the SBOM (Software Bill of Materials) File.  Covers
++	  both the Intel (EDK2_GOP_DRIVER) and AMD (EDK2_AMD_GOP_DRIVER) drivers.
+ 
+ config SBOM_EDK2_GOP_GENERATE
+-	bool "Auto-generate Intel GOP driver info in SBOM"
++	bool "Auto-generate GOP driver info in SBOM"
+ 	depends on SBOM_EDK2_GOP
+ 	default y
+ 	help
+@@ -551,7 +552,7 @@ config SBOM_EDK2_GOP_GENERATE
+ 	  If disabled, set SBOM_EDK2_GOP_PATH to a custom file.
+ 
+ config SBOM_EDK2_GOP_PATH
+-	string "Path to SBOM file for the Intel GOP driver"
++	string "Path to SBOM file for the GOP driver"
+ 	depends on SBOM_EDK2_GOP && !SBOM_EDK2_GOP_GENERATE
+ 	default "src/sbom/edk2-gop.json"
+ 	help
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index f9d36da255..52ff5dba61 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -689,6 +689,11 @@ $(build-dir)/vga-bios-dgpu.json: $(src-dir)/vga-bios-dgpu.json $(wildcard $(CONF
+ 
+ $(build-dir)/edk2-gop.json: $(src-dir)/edk2-gop.json $(wildcard $(CONFIG_EDK2_GOP_FILE)) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
++	# Label the component by the actual GOP driver vendor (Intel vs AMD), since
++	# the same template and rule serve both EDK2_GOP_DRIVER and
++	# EDK2_AMD_GOP_DRIVER builds.
++	if [ "$(CONFIG_EDK2_AMD_GOP_DRIVER)" = "y" ]; then gop_vendor="AMD"; else gop_vendor="Intel"; fi; \
++	sed -i -e "s/<gop_vendor>/$$gop_vendor/g" $@
+ 	# The GOP driver blob carries no embedded version; use the enclosing git
+ 	# repo's HEAD as a proxy: "<commit-date>_<hash>" (software-version) and the
+ 	# latest release tag (colloquial-version), mirroring the Intel Flash
+diff --git a/src/sbom/edk2-gop.json b/src/sbom/edk2-gop.json
+index ac14c445a0..68c69e4fbb 100644
+--- a/src/sbom/edk2-gop.json
++++ b/src/sbom/edk2-gop.json
+@@ -3,14 +3,14 @@
+   "lang": "en-US",
+   "tag-id": "dbdf7a7b-9e65-56e1-afc2-733f8808e044",
+   "tag-version": 0,
+-  "software-name": "Intel GOP driver",
++  "software-name": "<gop_vendor> GOP driver",
+   "software-version": "<software_version>",
+   "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
+-      "product": "Intel Graphics Output Protocol driver",
++      "product": "<gop_vendor> Graphics Output Protocol driver",
+       "colloquial-version": "<colloquial_version>",
+-      "summary": "Proprietary Intel GOP (Graphics Output Protocol) UEFI driver used by the edk2 payload for display initialization. Prefer a vendor-supplied SBOM via CONFIG_SBOM_EDK2_GOP_PATH."
++      "summary": "Proprietary <gop_vendor> GOP (Graphics Output Protocol) UEFI driver used by the edk2 payload for display initialization. Prefer a vendor-supplied SBOM via CONFIG_SBOM_EDK2_GOP_PATH."
+     }
+   ],
+   "entity": [

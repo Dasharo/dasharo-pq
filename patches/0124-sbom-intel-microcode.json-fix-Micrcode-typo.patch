@@ -1,0 +1,26 @@
+From 957548b95fbead14f67b72280e9c9a6f34bc2128 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Fri, 29 May 2026 16:42:34 +0300
+Subject: [PATCH 124/158] sbom/intel-microcode.json: fix "Micrcode" typo
+
+Change-Id: Ic0b5123eae7081f823b9e0f674238bef9946b54f
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+(cherry picked from commit 8b4df39fe48c9d6b834da30d2675dd6c37a440c9)
+---
+ src/sbom/intel-microcode.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/sbom/intel-microcode.json b/src/sbom/intel-microcode.json
+index 3ee8eb4d58..6ff8ecd6bf 100644
+--- a/src/sbom/intel-microcode.json
++++ b/src/sbom/intel-microcode.json
+@@ -9,7 +9,7 @@
+   "software-meta": [
+     {
+       "persistent-id": "com.intel.microcode",
+-      "summary": "Micrcode Updates for Intel Processors"
++      "summary": "Microcode Updates for Intel Processors"
+     }
+   ],
+   "entity": [

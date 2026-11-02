@@ -1,0 +1,101 @@
+From e47d98885892e1e8850c83d96b583ca1f6646e59 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 15:31:29 +0100
+Subject: [PATCH 161/161] sb/amd/pi/hudson,src/sbom: share one tag-id among the
+ apu/amdfw components
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Identify all AMD components placed in the apu/amdfw CBFS file (the PSP
+firmware blobs from the amdfwtool config file, and the xHCI and IMC
+firmware) with one CoSWID tag-id, HUDSON_AMDFW_SBOM_TAG_ID. It is the
+tag-id of the AMD PSP firmware template of amdfwtool.
+
+Pass it to amdfwtool with --sbom-tag-id and use it for the xHCI and IMC
+firmware tags, including the xHCI tag taken from an external SBOM file
+(SBOM_HUDSON_XHCI_FW_PATH), whose tag-id is replaced.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/sbom/Kconfig                          |  4 +++-
+ src/sbom/Makefile.mk                      | 10 ++++++++++
+ src/southbridge/amd/pi/hudson/Makefile.mk |  8 +++++++-
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 960dc62043..521ada2c53 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -530,7 +530,9 @@ config SBOM_HUDSON_XHCI_FW_PATH
+ 	  The path of the SBOM file describing the xHCI firmware, which provides
+ 	  its version and other details. File can be a .json, .xml, .cbor or
+ 	  .uswid. The SHA-256 of HUDSON_XHCI_FWM_FILE is added to the tag, so
+-	  that the described version is bound to the blob built into the image.
++	  that the described version is bound to the blob built into the image,
++	  and its tag-id is replaced with the one shared by all AMD components
++	  of the apu/amdfw CBFS file.
+ 
+ config SBOM_HUDSON_IMC_FW
+ 	bool "Include AMD FCH IMC firmware metadata in SBOM"
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index b9b9cbc761..263d2297ee 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -1031,6 +1031,13 @@ $(payload-swid): $(payload-swid-template) | $(build-dir) $(build-dir)/goswid $(p
+ 	fi
+ endif
+ 
++# Give the tag the tag-id shared by all AMD components of the apu/amdfw CBFS
++# file (HUDSON_AMDFW_SBOM_TAG_ID, src/southbridge/amd/pi/hudson), the same as
++# amdfwtool uses for the PSP firmware tags.
++amd-hudson-fw-tag-id = \
++	$(if $(HUDSON_AMDFW_SBOM_TAG_ID), \
++		sed -i -E 's/"tag-id":[[:space:]]*"[^"]*"/"tag-id": "$(HUDSON_AMDFW_SBOM_TAG_ID)"/' $@,:)
++
+ # AMD Hudson/Bolton/Avalon FCH firmware (xHCI and IMC) stored in the ROMSIG
+ # area by amdfwtool.  The blobs carry no version, so use the commit of the
+ # repository holding them as "<commit-date>_<hash>", mirroring the Intel Flash
+@@ -1056,6 +1063,7 @@ ifeq ($(CONFIG_SBOM_HUDSON_XHCI_FW_GENERATE),y)
+ $(build-dir)/amd-hudson-xhci.json: $(src-dir)/amd-hudson-xhci.json $(wildcard $(sbom-hudson-xhci-file)) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	$(call amd-hudson-fw-sbom,$(sbom-hudson-xhci-file))
++	$(amd-hudson-fw-tag-id)
+ else
+ # Tag provided by an external SBOM file (e.g. from the firmware vendor) which
+ # describes the version.  Convert it to JSON and bind it to the blob actually
+@@ -1072,11 +1080,13 @@ $(build-dir)/amd-hudson-xhci.json: $(CONFIG_SBOM_HUDSON_XHCI_FW_PATH) $(wildcard
+ 			--name "$(notdir $(sbom-hudson-xhci-file))" \
+ 			--hash "$$(sha256sum "$(sbom-hudson-xhci-file)" | cut -d' ' -f1)"; \
+ 	fi
++	$(amd-hudson-fw-tag-id)
+ endif
+ 
+ $(build-dir)/amd-hudson-imc.json: $(src-dir)/amd-hudson-imc.json $(wildcard $(sbom-hudson-imc-file)) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	$(call amd-hudson-fw-sbom,$(sbom-hudson-imc-file))
++	$(amd-hudson-fw-tag-id)
+ 
+ # Secondary payloads built from their own git checkouts.  Use the checked out
+ # commit as "<commit-date>_<hash>" and the latest tag as colloquial version,
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index 7d602d7bc6..6b14fdf18f 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -56,8 +56,14 @@ add_opt_prefix=$(if $(call strip_quotes, $(1)), $(2) $(call strip_quotes, $(1)),
+ OPT_HUDSON_XHCI_FWM_FILE=$(call add_opt_prefix, $(CONFIG_HUDSON_XHCI_FWM_FILE), --xhci)
+ OPT_HUDSON_IMC_FWM_FILE=$(call add_opt_prefix, $(CONFIG_HUDSON_IMC_FWM_FILE), --imc)
+ 
++# CoSWID tag-id shared by the SBOM tags of all AMD components placed in the
++# apu/amdfw CBFS file (PSP firmware, xHCI and IMC firmware), so that they are
++# identified as parts of the one AMD firmware package.  It is the tag-id of
++# the AMD PSP firmware template of amdfwtool.
++HUDSON_AMDFW_SBOM_TAG_ID := 064a09b4-429a-5070-9f41-889708b12456
++
+ ifeq ($(CONFIG_SBOM_AMD_PSP_FW),y)
+-OPT_SBOM_DIR = --sbom-dir $(obj)/sbom/amdfw
++OPT_SBOM_DIR = --sbom-dir $(obj)/sbom/amdfw --sbom-tag-id $(HUDSON_AMDFW_SBOM_TAG_ID)
+ # The PSP blobs have no SPDX license, so record the redistribution terms they
+ # are covered by.
+ sbom-amd-blob-license := $(call strip_quotes, $(CONFIG_SBOM_AMD_BLOB_LICENSE))

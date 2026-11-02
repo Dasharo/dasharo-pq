@@ -1,0 +1,34 @@
+From 715f193723b9d17fbe6fbffecbc8418d5a412fe4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Tue, 17 Mar 2026 08:12:55 +0100
+Subject: [PATCH 112/158] src/sbom: guarantee left-to-right processing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit e7e6184cf08b00da23fcb6b9db220562d79b1cee)
+---
+ src/sbom/Makefile.mk | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 88aa3e3ad7..c086a7b3c1 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -132,7 +132,7 @@ endif
+ 
+ ## Build final SBOM (Software Bill of Materials) file in uswid format
+ 
+-$(build-dir)/sbom.uswid: $(build-dir)/coreboot.json $$(swid-files-y) $(swid-files-compiler) | $(build-dir)/goswid $(build-dir)
++$(build-dir)/sbom.uswid: $(build-dir)/coreboot.json $$(swid-files-y) $(swid-files-compiler) | $(build-dir)/goswid $(build-dir) sbom-acm-clean
+ 	echo "    SBOM      " $^
+ 	$(build-dir)/goswid convert -o $@ \
+ 		--parent $(build-dir)/coreboot.json \
+@@ -394,4 +394,4 @@ sbom-acm-clean:
+ 	$(if $(CONFIG_SBOM_BIOS_ACM_GENERATE),rm -f $(build-dir)/intel-bios-acm.json,)
+ 	$(if $(CONFIG_SBOM_SINIT_ACM_GENERATE),rm -f $(build-dir)/intel-sinit-acm.json,)
+ 
+-sbom: sbom-acm-clean $(build-dir)/sbom.uswid
++sbom: $(build-dir)/sbom.uswid

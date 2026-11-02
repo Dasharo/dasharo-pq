@@ -1,0 +1,1009 @@
+From 45c3f6305399b1b5d23a539b5aee18d8a6052cd5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Tue, 10 Mar 2026 14:24:42 +0100
+Subject: [PATCH 109/158] src/sbom: extend for Dasharo components
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Extend to include most used components, e.g. FSP, ME, IFD, microcode,
+edk2, AGESA, EC.
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 2a74751abe327402dedf9aa0021702c3a897e111)
+---
+ src/sbom/Kconfig               | 214 +++++++++++++++++++++---
+ src/sbom/Makefile.mk           | 295 ++++++++++++++++++++++++++++++---
+ src/sbom/TAGS                  |   2 +
+ src/sbom/amd-agesa.json        |  24 +++
+ src/sbom/amd-opensil.json      |  24 +++
+ src/sbom/compiler-clang.json   |   2 +
+ src/sbom/compiler-gcc.json     |   2 +
+ src/sbom/compiler-generic.json |   2 +
+ src/sbom/generic-ec.json       |   1 +
+ src/sbom/generic-fsp.json      |   1 +
+ src/sbom/intel-bios-acm.json   |   1 +
+ src/sbom/intel-fsp.json        |  24 +++
+ src/sbom/intel-ifd.json        |  24 +++
+ src/sbom/intel-me.json         |   5 +-
+ src/sbom/intel-sinit-acm.json  |   1 +
+ src/sbom/payload-edk2.json     |  25 +++
+ src/sbom/vboot.json            |  25 +++
+ 17 files changed, 625 insertions(+), 47 deletions(-)
+ create mode 100644 src/sbom/amd-agesa.json
+ create mode 100644 src/sbom/amd-opensil.json
+ create mode 100644 src/sbom/intel-fsp.json
+ create mode 100644 src/sbom/intel-ifd.json
+ create mode 100644 src/sbom/payload-edk2.json
+ create mode 100644 src/sbom/vboot.json
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 43fde4c72c..41a0a2f8a2 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -41,7 +41,7 @@ config SBOM_PAYLOAD
+ 
+ config SBOM_PAYLOAD_GENERATE
+ 	bool "Auto-generate generic SBOM info for payload"
+-	depends on SBOM_PAYLOAD && (PAYLOAD_BOOTBOOT || PAYLOAD_DEPTHCHARGE || PAYLOAD_FILO || PAYLOAD_GRUB2 || PAYLOAD_LINUXBOOT || PAYLOAD_SEABIOS || PAYLOAD_SKIBOOT || PAYLOAD_UBOOT)
++	depends on SBOM_PAYLOAD && (PAYLOAD_BOOTBOOT || PAYLOAD_DEPTHCHARGE || PAYLOAD_EDK2 || PAYLOAD_FILO || PAYLOAD_GRUB2 || PAYLOAD_LINUXBOOT || PAYLOAD_SEABIOS || PAYLOAD_SKIBOOT || PAYLOAD_UBOOT)
+ 	default y
+ 	help
+ 	  Select this option if you want coreboot to generate and include
+@@ -89,7 +89,7 @@ config SBOM_ME_PATH
+ 
+ config SBOM_EC
+ 	bool "Include EC metadata in SBOM"
+-	depends on HAVE_EC_BIN
++	depends on HAVE_EC_BIN || EC_DASHARO_EC || EC_SYSTEM76_EC
+ 	default n
+ 	help
+ 	  Select this option if you want to include a
+@@ -97,9 +97,31 @@ config SBOM_EC
+ 	  EC (Embedded Controller) firmware into the
+ 	  SBOM (Software Bill of Materials) File in your build
+ 
++config SBOM_EC_GENERATE
++	bool "Auto-generate EC version in SBOM"
++	depends on SBOM_EC && (EC_DASHARO_EC || EC_SYSTEM76_EC)
++	default y
++	help
++	  When enabled, coreboot extracts the EC firmware version from the EC
++	  binary at SBOM_EC_BIN_PATH using strings(1) and includes it in the
++	  SBOM.  The version string is matched by the pattern _VERSION= in the
++	  binary (e.g. 76EC_VERSION=2025-10-31_af6bd04).
++	  If disabled, set SBOM_EC_PATH to a custom file.
++
++config SBOM_EC_BIN_PATH
++	string "Path to EC firmware binary for version extraction"
++	depends on SBOM_EC_GENERATE
++	default EC_DASHARO_EC_UPDATE_FILE if EC_DASHARO_EC
++	default "ec.rom"
++	help
++	  Path to the EC firmware binary from which the version string is
++	  extracted.  For EC_DASHARO_EC this defaults to the same path used
++	  by EC_DASHARO_EC_UPDATE_FILE.  For EC_SYSTEM76_EC the binary is not
++	  embedded by coreboot, so the path must point to the file on disk.
++
+ config SBOM_EC_PATH
+ 	string "Path to SBOM file for the EC firmware"
+-	depends on SBOM_EC
++	depends on SBOM_EC && !SBOM_EC_GENERATE
+ 	default "src/sbom/generic-ec.json"
+ 	help
+ 	  The path of the SBOM file describing the Software included in the build
+@@ -107,7 +129,7 @@ config SBOM_EC_PATH
+ 
+ config SBOM_SINIT_ACM
+ 	bool "Include SINIT ACM metadata in SBOM"
+-	depends on INTEL_TXT_SINITACM_FILE != ""
++	depends on INTEL_ACM
+ 	default n
+ 	help
+ 	  Select this option if you want to include a
+@@ -115,9 +137,23 @@ config SBOM_SINIT_ACM
+ 	  SINIT ACM (Authenticated Code Module) firmware into the
+ 	  SBOM (Software Bill of Materials) File in your build
+ 
+-config SBOM_SINIT_ACM_PATH
+-	string "Path to SBOM file for the SINIT AMC firmware"
++config SBOM_SINIT_ACM_GENERATE
++	bool "Auto-generate SINIT ACM version in SBOM"
+ 	depends on SBOM_SINIT_ACM
++	default y
++	help
++	  When enabled, coreboot extracts the SINIT ACM version from the built
++	  ROM image (build/coreboot.rom) via cbfstool and includes it in the
++	  SBOM.  The version is the BCD date field at offset 0x14 in the ACM
++	  header, formatted as YYYY-MM-DD.
++	  Run 'make sbom' after post-build ACM provisioning to ensure the SBOM
++	  reflects the actual ACM present in the ROM rather than a build-time
++	  placeholder.
++	  If disabled, set SBOM_SINIT_ACM_PATH to a custom file.
++
++config SBOM_SINIT_ACM_PATH
++	string "Path to SBOM file for the SINIT ACM firmware"
++	depends on SBOM_SINIT_ACM && !SBOM_SINIT_ACM_GENERATE
+ 	default "src/sbom/intel-sinit-acm.json"
+ 	help
+ 	  The path of the SBOM file describing the Software included in the build
+@@ -125,7 +161,7 @@ config SBOM_SINIT_ACM_PATH
+ 
+ config SBOM_BIOS_ACM
+ 	bool "Include BIOS ACM metadata in SBOM"
+-	depends on INTEL_TXT_BIOSACM_FILE != ""
++	depends on INTEL_ACM
+ 	default n
+ 	help
+ 	  Select this option if you want to include a
+@@ -133,37 +169,162 @@ config SBOM_BIOS_ACM
+ 	  BIOS ACM (Authenticated Code Module) firmware into the
+ 	  SBOM (Software Bill of Materials) File in your build
+ 
++config SBOM_BIOS_ACM_GENERATE
++	bool "Auto-generate BIOS ACM version in SBOM"
++	depends on SBOM_BIOS_ACM
++	default y
++	help
++	  When enabled, coreboot extracts the BIOS ACM version from the built
++	  ROM image (build/coreboot.rom) via cbfstool and includes it in the
++	  SBOM.  The version is the BCD date field at offset 0x14 in the ACM
++	  header, formatted as YYYY-MM-DD.
++	  Run 'make sbom' after post-build ACM provisioning to ensure the SBOM
++	  reflects the actual ACM present in the ROM rather than a build-time
++	  placeholder.
++	  If disabled, set SBOM_BIOS_ACM_PATH to a custom file.
++
+ config SBOM_BIOS_ACM_PATH
+-	string "Path to SBOM file for the BIOS AMC firmware"
+-	depends on SBOM_SINIT_ACM
++	string "Path to SBOM file for the BIOS ACM firmware"
++	depends on SBOM_BIOS_ACM && !SBOM_BIOS_ACM_GENERATE
+ 	default "src/sbom/intel-bios-acm.json"
+ 	help
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+ 
+-config SBOM_MICROCODE
+-	bool "Include microcode metadata in SBOM"
++config SBOM_INTEL_MICROCODE
++	bool "Include Intel microcode metadata in SBOM"
+ 	default n
++	depends on CPU_INTEL_COMMON
+ 	help
+ 	  Select this option if you want to include a
+ 	  coswid (Concise Software Identification Tag) of the
+-	  microcode firmware into the SBOM (Software Bill of Materials)
+-	  File in your build
++	  Intel CPU microcode into the SBOM (Software Bill of Materials)
++	  File in your build.
++	  This option is only available on Intel platforms.
+ 
+-config SBOM_FSP
++config SBOM_AMD_MICROCODE
++	bool "Include AMD microcode metadata in SBOM"
++	default n
++	depends on SOC_AMD_COMMON || CPU_AMD_PI
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the
++	  AMD CPU microcode patches into the SBOM (Software Bill of Materials)
++	  File in your build.
++	  This option is only available on AMD platforms.
++
++config SBOM_INTEL_FSP
+ 	bool "Include Intel FSP metadata in SBOM"
+ 	default n
+-	depends on (FSP_S_FILE != "" || FSP_M_FILE != "" || FSP_T_FILE != "")
++	depends on HAVE_IFD_BIN && (FSP_S_FILE != "" || FSP_M_FILE != "" || FSP_T_FILE != "")
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the
++	  Intel FSP (Firmware Support Package) into the SBOM
++	  (Software Bill of Materials) File in your build.
++	  This option is only available on Intel platforms that use the IFD.
++
++config SBOM_INTEL_FSP_GENERATE
++	bool "Auto-generate Intel FSP version info in SBOM"
++	depends on SBOM_INTEL_FSP && FSP_USE_REPO
++	default y
++	help
++	  When enabled, coreboot extracts the FSP version from the FSP git
++	  repository (3rdparty/fsp) commit history and includes it in the SBOM.
++	  If disabled, set SBOM_INTEL_FSP_PATH to a custom file that already
++	  contains version information.
++
++config SBOM_INTEL_FSP_PATH
++	string "Path to SBOM file for the Intel FSP firmware"
++	depends on SBOM_INTEL_FSP && !SBOM_INTEL_FSP_GENERATE
++	default "build/sbom/intel-fsp.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_AGESA
++	bool "Include AMD AGESA metadata in SBOM"
++	default n
++	depends on AGESA_BINARY_PI_FILE != ""
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the
++	  AMD AGESA (Generic Encapsulated Software Architecture) PI binary
++	  into the SBOM (Software Bill of Materials) File in your build.
++	  This option is only available on AMD platforms using a binary AGESA blob.
++
++config SBOM_AGESA_GENERATE
++	bool "Auto-generate AMD AGESA version info in SBOM"
++	depends on SBOM_AGESA
++	default y
++	help
++	  When enabled, coreboot attempts to extract a version string from the
++	  AGESA binary (AGESA_BINARY_PI_FILE) using strings(1) and records it
++	  in the SBOM.  If no version string is found the field is omitted.
++	  If disabled, set SBOM_AGESA_PATH to a custom file.
++
++config SBOM_AGESA_PATH
++	string "Path to SBOM file for AMD AGESA"
++	depends on SBOM_AGESA && !SBOM_AGESA_GENERATE
++	default "src/sbom/amd-agesa.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_OPENSIL
++	bool "Include AMD openSIL metadata in SBOM"
++	default n
++	depends on SOC_AMD_OPENSIL
+ 	help
+ 	  Select this option if you want to include a
+ 	  coswid (Concise Software Identification Tag) of the
+-	  FSP firmware into the SBOM (Software Bill of Materials)
++	  AMD openSIL (open Silicon Initialization Library) into the
++	  SBOM (Software Bill of Materials) File in your build.
++	  This option is only available on AMD platforms using openSIL.
++
++config SBOM_OPENSIL_GENERATE
++	bool "Auto-generate AMD openSIL revision in SBOM"
++	depends on SBOM_OPENSIL
++	default y
++	help
++	  When enabled, coreboot reads the git commit hash of the openSIL
++	  source tree (AMD_OPENSIL_PATH) and records it in the SBOM.
++	  If disabled, set SBOM_OPENSIL_PATH to a custom file.
++
++config SBOM_OPENSIL_PATH
++	string "Path to SBOM file for AMD openSIL"
++	depends on SBOM_OPENSIL && !SBOM_OPENSIL_GENERATE
++	default "src/sbom/amd-opensil.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_IFD
++	bool "Include Intel Flash Descriptor metadata in SBOM"
++	depends on HAVE_IFD_BIN
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the
++	  Intel Flash Descriptor into the SBOM (Software Bill of Materials)
+ 	  File in your build
+ 
+-config SBOM_FSP_PATH
+-	string "Path to SBOM file for the FSP firmware"
+-	depends on SBOM_FSP
+-	default "build/sbom/generic-fsp.json"
++config SBOM_IFD_GENERATE
++	bool "Auto-generate IFD revision in SBOM"
++	depends on SBOM_IFD
++	default y
++	help
++	  When enabled, coreboot determines the git repository that contains
++	  IFD_BIN_PATH (typically 3rdparty/dasharo-blobs) and records its
++	  HEAD commit hash as the SBOM version.  The IFD binary itself carries
++	  no embedded version, so the enclosing repo commit is the best
++	  available proxy for its revision.
++	  If disabled, set SBOM_IFD_PATH to a custom file.
++
++config SBOM_IFD_PATH
++	string "Path to SBOM file for the Intel Flash Descriptor"
++	depends on SBOM_IFD && !SBOM_IFD_GENERATE
++	default "src/sbom/intel-ifd.json"
+ 	help
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+@@ -178,4 +339,17 @@ config SBOM_VBOOT
+ 	  VBOOT Software into the SBOM (Software Bill of Materials)
+ 	  File in your build
+ 
++config SBOM_VBOOT_GENERATE
++	bool "Auto-generate vboot revision in SBOM"
++	depends on SBOM_VBOOT
++	default y
++	help
++	  When enabled, coreboot reads the git commit hash of the vboot
++	  submodule (3rdparty/vboot) and records it as the SBOM version,
++	  with the tree hash stored as colloquial-version.  This gives a
++	  meaningful source revision instead of the library API version "2"
++	  that comes from the pkgconfig .pc files.
++	  If disabled, the pkgconfig .pc files generated during the vboot
++	  build are used instead (original behaviour).
++
+ endif
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 91ebcaa816..ed93d28998 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -14,17 +14,27 @@ src-dir = $(src)/sbom
+ # at all, because extacting information out of mostly unknown binary blobs is a pain.
+ CONFIG_ME_BIN_PATH         := $(call strip_quotes, $(CONFIG_ME_BIN_PATH))
+ CONFIG_SBOM_ME_PATH        := $(call strip_quotes, $(CONFIG_SBOM_ME_PATH))
+-CONFIG_FSP_S_FILE          := $(call strip_quotes, $(CONFIG_FSP_S_FILE))
+-CONFIG_FSP_M_FILE          := $(call strip_quotes, $(CONFIG_FSP_M_FILE))
+-CONFIG_FSP_T_FILE          := $(call strip_quotes, $(CONFIG_FSP_T_FILE))
+-CONFIG_SBOM_FSP_PATH       := $(call strip_quotes, $(CONFIG_SBOM_FSP_PATH))
++CONFIG_FSP_S_FILE               := $(call strip_quotes, $(CONFIG_FSP_S_FILE))
++CONFIG_FSP_M_FILE               := $(call strip_quotes, $(CONFIG_FSP_M_FILE))
++CONFIG_FSP_T_FILE               := $(call strip_quotes, $(CONFIG_FSP_T_FILE))
++CONFIG_SBOM_INTEL_FSP_PATH      := $(call strip_quotes, $(CONFIG_SBOM_INTEL_FSP_PATH))
++CONFIG_AGESA_BINARY_PI_FILE     := $(call strip_quotes, $(CONFIG_AGESA_BINARY_PI_FILE))
++CONFIG_SBOM_AGESA_PATH          := $(call strip_quotes, $(CONFIG_SBOM_AGESA_PATH))
++CONFIG_AMD_OPENSIL_PATH         := $(call strip_quotes, $(CONFIG_AMD_OPENSIL_PATH))
++CONFIG_SBOM_OPENSIL_PATH        := $(call strip_quotes, $(CONFIG_SBOM_OPENSIL_PATH))
+ CONFIG_PAYLOAD_FILE        := $(call strip_quotes, $(CONFIG_PAYLOAD_FILE))
+ CONFIG_SBOM_PAYLOAD_PATH   := $(call strip_quotes, $(CONFIG_SBOM_PAYLOAD_PATH))
+ CONFIG_EC_PATH             := $(call strip_quotes, $(CONFIG_EC_PATH))
+ CONFIG_SBOM_EC_PATH        := $(call strip_quotes, $(CONFIG_SBOM_EC_PATH))
+-CONFIG_SBOM_BIOS_ACM_PATH  := $(call strip_quotes, $(CONFIG_SBOM_BIOS_ACM_PATH))
+-CONFIG_SBOM_SINIT_ACM_PATH := $(call strip_quotes, $(CONFIG_SBOM_SINIT_ACM_PATH))
++CONFIG_SBOM_EC_BIN_PATH    := $(call strip_quotes, $(CONFIG_SBOM_EC_BIN_PATH))
++CONFIG_IFD_BIN_PATH              := $(call strip_quotes, $(CONFIG_IFD_BIN_PATH))
++CONFIG_SBOM_IFD_PATH             := $(call strip_quotes, $(CONFIG_SBOM_IFD_PATH))
++CONFIG_SBOM_BIOS_ACM_PATH        := $(call strip_quotes, $(CONFIG_SBOM_BIOS_ACM_PATH))
++CONFIG_SBOM_SINIT_ACM_PATH       := $(call strip_quotes, $(CONFIG_SBOM_SINIT_ACM_PATH))
++CONFIG_INTEL_TXT_CBFS_BIOS_ACM   := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS_BIOS_ACM))
++CONFIG_INTEL_TXT_CBFS_SINIT_ACM  := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS_SINIT_ACM))
+ CONFIG_SBOM_COMPILER_PATH  := $(call strip_quotes, $(CONFIG_SBOM_COMPILER_PATH))
++CONFIG_EDK2_REPOSITORY     := $(call strip_quotes, $(CONFIG_EDK2_REPOSITORY))
+ 
+ # Select the correct payload directory for the used payload. Ideally we could just make this
+ # a one-liner, but since the payload is generated externally (with an extra make command), we
+@@ -37,16 +47,34 @@ payload-git-dir-$(CONFIG_PAYLOAD_GRUB2)       = payloads/external/GRUB2/grub2
+ payload-git-dir-$(CONFIG_PAYLOAD_LINUXBOOT)   = payloads/external/LinuxBoot/linuxboot
+ payload-git-dir-$(CONFIG_PAYLOAD_SEABIOS)     = payloads/external/SeaBIOS/seabios
+ payload-git-dir-$(CONFIG_PAYLOAD_SKIBOOT)     = payloads/external/skiboot/skiboot
+-#payload-git-dir-$(CONFIG_PAYLOAD_TIANOCORE)   = payloads/external/tianocore/
+ payload-git-dir-$(CONFIG_PAYLOAD_UBOOT)       = payloads/external/U-Boot/u-boot
+ payload-git-dir-$(CONFIG_PAYLOAD_IPXE)        = payloads/external/iPXE/ipxe
++# edk2 workspace is nested: payloads/external/edk2/workspace/<org>/
++# The repo directory name is word 3 of the repository URL (after splitting on '/'),
++# matching the logic in payloads/external/edk2/Makefile.
++ifeq ($(CONFIG_PAYLOAD_EDK2), y)
++payload-git-dir-y = payloads/external/edk2/workspace/$(word 3,$(subst /, ,$(CONFIG_EDK2_REPOSITORY)))
++endif
+ ifneq ($(payload-git-dir-y),)
+ # only proceed with payload sbom data, if one of the above payloads were selected (should be guarded by Kconfig as well)
+ # e.g. payload-git-dir-y=payloads/external/SeaBIOS/seabios -> payload-json-file=$(build-dir)/payload-SeaBIOS.json
++ifeq ($(CONFIG_PAYLOAD_EDK2), y)
++payload-swid          = $(build-dir)/payload-edk2.json
++payload-swid-template = $(src-dir)/payload-edk2.json
++else
+ payload-swid = $(build-dir)/payload-$(subst /,,$(dir $(patsubst payloads/external/%,%,$(payload-git-dir-y)))).json
+ payload-swid-template = $(patsubst $(build-dir)/%.json,$(src-dir)/%.json,$(payload-swid))
+ endif
+ endif
++endif
++
++# edk2 payload: also set swid variables when SBOM_PAYLOAD_GENERATE is not yet
++# enabled in .config (e.g. configs predating edk2 support in SBOM_PAYLOAD_GENERATE).
++ifeq ($(CONFIG_SBOM_PAYLOAD)$(CONFIG_PAYLOAD_EDK2), yy)
++payload-git-dir-y     := payloads/external/edk2/workspace/$(word 3,$(subst /, ,$(CONFIG_EDK2_REPOSITORY)))
++payload-swid          := $(build-dir)/payload-edk2.json
++payload-swid-template := $(src-dir)/payload-edk2.json
++endif
+ 
+ # Add all SBOM files into the swid-files-y target. This target contains all
+ # .json, .ini, .uswid, .xml, .pc SBOM files that are later merged into one uSWID SBOM file.
+@@ -54,20 +82,35 @@ endif
+ # binary files in order to give more complete/detailed information inside the SBOM file.
+ # These files are either in src/sbom/ or build/sbom (if they are generated).
+ swid-files-$(CONFIG_SBOM_ME) += $(if $(CONFIG_SBOM_ME_GENERATE), $(build-dir)/intel-me.json, $(CONFIG_SBOM_ME_PATH))
+-swid-files-$(CONFIG_SBOM_PAYLOAD) += $(if $(CONFIG_SBOM_PAYLOAD_GENERATE), $(payload-swid), $(CONFIG_SBOM_PAYLOAD_PATH))
++swid-files-$(CONFIG_SBOM_PAYLOAD) += $(if $(CONFIG_SBOM_PAYLOAD_GENERATE),$(payload-swid),$(if $(CONFIG_PAYLOAD_EDK2),$(payload-swid),$(CONFIG_SBOM_PAYLOAD_PATH)))
+ # TODO think about just using one CoSWID tag for all intel-microcode instead of one for each. maybe put each microcode into files entity of CoSWID tag?
+-swid-files-$(CONFIG_SBOM_MICROCODE) += $(patsubst 3rdparty/intel-microcode/intel-ucode/%, $(build-dir)/intel-microcode-%.json, $(filter 3rdparty/intel-microcode/intel-ucode/%, $(cpu_microcode_bins)))
+-swid-files-$(CONFIG_SBOM_MICROCODE) += $(patsubst ${FIRMWARE_LOCATION}/UcodePatch_%.bin, $(build-dir)/amd-microcode-%.json, $(filter ${FIRMWARE_LOCATION}/UcodePatch_%.bin, $(cpu_microcode_bins)))
+-swid-files-$(CONFIG_SBOM_FSP) += $(CONFIG_SBOM_FSP_PATH)
+-swid-files-$(CONFIG_SBOM_EC) += $(CONFIG_SBOM_EC_PATH)
+-swid-files-$(CONFIG_SBOM_BIOS_ACM) += $(CONFIG_BIOS_ACM_PATH)
+-swid-files-$(CONFIG_SBOM_SINIT_ACM) += $(CONFIG_SINIT_ACM_PATH)
++swid-files-$(CONFIG_SBOM_INTEL_MICROCODE) += $(patsubst 3rdparty/intel-microcode/intel-ucode/%, $(build-dir)/intel-microcode-%.json, $(filter 3rdparty/intel-microcode/intel-ucode/%, $(cpu_microcode_bins)))
++swid-files-$(CONFIG_SBOM_AMD_MICROCODE) += $(foreach ucode,$(amd_microcode_bins),$(build-dir)/amd-microcode-$(basename $(notdir $(ucode))).json)
++swid-files-$(CONFIG_SBOM_INTEL_FSP) += $(if $(CONFIG_SBOM_INTEL_FSP_GENERATE), $(build-dir)/intel-fsp.json, $(CONFIG_SBOM_INTEL_FSP_PATH))
++swid-files-$(CONFIG_SBOM_AGESA) += $(if $(CONFIG_SBOM_AGESA_GENERATE), $(build-dir)/amd-agesa.json, $(CONFIG_SBOM_AGESA_PATH))
++swid-files-$(CONFIG_SBOM_OPENSIL) += $(if $(CONFIG_SBOM_OPENSIL_GENERATE), $(build-dir)/amd-opensil.json, $(CONFIG_SBOM_OPENSIL_PATH))
++swid-files-$(CONFIG_SBOM_IFD) += $(if $(CONFIG_SBOM_IFD_GENERATE),$(build-dir)/intel-ifd.json,$(CONFIG_SBOM_IFD_PATH))
++swid-files-$(CONFIG_SBOM_EC) += $(if $(CONFIG_SBOM_EC_GENERATE),$(build-dir)/generic-ec.json,$(CONFIG_SBOM_EC_PATH))
++# For ACM entries: extract version from the ROM after provisioning (make sbom).
++# The wildcard guard avoids a circular dependency during the initial 'make all'
++# (coreboot.rom → sbom.uswid → acm.json → coreboot.rom): when the ROM does not
++# yet exist, swid-files is left empty for ACMs so the initial SBOM builds
++# without ACM version info.  After post-build ACM provisioning, run 'make sbom'
++# to regenerate sbom.uswid with the real ACM versions extracted from the ROM.
++swid-files-$(CONFIG_SBOM_BIOS_ACM) += \
++	$(if $(CONFIG_SBOM_BIOS_ACM_GENERATE), \
++		$(if $(wildcard $(obj)/coreboot.rom),$(build-dir)/intel-bios-acm.json,), \
++		$(CONFIG_SBOM_BIOS_ACM_PATH))
++swid-files-$(CONFIG_SBOM_SINIT_ACM) += \
++	$(if $(CONFIG_SBOM_SINIT_ACM_GENERATE), \
++		$(if $(wildcard $(obj)/coreboot.rom),$(build-dir)/intel-sinit-acm.json,), \
++		$(CONFIG_SBOM_SINIT_ACM_PATH))
+ 
+ vboot-pkgconfig-files = $(obj)/external/vboot_reference-bootblock/vboot_host.pc $(obj)/external/vboot_reference-ramstage/vboot_host.pc $(obj)/external/vboot_reference-postcar/vboot_host.pc
+ ifeq ($(CONFIG_SEPARATE_ROMSTAGE),y)
+ vboot-pkgconfig-files += $(obj)/external/vboot_reference-romstage/vboot_host.pc
+ endif
+-swid-files-$(CONFIG_SBOM_VBOOT) += $(vboot-pkgconfig-files)
++swid-files-$(CONFIG_SBOM_VBOOT) += $(if $(CONFIG_SBOM_VBOOT_GENERATE),$(build-dir)/vboot.json,$(vboot-pkgconfig-files))
+ $(vboot-pkgconfig-files): $(VBOOT_LIB_bootblock) $(VBOOT_LIB_romstage) $(VBOOT_LIB_ramstage) $(VBOOT_LIB_postcar) # src/security/vboot/Makefile.mk
+ 
+ ifeq ($(CONFIG_SBOM_COMPILER),y)
+@@ -109,9 +152,18 @@ $(build-dir)/goswid: | $(build-dir)
+ 
+ $(build-dir)/compiler-%.json: $(src-dir)/compiler-%.json | $(build-dir)/goswid
+ 	cp $< $@
+-	for tool in $$(echo $(compiler-toolchain) | tr ' ' '\n' | sort | uniq); do \
++	ver=$$($(CC_bootblock) --version 2>&1 | head -n 1 | grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)*' | head -n 1); \
++	if [ -n "$$ver" ]; then \
++		sed -i "s/<software_version>/$$ver/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
++	for tool in $$(echo $(compiler-toolchain) | tr ' ' '\n' | grep -v '^-' | sort | uniq); do \
++		command -v "$$tool" > /dev/null 2>&1 || continue; \
++		name=$$(basename "$$tool"); \
+ 		version=$$($$tool --version 2>&1 | head -n 1 | grep -Eo '([0-9]+\.[0-9]+\.*[0-9]*)'); \
+-		$(build-dir)/goswid add-payload-file -o $@ -i $@ --name $$(basename $$tool) --version $$version; \
++		[ -n "$$name" ] && [ -n "$$version" ] || continue; \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ --name "$$name" --version "$$version"; \
+ 	done
+ 
+ $(build-dir)/coreboot.json: $(src-dir)/coreboot.json $(obj)/build.h | $(build-dir)/goswid
+@@ -121,13 +173,108 @@ $(build-dir)/coreboot.json: $(src-dir)/coreboot.json $(obj)/build.h | $(build-di
+ 	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@;\
+ 	$(build-dir)/goswid add-license -o $@ -i $@ $(coreboot-licenses)
+ 
++# Extract ME toolkit version from the ME binary. In Dasharo blobs the version
++# is stored as an ASCII string like: "ME16.1.40.2765".
+ $(build-dir)/intel-me.json: $(src-dir)/intel-me.json $(CONFIG_ME_BIN_PATH) | $(build-dir)
+ 	cp $< $@
+-	#TODO put more Intel Management Engine metadata in sbom file
++	set -e; \
++	me_ver=$$(strings -a "$(CONFIG_ME_BIN_PATH)" \
++		| grep -m1 -Eo 'ME[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' \
++		| sed 's/^ME//'); \
++	if [ -n "$$me_ver" ]; then \
++		sed -i "s/<software_version>/$$me_ver/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
++
++
++# Derive the IFD revision from the git repository that contains IFD_BIN_PATH.
++# For Dasharo builds this is 3rdparty/dasharo-blobs.  The IFD binary itself
++# carries no embedded version string, so the enclosing repo commit hash is
++# used as a proxy, matching the same approach used for coreboot and payloads.
++$(build-dir)/intel-ifd.json: $(src-dir)/intel-ifd.json $(CONFIG_IFD_BIN_PATH) | $(build-dir)/goswid
++	cp $< $@
++	set -e; \
++	ifd_git_root=$$(git -C "$$(dirname "$(CONFIG_IFD_BIN_PATH)")" rev-parse --show-toplevel 2>/dev/null); \
++	if [ -n "$$ifd_git_root" ]; then \
++		ifd_comm_hash=$$(git -C "$$ifd_git_root" log -n 1 --format=%H); \
++		ifd_tree_hash=$$(git -C "$$ifd_git_root" log -n 1 --format=%T); \
++		sed -i -e "s/<software_version>/$$ifd_comm_hash/" \
++		       -e "s/<colloquial_version>/$$ifd_tree_hash/" $@; \
++	else \
++		sed -i -e "/software-version/d" -e "/colloquial-version/d" $@; \
++	fi
++
++# Extract EC firmware version from the EC binary.  The version string is
++# embedded as an ASCII symbol matching the pattern _VERSION=<value>, e.g.
++# 76EC_VERSION=2025-10-31_af6bd04 for Dasharo/System76 EC firmware.
++$(build-dir)/generic-ec.json: $(src-dir)/generic-ec.json $(CONFIG_SBOM_EC_BIN_PATH) | $(build-dir)
++	cp $< $@
++	set -e; \
++	ec_ver=$$(strings -a "$(CONFIG_SBOM_EC_BIN_PATH)" \
++		| grep -m1 '_VERSION=' \
++		| sed 's/.*_VERSION=//'); \
++	if [ -n "$$ec_ver" ]; then \
++		sed -i "s/<software_version>/$$ec_ver/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
+ 
++# Extract ACM version from the ROM image.  The ACM header has a BCD date field
++# at offset 0x14: byte[20]=day, byte[21]=month, bytes[22-23 LE 16-bit]=year.
++# This mirrors the Intel microcode date layout (same BCD encoding, different
++# offsets).  cbfstool decompresses the SINIT ACM on extraction so the offsets
++# are identical for both ACM types.
++# NOTE: $(obj)/coreboot.rom is intentionally NOT listed as a make prerequisite.
++# Adding it as a prereq would cause 'make sbom' (and especially 'make -B sbom')
++# to rebuild the entire ROM.  Instead, the 'sbom' target depends on the phony
++# 'sbom-acm-clean' target which deletes these JSON files unconditionally, so
++# they are always regenerated fresh from whatever ROM is already on disk.
++$(build-dir)/intel-bios-acm.json: $(src-dir)/intel-bios-acm.json | $(build-dir)
++	cp $< $@
++	acm_tmp=$$(mktemp); \
++	if $(CBFSTOOL) $(obj)/coreboot.rom extract -r COREBOOT \
++	    -n $(CONFIG_INTEL_TXT_CBFS_BIOS_ACM) -f $$acm_tmp 2>/dev/null; then \
++		year=$$(hexdump --skip 22 --length 2 --format '"%04x"' $$acm_tmp); \
++		month=$$(hexdump --skip 21 --length 1 --format '"%02x"' $$acm_tmp); \
++		day=$$(hexdump   --skip 20 --length 1 --format '"%02x"' $$acm_tmp); \
++		sed -i "s/<software_version>/$$year-$$month-$$day/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi; \
++	rm -f $$acm_tmp
++
++$(build-dir)/intel-sinit-acm.json: $(src-dir)/intel-sinit-acm.json | $(build-dir)
++	cp $< $@
++	acm_tmp=$$(mktemp); \
++	if $(CBFSTOOL) $(obj)/coreboot.rom extract -r COREBOOT \
++	    -n $(CONFIG_INTEL_TXT_CBFS_SINIT_ACM) -f $$acm_tmp 2>/dev/null; then \
++		year=$$(hexdump --skip 22 --length 2 --format '"%04x"' $$acm_tmp); \
++		month=$$(hexdump --skip 21 --length 1 --format '"%02x"' $$acm_tmp); \
++		day=$$(hexdump   --skip 20 --length 1 --format '"%02x"' $$acm_tmp); \
++		sed -i "s/<software_version>/$$year-$$month-$$day/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi; \
++	rm -f $$acm_tmp
+ 
+-$(build-dir)/generic-fsp.json: $(src-dir)/generic-fsp.json $(CONFIG_FSP_S_FILE) $(CONFIG_FSP_T_FILE) $(CONFIG_FSP_M_FILE) | $(build-dir)/goswid
+-	cp $(src-dir)/generic-fsp.json $@
++$(build-dir)/intel-fsp.json: $(src-dir)/intel-fsp.json $(CONFIG_FSP_S_FILE) $(CONFIG_FSP_T_FILE) $(CONFIG_FSP_M_FILE) | $(build-dir)/goswid
++	cp $(src-dir)/intel-fsp.json $@
++ifeq ($(CONFIG_FSP_USE_REPO),y)
++	set -e; \
++	fsp_fd='$(patsubst "%",%,$(CONFIG_FSP_FD_PATH))'; \
++	fsp_git_root=$$(git -C "$$(dirname "$$fsp_fd")" rev-parse --show-toplevel 2>/dev/null); \
++	fsp_fd_abs=$$(realpath "$$fsp_fd" 2>/dev/null || printf '%s\n' "$$fsp_fd"); \
++	fsp_rel=$${fsp_fd_abs#$$fsp_git_root/}; \
++	fsp_version=$$(git -C "$$fsp_git_root" log --format=%s -- "$$fsp_rel" 2>/dev/null | grep -o -m1 -E '\([0-9]+_[0-9]+\)|[A-Z]\.[0-9]+\.[A-Fa-f0-9]+\.[0-9]+'); \
++	if [ -n "$$fsp_version" ]; then \
++		sed -i "s|<software_version>|$$fsp_version|" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
++else
++	sed -i "/software-version/d" $@
++endif
+ ifneq ($(CONFIG_FSP_S_FILE),)
+ 	echo "    SBOM      Adding FSP-S"
+ 	$(build-dir)/goswid add-payload-file -o $@ -i $@ --name "FSP-S"
+@@ -141,6 +288,45 @@ ifneq ($(CONFIG_FSP_M_FILE),)
+ 	$(build-dir)/goswid add-payload-file -o $@ -i $@ --name "FSP-M"
+ endif
+ 
++# Extract AGESA version from the binary blob. AGESA binaries often embed a
++# version string like "AGESA!YYYYY_X.X.X.X" or similar.  We search for the
++# first string matching a common AGESA version pattern; if none is found the
++# version field is omitted and the generic template description is used.
++$(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_FILE) | $(build-dir)
++	cp $< $@
++	set -e; \
++	agesa_ver=$$(strings -a "$(CONFIG_AGESA_BINARY_PI_FILE)" \
++		| grep -m1 -Eo 'AGESA![A-Za-z0-9_]+|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' \
++		| head -1); \
++	if [ -n "$$agesa_ver" ]; then \
++		sed -i "s/<software_version>/$$agesa_ver/" $@; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
++
++# Record the git commit of the openSIL source tree as the SBOM version.
++# openSIL is an open-source library checked out as a submodule or external
++# repo, so the commit hash is the canonical version identifier.
++$(build-dir)/amd-opensil.json: $(src-dir)/amd-opensil.json | $(build-dir)
++	cp $< $@
++	set -e; \
++	opensil_path='$(CONFIG_AMD_OPENSIL_PATH)'; \
++	if [ -z "$$opensil_path" ] || [ ! -d "$$opensil_path" ]; then \
++		for p in src/vendorcode/amd/opensil/*/opensil; do \
++			if [ -e "$$p/.git" ]; then opensil_path="$$p"; break; fi; \
++		done; \
++	fi; \
++	if [ -n "$$opensil_path" ] && [ -d "$$opensil_path" ]; then \
++		comm_hash=$$(git -c safe.directory='*' -C "$$opensil_path" log -n 1 --format=%H 2>/dev/null); \
++		if [ -n "$$comm_hash" ]; then \
++			sed -i -e "s/<software_version>/$$comm_hash/" $@; \
++		else \
++			sed -i "/software-version/d" $@; \
++		fi; \
++	else \
++		sed -i "/software-version/d" $@; \
++	fi
++
+ $(build-dir)/intel-microcode-%.json: $(src-dir)/intel-microcode.json 3rdparty/intel-microcode/intel-ucode/% | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	year=$$(hexdump --skip 8 --length 2 --format '"%04x"' $(word 2,$^));\
+@@ -149,15 +335,72 @@ $(build-dir)/intel-microcode-%.json: $(src-dir)/intel-microcode.json 3rdparty/in
+ 	sed -i "s/<software_version>/$$year-$$month-$$day/" $@
+ 	#TODO add cpuid (processor family, model, stepping) as extra attribute
+ 
+-$(build-dir)/amd-microcode-%.json: $(src-dir)/amd-microcode.json ${FIRMWARE_LOCATION}/UcodePatch_%.bin | $(build-dir) $(build-dir)/goswid
++# Generate per-file SBOM rules for AMD microcode patches.
++# AMD microcode filenames vary widely across SoCs:
++#   UcodePatch_CZN_A0.bin       (cezanne, picasso)
++#   Typex66_0_0_0_UCodePatch.bin (genoa)
++#   TypeId0x66_UcodePatch_A0.bin (glinda, phoenix, mendocino)
++# A static pattern rule cannot handle these because make's % cannot match a
++# variable prefix.  Instead we generate one explicit rule per file via eval.
++# The AMD ucode patch binary header layout (all SoCs, per AMD PSP spec):
++#   offset 0x00, 2 bytes LE: year  (BCD)
++#   offset 0x02, 1 byte:     day   (BCD)
++#   offset 0x03, 1 byte:     month (BCD)
++define amd-ucode-sbom-rule
++$(build-dir)/amd-microcode-$(basename $(notdir $(1))).json: $(src-dir)/amd-microcode.json $(1) | $(build-dir)
++	cp $$< $$@
++	year=$$$$(hexdump --skip 0 --length 2 --format '"%04x"' $(1)); \
++	day=$$$$(hexdump --skip 2 --length 1 --format '"%02x"' $(1)); \
++	month=$$$$(hexdump --skip 3 --length 1 --format '"%02x"' $(1)); \
++	sed -i "s/<software_version>/$$$$year-$$$$month-$$$$day/" $$@
++endef
++# amd_microcode_bins is populated in src/soc/amd/common/block/cpu/Makefile.mk,
++# which is included several rounds after src/sbom (breadth-first traversal).
++# Deferring via postinclude-hooks ensures the rules are generated after all
++# Makefile.mks have been processed and amd_microcode_bins is fully populated.
++postinclude-hooks += $$(foreach ucode,$$(amd_microcode_bins),$$(eval $$(call amd-ucode-sbom-rule,$$(ucode))))
++
++# Resolve the real .git dir for the vboot submodule.
++# When vboot is a submodule, 3rdparty/vboot/.git is a file (gitdir pointer), not a directory.
++# NOTE: avoid case/pattern syntax inside $(shell) — make parses ')' as closing the $(shell) call.
++vboot-gitdir := $(shell \
++  if [ -d 3rdparty/vboot/.git ]; then \
++    echo 3rdparty/vboot/.git; \
++  elif [ -f 3rdparty/vboot/.git ]; then \
++    realpath --relative-to=. \
++      "3rdparty/vboot/$$(sed 's/^gitdir: //' 3rdparty/vboot/.git)"; \
++  fi)
++
++$(build-dir)/vboot.json: $(src-dir)/vboot.json $(if $(vboot-gitdir),$(vboot-gitdir)/HEAD,) | $(build-dir)
+ 	cp $< $@
+-	year=$$(hexdump --skip 0 --length 2 --format '"%04x"' $(word 2,$^));\
+-	day=$$(hexdump --skip 2 --length 1 --format '"%02x"' $(word 2,$^));\
+-	month=$$(hexdump --skip 3 --length 1 --format '"%02x"' $(word 2,$^));\
+-	sed -i "s/<software_version>/$$year-$$month-$$day/" $@
++	git_tree_hash=$$(git -C 3rdparty/vboot log -n 1 --format=%T); \
++	git_comm_hash=$$(git -C 3rdparty/vboot log -n 1 --format=%H); \
++	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@
+ 
+-$(payload-swid): $(payload-swid-template) $(CONFIG_PAYLOAD_FILE) | $(build-dir)
++# Order-only dep on the .git dir ensures the payload is cloned before we try
++# to read it.  We do NOT depend on the payload binary ($(CONFIG_PAYLOAD_FILE))
++# because: (a) the recipe never reads the binary, only .git; (b) with make -B
++# an order-only dep on the binary would still force a full payload rebuild.
++$(payload-swid): $(payload-swid-template) | $(build-dir) $(payload-git-dir-y)/.git
+ 	cp $< $@;\
+ 	git_tree_hash=$$(git --git-dir $(payload-git-dir-y)/.git log -n 1 --format=%T);\
+ 	git_comm_hash=$$(git --git-dir $(payload-git-dir-y)/.git log -n 1 --format=%H);\
+ 	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@;
++
++## Standalone SBOM regeneration target
++## Rebuilds build/sbom/sbom.uswid from existing build artifacts without
++## requiring a full rebuild. Useful for updating the SBOM after post-build
++## blob patching (e.g. btg_provision, create_eom swap ACMs).
++## Usage: make sbom
++## To re-inject into the ROM after regenerating: use cbfstool manually or
++## via build.sh once that integration is added.
++##
++## ACM JSON files are deleted before rebuilding so they are always freshly
++## extracted from the current ROM, reflecting any post-build ACM swap.
++.PHONY: sbom sbom-acm-clean
++
++sbom-acm-clean:
++	$(if $(CONFIG_SBOM_BIOS_ACM_GENERATE),rm -f $(build-dir)/intel-bios-acm.json,)
++	$(if $(CONFIG_SBOM_SINIT_ACM_GENERATE),rm -f $(build-dir)/intel-sinit-acm.json,)
++
++sbom: sbom-acm-clean $(build-dir)/sbom.uswid
+diff --git a/src/sbom/TAGS b/src/sbom/TAGS
+index 776e265131..ba6425e4fb 100644
+--- a/src/sbom/TAGS
++++ b/src/sbom/TAGS
+@@ -17,6 +17,8 @@ intel-fsp-s:         uuidgen --name intel-fsp-s      --namespace "6ba7b810-9dad-
+ intel-fsp-m:         uuidgen --name intel-fsp-m      --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+ intel-fsp-t:         uuidgen --name intel-fsp-t      --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+ intel-fsp:           uuidgen --name intel-fsp        --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
++amd-agesa:           uuidgen --name amd-agesa        --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
++amd-opensil:         uuidgen --name amd-opensil      --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+ intel-mircocode:     uuidgen --name intel-microcode  --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+ amd-mircocode:       uuidgen --name amd-microcode    --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+ compiler-gcc:        uuidgen --name compiler-gcc     --namespace "6ba7b810-9dad-11d1-80b4-00c04fd430c8" --sha1
+diff --git a/src/sbom/amd-agesa.json b/src/sbom/amd-agesa.json
+new file mode 100644
+index 0000000000..49927c5768
+--- /dev/null
++++ b/src/sbom/amd-agesa.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "75efb0da-7a82-524f-bd46-86fdc9e802b9",
++  "tag-version": 0,
++  "software-name": "AMD AGESA",
++  "software-version": "<software_version>",
++  "software-meta": [
++    {
++      "product": "AMD AGESA",
++      "persistent-id": "com.amd.agesa",
++      "summary": "AMD AGESA (AMD Generic Encapsulated Software Architecture) is a binary PI (Platform Initialization) blob providing memory and silicon initialization for AMD platforms"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/amd-opensil.json b/src/sbom/amd-opensil.json
+new file mode 100644
+index 0000000000..869ef452ed
+--- /dev/null
++++ b/src/sbom/amd-opensil.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "a6bb55ce-b6d4-55a6-a936-96396c723439",
++  "tag-version": 0,
++  "software-name": "AMD openSIL",
++  "software-version": "<software_version>",
++  "software-meta": [
++    {
++      "product": "AMD openSIL",
++      "persistent-id": "com.amd.opensil",
++      "summary": "AMD openSIL (open Silicon Initialization Library) is an open-source silicon initialization library for AMD platforms, serving the same role as Intel FSP"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/compiler-clang.json b/src/sbom/compiler-clang.json
+index cd21cea70c..7d6033a7c0 100644
+--- a/src/sbom/compiler-clang.json
++++ b/src/sbom/compiler-clang.json
+@@ -4,6 +4,8 @@
+   "tag-id": "56ed2b98-6b90-574f-aa1d-11579df90e25",
+   "tag-version": 0,
+   "software-name": "clang",
++  "software-version": "<software_version>",
++  "version-scheme": "semver",
+   "software-meta": [
+     {
+       "persistent-id": "org.llvm.clang"
+diff --git a/src/sbom/compiler-gcc.json b/src/sbom/compiler-gcc.json
+index ba1938daf7..c9defa4793 100644
+--- a/src/sbom/compiler-gcc.json
++++ b/src/sbom/compiler-gcc.json
+@@ -4,6 +4,8 @@
+   "tag-id": "8e0d0fd3-1116-50ad-ba5f-599c8117c42b",
+   "tag-version": 0,
+   "software-name": "GCC",
++  "software-version": "<software_version>",
++  "version-scheme": "semver",
+   "software-meta": [
+     {
+       "persistent-id": "org.gnu.gcc"
+diff --git a/src/sbom/compiler-generic.json b/src/sbom/compiler-generic.json
+index 6779460dcb..29d927d3f3 100644
+--- a/src/sbom/compiler-generic.json
++++ b/src/sbom/compiler-generic.json
+@@ -3,6 +3,8 @@
+   "lang": "en-US",
+   "tag-id": "a79cee21-97a6-53e5-8e41-65b084a7b90e",
+   "tag-version": 0,
++  "software-version": "<software_version>",
++  "version-scheme": "semver",
+   "entity": [
+     {
+       "entity-name": "coreboot",
+diff --git a/src/sbom/generic-ec.json b/src/sbom/generic-ec.json
+index 11a1660311..7a20887800 100644
+--- a/src/sbom/generic-ec.json
++++ b/src/sbom/generic-ec.json
+@@ -4,6 +4,7 @@
+   "tag-id": "cb643972-4544-525e-a25e-31651fe9fcbe",
+   "tag-version": 0,
+   "software-name": "Embedded Controller Firmware",
++  "software-version": "<software_version>",
+   "software-meta": [
+     {
+       "summary": "The Embedded Controller is a microcontroller which handles various tasks such as power management and keyboard control"
+diff --git a/src/sbom/generic-fsp.json b/src/sbom/generic-fsp.json
+index 52ec447c8d..e1bc5b3eb0 100644
+--- a/src/sbom/generic-fsp.json
++++ b/src/sbom/generic-fsp.json
+@@ -4,6 +4,7 @@
+   "tag-id": "719e6299-4355-5beb-b182-9cf47928515a",
+   "tag-version": 0,
+   "software-name": "Firmware Support Package",
++  "software-version": "<software_version>",
+   "software-meta": [
+     {
+       "product": "Firmware Support Package",
+diff --git a/src/sbom/intel-bios-acm.json b/src/sbom/intel-bios-acm.json
+index d980d032ec..b4e077035f 100644
+--- a/src/sbom/intel-bios-acm.json
++++ b/src/sbom/intel-bios-acm.json
+@@ -4,6 +4,7 @@
+   "tag-id": "2de383e0-1721-5369-8511-e3d07743b09a",
+   "tag-version": 0,
+   "software-name": "Intel BIOS ACM",
++  "software-version": "<software_version>",
+   "entity": [
+     {
+       "entity-name": "coreboot",
+diff --git a/src/sbom/intel-fsp.json b/src/sbom/intel-fsp.json
+new file mode 100644
+index 0000000000..27d8b352b3
+--- /dev/null
++++ b/src/sbom/intel-fsp.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "719e6299-4355-5beb-b182-9cf47928515a",
++  "tag-version": 0,
++  "software-name": "Intel Firmware Support Package",
++  "software-version": "<software_version>",
++  "software-meta": [
++    {
++      "product": "Intel Firmware Support Package",
++      "persistent-id": "com.intel.fsp",
++      "summary": "Intel Firmware Support Package (FSP) is a binary blob providing memory initialization and silicon bring-up for Intel platforms"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/intel-ifd.json b/src/sbom/intel-ifd.json
+new file mode 100644
+index 0000000000..69746da89d
+--- /dev/null
++++ b/src/sbom/intel-ifd.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "9a5e8734-7068-5502-9f6a-6e1bcffb77dd",
++  "tag-version": 0,
++  "software-name": "Intel Flash Descriptor",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "summary": "The Intel Flash Descriptor defines the flash layout and hardware strap settings for Intel platforms"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/intel-me.json b/src/sbom/intel-me.json
+index 9eeec613d8..4afc80235a 100644
+--- a/src/sbom/intel-me.json
++++ b/src/sbom/intel-me.json
+@@ -4,9 +4,12 @@
+   "tag-id": "9579af2b-39d8-59f1-ac5a-5b1fd4c03bd0",
+   "tag-version": 0,
+   "software-name": "Intel Management Engine",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
+-      "persistent-id": "com.intel.me"
++      "persistent-id": "com.intel.me",
++      "summary": "Intel Management Engine firmware"
+     }
+   ],
+   "entity": [
+diff --git a/src/sbom/intel-sinit-acm.json b/src/sbom/intel-sinit-acm.json
+index 92e0b4d3ce..64df53a891 100644
+--- a/src/sbom/intel-sinit-acm.json
++++ b/src/sbom/intel-sinit-acm.json
+@@ -4,6 +4,7 @@
+   "tag-id": "231b1f39-28c2-596a-a33e-3d2d6570888f",
+   "tag-version": 0,
+   "software-name": "Intel SINIT ACM",
++  "software-version": "<software_version>",
+   "entity": [
+     {
+       "entity-name": "coreboot",
+diff --git a/src/sbom/payload-edk2.json b/src/sbom/payload-edk2.json
+new file mode 100644
+index 0000000000..87f5a80356
+--- /dev/null
++++ b/src/sbom/payload-edk2.json
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
++  "tag-version": 0,
++  "software-name": "edk2",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "persistent-id": "org.tianocore.edk2",
++      "summary": "EDK II is a modern, feature-rich, cross-platform firmware development environment for the UEFI and UEFI Platform Initialization (PI) specifications. It is used as a coreboot payload to provide a UEFI environment."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/vboot.json b/src/sbom/vboot.json
+new file mode 100644
+index 0000000000..6ac8cd72b9
+--- /dev/null
++++ b/src/sbom/vboot.json
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "7d6f330b-8561-54ac-b507-a143b12e1d32",
++  "tag-version": 0,
++  "software-name": "vboot",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "persistent-id": "org.chromium.vboot",
++      "summary": "Chromium OS Verified Boot reference implementation, used by coreboot for firmware verification and anti-rollback protection."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}

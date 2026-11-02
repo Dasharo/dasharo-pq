@@ -1,0 +1,62 @@
+From 21b82225ce4726cc12a91dba7f0c41bfcb92f982 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 14:53:32 +0100
+Subject: [PATCH 156/158] src/sbom: hash and license AGESA, describe
+ AGESA_UCODE_EXPERIMENTAL microcode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The AMD AGESA binary PI blob tag had neither the hash of the blob nor a
+license link, unlike the other AMD blobs (microcode, PSP firmware).
+Record the SHA-256 of AGESA_BINARY_PI_FILE and SBOM_AMD_BLOB_LICENSE.
+
+With AGESA_UCODE_EXPERIMENTAL (AMD family 16h, PC Engines apu) the
+microcode patch given in CPU_UCODE_BINARIES is written directly into
+the image and is not part of amd_microcode_bins, so SBOM_AMD_MICROCODE
+did not describe it. Add it to the list.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/sbom/Makefile.mk | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 35957dab82..329aa69083 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -134,6 +134,11 @@ endif
+ swid-files-$(CONFIG_SBOM_PAYLOAD) += $(if $(CONFIG_SBOM_PAYLOAD_GENERATE),$(payload-swid),$(if $(CONFIG_PAYLOAD_EDK2),$(payload-swid),$(CONFIG_SBOM_PAYLOAD_PATH)))
+ swid-files-$(CONFIG_SBOM_EDK2_PLATFORMS) += $(if $(CONFIG_SBOM_EDK2_PLATFORMS_GENERATE),$(build-dir)/payload-edk2-platforms.json,$(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
+ swid-files-$(CONFIG_SBOM_INTEL_MICROCODE) += $(foreach ucode,$(filter 3rdparty/intel-microcode/intel-ucode/%, $(cpu_microcode_bins)),$(call intel-ucode-swids,$(ucode)))
++# With AGESA_UCODE_EXPERIMENTAL (AMD family 16h) the microcode patch given in
++# CPU_UCODE_BINARIES is written directly into the image, describe it as well.
++ifeq ($(CONFIG_AGESA_UCODE_EXPERIMENTAL),y)
++amd_microcode_bins += $(call strip_quotes,$(CONFIG_CPU_UCODE_BINARIES))
++endif
+ swid-files-$(CONFIG_SBOM_AMD_MICROCODE) += $(foreach ucode,$(amd_microcode_bins),$(build-dir)/amd-microcode-$(basename $(notdir $(ucode))).json)
+ swid-files-$(CONFIG_SBOM_INTEL_FSP) += $(if $(CONFIG_SBOM_INTEL_FSP_GENERATE), $(build-dir)/intel-fsp.json, $(CONFIG_SBOM_INTEL_FSP_PATH))
+ swid-files-$(CONFIG_SBOM_AGESA) += $(if $(CONFIG_SBOM_AGESA_GENERATE), $(build-dir)/amd-agesa.json, $(CONFIG_SBOM_AGESA_PATH))
+@@ -623,7 +628,7 @@ endif
+ # version string like "AGESA!YYYYY_X.X.X.X" or similar.  We search for the
+ # first string matching a common AGESA version pattern; if none is found the
+ # version field is omitted and the generic template description is used.
+-$(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_FILE) | $(build-dir)
++$(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_FILE) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	set -e; \
+ 	agesa_ver=$$(strings -a "$(CONFIG_AGESA_BINARY_PI_FILE)" \
+@@ -633,6 +638,12 @@ $(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_
+ 	else \
+ 		sed -i "/software-version/d" $@; \
+ 	fi
++	if [ -s "$(CONFIG_AGESA_BINARY_PI_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "$(notdir $(CONFIG_AGESA_BINARY_PI_FILE))" \
++			--hash "$$(sha256sum "$(CONFIG_AGESA_BINARY_PI_FILE)" | cut -d' ' -f1)"; \
++	fi
++	$(if $(CONFIG_SBOM_AMD_BLOB_LICENSE),$(build-dir)/goswid add-license -o $@ -i $@ "$(CONFIG_SBOM_AMD_BLOB_LICENSE)",:)
+ 
+ $(CONFIG_AMD_OPENSIL_PATH)/.git:
+ 	git submodule update --init --checkout $(patsubst $(top)/%,%,$(CONFIG_AMD_OPENSIL_PATH))

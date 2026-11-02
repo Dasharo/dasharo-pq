@@ -1,0 +1,89 @@
+From 479cbeed795a4cdced55ff8ca18ac4e4cfd9a2e9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Wed, 18 Mar 2026 08:29:40 +0100
+Subject: [PATCH 113/158] src/sbom: add iPXE revision to SBOM
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 429213c4d4c6dcca6f4f0f452594cbb5b2775c9d)
+---
+ src/sbom/Kconfig     | 28 ++++++++++++++++++++++++++++
+ src/sbom/Makefile.mk | 11 +++++++++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index ea21bdd16a..fb2c6a9f1f 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -352,4 +352,32 @@ config SBOM_VBOOT_GENERATE
+ 	  If disabled, the pkgconfig .pc files generated during the vboot
+ 	  build are used instead (original behaviour).
+ 
++config SBOM_IPXE
++	bool "Include iPXE metadata in SBOM"
++	default n
++	depends on BUILD_IPXE
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the
++	  iPXE network boot firmware into the SBOM
++	  (Software Bill of Materials) File in your build.
++
++config SBOM_IPXE_GENERATE
++	bool "Auto-generate iPXE revision in SBOM"
++	depends on SBOM_IPXE
++	default y
++	help
++	  When enabled, coreboot reads the git commit hash of the iPXE
++	  source tree (payloads/external/iPXE/ipxe) and records it as the
++	  SBOM version, with the tree hash stored as colloquial-version.
++	  If disabled, set SBOM_IPXE_PATH to a custom file.
++
++config SBOM_IPXE_PATH
++	string "Path to SBOM file for iPXE"
++	depends on SBOM_IPXE && !SBOM_IPXE_GENERATE
++	default "src/sbom/payload-iPXE.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
+ endif
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index c086a7b3c1..413e4186d9 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -36,6 +36,7 @@ CONFIG_INTEL_TXT_CBFS_BIOS_ACM   := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS
+ CONFIG_INTEL_TXT_CBFS_SINIT_ACM  := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS_SINIT_ACM))
+ CONFIG_SBOM_COMPILER_PATH  := $(call strip_quotes, $(CONFIG_SBOM_COMPILER_PATH))
+ CONFIG_EDK2_REPOSITORY     := $(call strip_quotes, $(CONFIG_EDK2_REPOSITORY))
++CONFIG_SBOM_IPXE_PATH      := $(call strip_quotes, $(CONFIG_SBOM_IPXE_PATH))
+ 
+ # Select the correct payload directory for the used payload. Ideally we could just make this
+ # a one-liner, but since the payload is generated externally (with an extra make command), we
+@@ -107,6 +108,8 @@ swid-files-$(CONFIG_SBOM_SINIT_ACM) += \
+ 		$(if $(wildcard $(obj)/coreboot.rom),$(build-dir)/intel-sinit-acm.json,), \
+ 		$(CONFIG_SBOM_SINIT_ACM_PATH))
+ 
++swid-files-$(CONFIG_SBOM_IPXE) += $(if $(CONFIG_SBOM_IPXE_GENERATE),$(build-dir)/payload-iPXE.json,$(CONFIG_SBOM_IPXE_PATH))
++
+ vboot-pkgconfig-files = $(obj)/external/vboot_reference-bootblock/vboot_host.pc $(obj)/external/vboot_reference-ramstage/vboot_host.pc $(obj)/external/vboot_reference-postcar/vboot_host.pc
+ ifeq ($(CONFIG_SEPARATE_ROMSTAGE),y)
+ vboot-pkgconfig-files += $(obj)/external/vboot_reference-romstage/vboot_host.pc
+@@ -368,6 +371,14 @@ $(build-dir)/vboot.json: $(src-dir)/vboot.json $(if $(vboot-gitdir),$(vboot-gitd
+ 	git_comm_hash=$$(git -C 3rdparty/vboot log -n 1 --format=%H); \
+ 	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@
+ 
++ipxe-gitdir := $(shell git -C payloads/external/iPXE/ipxe rev-parse --absolute-git-dir 2>/dev/null)
++
++$(build-dir)/payload-iPXE.json: $(src-dir)/payload-iPXE.json $(if $(ipxe-gitdir),$(ipxe-gitdir)/HEAD,) | $(build-dir)
++	cp $< $@
++	git_tree_hash=$$(git --git-dir payloads/external/iPXE/ipxe/.git log -n 1 --format=%T); \
++	git_comm_hash=$$(git --git-dir payloads/external/iPXE/ipxe/.git log -n 1 --format=%H); \
++	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@
++
+ # Order-only dep on the .git dir ensures the payload is cloned before we try
+ # to read it.  We do NOT depend on the payload binary ($(CONFIG_PAYLOAD_FILE))
+ # because: (a) the recipe never reads the binary, only .git; (b) with make -B

@@ -1,0 +1,58 @@
+From 92dcce3277ffcff08c326b7bca3e561cc4e97ce0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 22 Oct 2026 13:29:11 +0200
+Subject: [PATCH 150/158] sbom: Fix IFD and ME license URLs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The URLs were pointing at wrong license file for IFD and ME.
+
+Upstream-Status: Inappropriate [Dasharo downstream]
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit dc19516f2827567f92096083d7ea15a4264e339d)
+---
+ src/sbom/intel-ifd.json | 2 +-
+ src/sbom/intel-me.json  | 2 +-
+ src/sbom/intel-sps.json | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/sbom/intel-ifd.json b/src/sbom/intel-ifd.json
+index bc379a96bb..78de21f30d 100644
+--- a/src/sbom/intel-ifd.json
++++ b/src/sbom/intel-ifd.json
+@@ -15,7 +15,7 @@
+   "link": [
+     {
+       "rel": "license",
+-      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/LICENSE"
++      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/licenses/pv%20intel%20obl%20software%20license%20agreement%2011.2.2017.pdf"
+     }
+   ],
+   "entity": [
+diff --git a/src/sbom/intel-me.json b/src/sbom/intel-me.json
+index 41c5b2faad..0e6c866458 100644
+--- a/src/sbom/intel-me.json
++++ b/src/sbom/intel-me.json
+@@ -15,7 +15,7 @@
+   "link": [
+     {
+       "rel": "license",
+-      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/LICENSE"
++      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/licenses/pv%20intel%20obl%20software%20license%20agreement%2011.2.2017.pdf"
+     }
+   ],
+   "entity": [
+diff --git a/src/sbom/intel-sps.json b/src/sbom/intel-sps.json
+index 5a1e98e961..346cf1c445 100644
+--- a/src/sbom/intel-sps.json
++++ b/src/sbom/intel-sps.json
+@@ -15,7 +15,7 @@
+   "link": [
+     {
+       "rel": "license",
+-      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/LICENSE"
++      "href": "https://github.com/Dasharo/dasharo-blobs/blob/main/licenses/pv%20intel%20obl%20software%20license%20agreement%2011.2.2017.pdf"
+     }
+   ],
+   "entity": [

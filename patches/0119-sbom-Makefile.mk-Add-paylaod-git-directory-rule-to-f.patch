@@ -1,0 +1,34 @@
+From b733f3c0c58a1f1b7d17075a9f9108689c35962d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 28 Apr 2026 11:31:25 +0200
+Subject: [PATCH 119/158] sbom/Makefile.mk: Add paylaod git directory rule to
+ fix multijob builds
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add workaround rule to fix multijob builds and ensure the payload git
+directory exists when SBOM is created. In multijob builds, SBOM creation
+may be attempted before payload is cloned.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit 0189c4c44c2fe33f784bf4371f5e0c8b1206ec3e)
+---
+ src/sbom/Makefile.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 49d7fea2a9..92304f0ab5 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -63,6 +63,9 @@ ifneq ($(payload-git-dir-y),)
+ ifeq ($(CONFIG_PAYLOAD_EDK2), y)
+ payload-swid          = $(build-dir)/payload-edk2.json
+ payload-swid-template = $(src-dir)/payload-edk2.json
++# W/A for multijob build:
++# Rule to ensure the EDK2 repo is cloned, if not available at the time of SBOM creation
++$(payload-git-dir-y)/.git: $(obj)/UEFIPAYLOAD.fd
+ else
+ payload-swid = $(build-dir)/payload-$(subst /,,$(dir $(patsubst payloads/external/%,%,$(payload-git-dir-y)))).json
+ payload-swid-template = $(patsubst $(build-dir)/%.json,$(src-dir)/%.json,$(payload-swid))

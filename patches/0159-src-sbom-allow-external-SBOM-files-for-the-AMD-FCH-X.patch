@@ -1,0 +1,175 @@
+From 48bcd4be288299f1bdd2cbfca4f92e634f36c56c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 15:26:37 +0100
+Subject: [PATCH] src/sbom: allow external SBOM files for the AMD FCH XHCI
+ firmware and AGESA
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The xHCI firmware blob carries no version, so the generated tag can only
+record the commit of the repository holding it. The version extracted
+from the AGESA binary PI blob with strings(1) is not necessarily the one
+the vendor uses to identify the release either. Allow providing these
+tags from external SBOM files instead, e.g. ones supplied by the vendor
+which describe the firmware version, like the other components offer
+with the SBOM_*_GENERATE / SBOM_*_PATH options.
+
+With SBOM_HUDSON_XHCI_FW_GENERATE disabled, SBOM_HUDSON_XHCI_FW_PATH
+(.json, .xml, .cbor or .uswid) is converted to the JSON tag used for
+the SBOM, and the SHA-256 of HUDSON_XHCI_FWM_FILE is added to it to bind
+the described version to the blob built into the image.
+
+SBOM_AGESA_PATH already existed, but the file was used as is. Handle it
+the same way as the xHCI one, adding the SHA-256 of AGESA_BINARY_PI_FILE.
+Its default pointed to src/sbom/amd-agesa.json, which is the template
+for the generated tag and still contains placeholders, so drop the
+default.
+
+In both cases the build fails early if the path is not set.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/sbom/Kconfig     | 34 ++++++++++++++++++++++++++++------
+ src/sbom/Makefile.mk | 39 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 66 insertions(+), 7 deletions(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index f0158ccd0f..c9ef2be4e6 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -330,15 +330,18 @@ config SBOM_AGESA_GENERATE
+ 	  When enabled, coreboot attempts to extract a version string from the
+ 	  AGESA binary (AGESA_BINARY_PI_FILE) using strings(1) and records it
+ 	  in the SBOM.  If no version string is found the field is omitted.
+-	  If disabled, set SBOM_AGESA_PATH to a custom file.
++	  If disabled, set SBOM_AGESA_PATH to a file describing the AGESA blob,
++	  e.g. one supplied by the vendor with the AGESA version.
+ 
+ config SBOM_AGESA_PATH
+ 	string "Path to SBOM file for AMD AGESA"
+ 	depends on SBOM_AGESA && !SBOM_AGESA_GENERATE
+-	default "src/sbom/amd-agesa.json"
++	default ""
+ 	help
+-	  The path of the SBOM file describing the Software included in the build
+-	  File can be a .json, .xml, .cbor, .uswid, or .pc
++	  The path of the SBOM file describing the AGESA blob, which provides
++	  its version and other details. File can be a .json, .xml, .cbor or
++	  .uswid. The SHA-256 of AGESA_BINARY_PI_FILE is added to the tag, so
++	  that the described version is bound to the blob built into the image.
+ 
+ config SBOM_OPENSIL
+ 	bool "Include AMD openSIL metadata in SBOM"
+@@ -510,8 +513,27 @@ config SBOM_HUDSON_XHCI_FW
+ 	  Select this option to include a coswid (Concise Software
+ 	  Identification Tag) of the xHCI controller firmware added to the
+ 	  ROMSIG area of AMD Hudson/Bolton/Avalon FCH (HUDSON_XHCI_FWM_FILE).
+-	  The blob carries no version, so the commit of the repository holding
+-	  it is recorded as the version together with the SHA-256 of the blob.
++
++config SBOM_HUDSON_XHCI_FW_GENERATE
++	bool "Auto-generate AMD FCH XHCI firmware SBOM"
++	depends on SBOM_HUDSON_XHCI_FW
++	default y
++	help
++	  When enabled, coreboot generates the tag itself. The blob carries no
++	  version, so the commit of the repository holding it is recorded as
++	  the version together with the SHA-256 of the blob.
++	  If disabled, set SBOM_HUDSON_XHCI_FW_PATH to a file describing the
++	  firmware, e.g. one supplied by the vendor with the firmware version.
++
++config SBOM_HUDSON_XHCI_FW_PATH
++	string "Path to SBOM file for the AMD FCH XHCI firmware"
++	depends on SBOM_HUDSON_XHCI_FW && !SBOM_HUDSON_XHCI_FW_GENERATE
++	default ""
++	help
++	  The path of the SBOM file describing the xHCI firmware, which provides
++	  its version and other details. File can be a .json, .xml, .cbor or
++	  .uswid. The SHA-256 of HUDSON_XHCI_FWM_FILE is added to the tag, so
++	  that the described version is bound to the blob built into the image.
+ 
+ config SBOM_HUDSON_IMC_FW
+ 	bool "Include AMD FCH IMC firmware metadata in SBOM"
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 4ea79eed09..77c8e075a1 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -64,6 +64,7 @@ CONFIG_LINUXBOOT_UROOT_VERSION  := $(call strip_quotes, $(CONFIG_LINUXBOOT_UROOT
+ CONFIG_PAYLOAD_FILE        := $(call strip_quotes, $(CONFIG_PAYLOAD_FILE))
+ CONFIG_SBOM_MANUFACTURER   := $(call strip_quotes, $(CONFIG_SBOM_MANUFACTURER))
+ sbom-hudson-xhci-file      := $(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE))
++CONFIG_SBOM_HUDSON_XHCI_FW_PATH := $(call strip_quotes, $(CONFIG_SBOM_HUDSON_XHCI_FW_PATH))
+ sbom-hudson-imc-file       := $(call strip_quotes, $(CONFIG_HUDSON_IMC_FWM_FILE))
+ sbom-sortbootorder-dir     := payloads/external/sortbootorder/sortbootorder
+ sbom-sortbootorder-file    := $(sbom-sortbootorder-dir)/sortbootorder.elf
+@@ -151,7 +152,7 @@ amd_microcode_bins += $(call strip_quotes,$(CONFIG_CPU_UCODE_BINARIES))
+ endif
+ swid-files-$(CONFIG_SBOM_AMD_MICROCODE) += $(foreach ucode,$(amd_microcode_bins),$(build-dir)/amd-microcode-$(basename $(notdir $(ucode))).json)
+ swid-files-$(CONFIG_SBOM_INTEL_FSP) += $(if $(CONFIG_SBOM_INTEL_FSP_GENERATE), $(build-dir)/intel-fsp.json, $(CONFIG_SBOM_INTEL_FSP_PATH))
+-swid-files-$(CONFIG_SBOM_AGESA) += $(if $(CONFIG_SBOM_AGESA_GENERATE), $(build-dir)/amd-agesa.json, $(CONFIG_SBOM_AGESA_PATH))
++swid-files-$(CONFIG_SBOM_AGESA) += $(build-dir)/amd-agesa.json
+ swid-files-$(CONFIG_SBOM_OPENSIL) += $(if $(CONFIG_SBOM_OPENSIL_GENERATE), $(build-dir)/amd-opensil.json, $(CONFIG_SBOM_OPENSIL_PATH))
+ swid-files-$(CONFIG_SBOM_IFD) += $(if $(CONFIG_SBOM_IFD_GENERATE),$(build-dir)/intel-ifd.json,$(CONFIG_SBOM_IFD_PATH))
+ swid-files-$(CONFIG_SBOM_EC) += $(if $(CONFIG_SBOM_EC_GENERATE),$(build-dir)/generic-ec.json,$(CONFIG_SBOM_EC_PATH))
+@@ -642,6 +643,7 @@ endif
+ # version string like "AGESA!YYYYY_X.X.X.X" or similar.  We search for the
+ # first string matching a common AGESA version pattern; if none is found the
+ # version field is omitted and the generic template description is used.
++ifeq ($(CONFIG_SBOM_AGESA_GENERATE),y)
+ $(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_FILE) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	set -e; \
+@@ -658,6 +660,23 @@ $(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_
+ 			--hash "$$(sha256sum "$(CONFIG_AGESA_BINARY_PI_FILE)" | cut -d' ' -f1)"; \
+ 	fi
+ 	$(if $(CONFIG_SBOM_AMD_BLOB_LICENSE),$(build-dir)/goswid add-license -o $@ -i $@ "$(CONFIG_SBOM_AMD_BLOB_LICENSE)",:)
++else
++# Tag provided by an external SBOM file (e.g. from the vendor) which describes
++# the AGESA version.  Convert it to JSON and bind it to the blob actually built
++# into the image by recording the blob's SHA-256.
++ifeq ($(CONFIG_SBOM_AGESA),y)
++ifeq ($(CONFIG_SBOM_AGESA_PATH),)
++$(error SBOM_AGESA_PATH must be set when SBOM_AGESA_GENERATE is disabled)
++endif
++endif
++$(build-dir)/amd-agesa.json: $(CONFIG_SBOM_AGESA_PATH) $(CONFIG_AGESA_BINARY_PI_FILE) | $(build-dir) $(build-dir)/goswid
++	$(build-dir)/goswid convert -i $< -o $@
++	if [ -s "$(CONFIG_AGESA_BINARY_PI_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "$(notdir $(CONFIG_AGESA_BINARY_PI_FILE))" \
++			--hash "$$(sha256sum "$(CONFIG_AGESA_BINARY_PI_FILE)" | cut -d' ' -f1)"; \
++	fi
++endif
+ 
+ $(CONFIG_AMD_OPENSIL_PATH)/.git:
+ 	git submodule update --init --checkout $(patsubst $(top)/%,%,$(CONFIG_AMD_OPENSIL_PATH))
+@@ -1051,9 +1070,27 @@ amd-hudson-fw-sbom = \
+ 	fi; \
+ 	$(if $(CONFIG_SBOM_AMD_BLOB_LICENSE),$(build-dir)/goswid add-license -o $@ -i $@ "$(CONFIG_SBOM_AMD_BLOB_LICENSE)",:)
+ 
++ifeq ($(CONFIG_SBOM_HUDSON_XHCI_FW_GENERATE),y)
+ $(build-dir)/amd-hudson-xhci.json: $(src-dir)/amd-hudson-xhci.json $(wildcard $(sbom-hudson-xhci-file)) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@
+ 	$(call amd-hudson-fw-sbom,$(sbom-hudson-xhci-file))
++else
++# Tag provided by an external SBOM file (e.g. from the firmware vendor) which
++# describes the version.  Convert it to JSON and bind it to the blob actually
++# built into the image by recording the blob's SHA-256.
++ifeq ($(CONFIG_SBOM_HUDSON_XHCI_FW),y)
++ifeq ($(CONFIG_SBOM_HUDSON_XHCI_FW_PATH),)
++$(error SBOM_HUDSON_XHCI_FW_PATH must be set when SBOM_HUDSON_XHCI_FW_GENERATE is disabled)
++endif
++endif
++$(build-dir)/amd-hudson-xhci.json: $(CONFIG_SBOM_HUDSON_XHCI_FW_PATH) $(wildcard $(sbom-hudson-xhci-file)) | $(build-dir) $(build-dir)/goswid
++	$(build-dir)/goswid convert -i $< -o $@
++	if [ -s "$(sbom-hudson-xhci-file)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "$(notdir $(sbom-hudson-xhci-file))" \
++			--hash "$$(sha256sum "$(sbom-hudson-xhci-file)" | cut -d' ' -f1)"; \
++	fi
++endif
+ 
+ $(build-dir)/amd-hudson-imc.json: $(src-dir)/amd-hudson-imc.json $(wildcard $(sbom-hudson-imc-file)) | $(build-dir) $(build-dir)/goswid
+ 	cp $< $@

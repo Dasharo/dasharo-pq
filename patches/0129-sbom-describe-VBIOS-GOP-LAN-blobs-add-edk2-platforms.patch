@@ -1,0 +1,611 @@
+From e08b30ac98e8e1e97ecdae65c6be287d19f616e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Thu, 16 Jul 2026 10:31:23 +0200
+Subject: [PATCH 129/158] sbom: describe VBIOS/GOP/LAN blobs, add
+ edk2-platforms, enrich FSP
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Extend the embedded SBOM to cover firmware components that were missing
+or underspecified, reusing the existing per-component pattern
+(SBOM_<X> / SBOM_<X>_GENERATE / SBOM_<X>_PATH + CoSWID template +
+Makefile rule). The _PATH option lets a vendor supply a full external
+SBOM JSON per blob; GENERATE emits a minimal hashed fallback.
+
+New components:
+- SBOM_VGA_BIOS / _SECOND / _DGPU: the VGA BIOS OptionROMs
+  (VGA_BIOS_FILE and friends). GENERATE records the blob sha256 and the
+  target PCI vendor:device ID from VGA_BIOS_ID.
+- SBOM_EDK2_GOP: the external Intel GOP driver (EDK2_GOP_FILE) compiled
+  into the edk2 payload.
+- SBOM_EDK2_LAN_ROM: the external LAN Option ROM driver
+  (EDK2_LAN_ROM_DRIVER) compiled into the edk2 payload.
+- SBOM_EDK2_PLATFORMS: the edk2-platforms source tree, previously
+  absent from the SBOM. Records the commit and tree hash of the
+  checkout at payloads/external/edk2/workspace/edk2-platforms.
+
+Intel FSP enrichment:
+- Capture the FSP release version, the BIOS build number
+  ((NNNN_NN) -> colloquial-version) and the target (Edge/IoT/Client,
+  derived from the FD path -> edition), plus the SoC package
+  (-> product-family), instead of a single opaque version token.
+
+New CoSWID templates are added under src/sbom/ and the new options are
+documented in Documentation/sbom/sbom.md. All new options default to n,
+so existing boards' SBOMs are unchanged.
+
+Change tested with 'make sbom' on novacustom_nuc_box: FSP now reports
+edition=IoT, product-family=ArrowLake; edk2-platforms and a VGA BIOS
+entry (with matching sha256) merge into a valid uSWID when enabled.
+
+Upstream-Status: Pending
+Change-Id: I9edadfebf5b0c55decdf9a779797b39838accdea
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 363be14b0a68c91885b633f5df4767e882718ec8)
+---
+ Documentation/sbom/sbom.md    |  34 ++++++++
+ src/sbom/Kconfig              | 143 ++++++++++++++++++++++++++++++++++
+ src/sbom/Makefile.mk          | 136 +++++++++++++++++++++++++++++---
+ src/sbom/edk2-gop.json        |  25 ++++++
+ src/sbom/edk2-lan-rom.json    |  24 ++++++
+ src/sbom/intel-fsp.json       |   4 +
+ src/sbom/vga-bios-dgpu.json   |  24 ++++++
+ src/sbom/vga-bios-second.json |  24 ++++++
+ src/sbom/vga-bios.json        |  24 ++++++
+ 9 files changed, 427 insertions(+), 11 deletions(-)
+ create mode 100644 src/sbom/edk2-gop.json
+ create mode 100644 src/sbom/edk2-lan-rom.json
+ create mode 100644 src/sbom/vga-bios-dgpu.json
+ create mode 100644 src/sbom/vga-bios-second.json
+ create mode 100644 src/sbom/vga-bios.json
+
+diff --git a/Documentation/sbom/sbom.md b/Documentation/sbom/sbom.md
+index 654fe5565e..6271b99bd3 100644
+--- a/Documentation/sbom/sbom.md
++++ b/Documentation/sbom/sbom.md
+@@ -154,3 +154,37 @@ avoids duplication in case the BMC or EC is updated (without updating
+ coreboot). The distinction is not always easy and this problem is
+ currently not considered in the implementation, since none of the
+ software components currently create a SBOM file on their own.
++
++
++## Covered components
++
++Each component has a `CONFIG_SBOM_<name>` switch to include it, a
++`CONFIG_SBOM_<name>_GENERATE` suboption to auto-extract basic data, and a
++`CONFIG_SBOM_<name>_PATH` to point at a vendor-supplied SWID/CoSWID/uSWID file
++instead. Components with a git-backed source tree (coreboot, vboot, iPXE, the
++edk2 payload, edk2-platforms, openSIL) record the commit hash as the version;
++binary blobs (ME, IFD, FSP, AGESA, microcode, ACMs, EC) record an extracted
++version and/or a sha256 hash. Git-backed components that ship no standalone
++binary (e.g. edk2-platforms, which is linked into the edk2 payload) additionally
++record a sha256 over their source tree (`git archive HEAD`) as the component
++integrity hash.
++
++Proprietary graphics and network binary blobs are also covered:
++
++  - `SBOM_VGA_BIOS`, `SBOM_VGA_BIOS_SECOND`, `SBOM_VGA_BIOS_DGPU` - the primary,
++    secondary and discrete-GPU VGA BIOS OptionROMs (`VGA_BIOS_FILE` and
++    friends). In GENERATE mode the entry records the blob's sha256 hash and the
++    target PCI vendor:device ID (`VGA_BIOS_ID`).
++  - `SBOM_EDK2_GOP` - the external Intel GOP driver (`EDK2_GOP_FILE`) compiled
++    into the edk2 payload.
++  - `SBOM_EDK2_LAN_ROM` - the external LAN Option ROM network driver
++    (`EDK2_LAN_ROM_DRIVER`) compiled into the edk2 payload.
++
++These blobs carry no extractable semantic version, so GENERATE mode only records
++name + hash (+ PCI ID for VGA BIOS). As with any closed-source blob, supplying a
++full vendor SBOM through the matching `_PATH` option is strongly preferred.
++
++For Intel FSP (`SBOM_INTEL_FSP`) the GENERATE path additionally records the FSP
++release version, the BIOS build number (`colloquial-version`), and the target
++edition (Edge/IoT/Client, from the FD path) so the entry is not limited to a
++single opaque version token.
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index aa2b9118f1..a6f0cd4255 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -446,4 +446,147 @@ config SBOM_AMD_PSP_FW
+ 	    - Key store types (0x50, 0x51) and SEV driver (0x1a, if the
+ 	      $PS1 magic is present) are treated as regular PSP FW.
+ 
++config SBOM_VGA_BIOS
++	bool "Include primary VGA BIOS Option ROM metadata in SBOM"
++	depends on VGA_BIOS
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the primary VGA BIOS
++	  Option ROM (VGA_BIOS_FILE) into the SBOM (Software Bill of Materials)
++	  File in your build.
++
++config SBOM_VGA_BIOS_GENERATE
++	bool "Auto-generate primary VGA BIOS Option ROM info in SBOM"
++	depends on SBOM_VGA_BIOS
++	default y
++	help
++	  When enabled, coreboot records the sha256 hash of the VGA BIOS Option
++	  ROM binary and its target PCI vendor:device ID (VGA_BIOS_ID) in the
++	  SBOM.  VGA BIOS blobs carry no extractable semantic version, so a
++	  vendor-supplied SBOM (SBOM_VGA_BIOS_PATH) is strongly preferred.
++	  If disabled, set SBOM_VGA_BIOS_PATH to a custom file.
++
++config SBOM_VGA_BIOS_PATH
++	string "Path to SBOM file for the primary VGA BIOS Option ROM"
++	depends on SBOM_VGA_BIOS && !SBOM_VGA_BIOS_GENERATE
++	default "src/sbom/vga-bios.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_VGA_BIOS_SECOND
++	bool "Include second VGA BIOS Option ROM metadata in SBOM"
++	depends on VGA_BIOS_SECOND
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the second VGA BIOS
++	  Option ROM (VGA_BIOS_SECOND_FILE) into the SBOM (Software Bill of
++	  Materials) File in your build.
++
++config SBOM_VGA_BIOS_SECOND_GENERATE
++	bool "Auto-generate second VGA BIOS Option ROM info in SBOM"
++	depends on SBOM_VGA_BIOS_SECOND
++	default y
++	help
++	  When enabled, coreboot records the sha256 hash of the second VGA BIOS
++	  Option ROM binary and its target PCI vendor:device ID
++	  (VGA_BIOS_SECOND_ID) in the SBOM.
++	  If disabled, set SBOM_VGA_BIOS_SECOND_PATH to a custom file.
++
++config SBOM_VGA_BIOS_SECOND_PATH
++	string "Path to SBOM file for the second VGA BIOS Option ROM"
++	depends on SBOM_VGA_BIOS_SECOND && !SBOM_VGA_BIOS_SECOND_GENERATE
++	default "src/sbom/vga-bios-second.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_VGA_BIOS_DGPU
++	bool "Include discrete-GPU VGA BIOS Option ROM metadata in SBOM"
++	depends on VGA_BIOS_DGPU
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the discrete-GPU VGA
++	  BIOS Option ROM (VGA_BIOS_DGPU_FILE) into the SBOM (Software Bill of
++	  Materials) File in your build.
++
++config SBOM_VGA_BIOS_DGPU_GENERATE
++	bool "Auto-generate discrete-GPU VGA BIOS Option ROM info in SBOM"
++	depends on SBOM_VGA_BIOS_DGPU
++	default y
++	help
++	  When enabled, coreboot records the sha256 hash of the discrete-GPU VGA
++	  BIOS Option ROM binary and its target PCI vendor:device ID
++	  (VGA_BIOS_DGPU_ID) in the SBOM.
++	  If disabled, set SBOM_VGA_BIOS_DGPU_PATH to a custom file.
++
++config SBOM_VGA_BIOS_DGPU_PATH
++	string "Path to SBOM file for the discrete-GPU VGA BIOS Option ROM"
++	depends on SBOM_VGA_BIOS_DGPU && !SBOM_VGA_BIOS_DGPU_GENERATE
++	default "src/sbom/vga-bios-dgpu.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_EDK2_GOP
++	bool "Include Intel GOP driver metadata in SBOM"
++	depends on SBOM_PAYLOAD && EDK2_GOP_DRIVER
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the external Intel GOP
++	  (Graphics Output Protocol) driver (EDK2_GOP_FILE) compiled into the
++	  edk2 payload into the SBOM (Software Bill of Materials) File.
++
++config SBOM_EDK2_GOP_GENERATE
++	bool "Auto-generate Intel GOP driver info in SBOM"
++	depends on SBOM_EDK2_GOP
++	default y
++	help
++	  When enabled, coreboot records the sha256 hash of the GOP driver
++	  binary (EDK2_GOP_FILE) in the SBOM.  The proprietary GOP driver carries
++	  no extractable semantic version, so a vendor-supplied SBOM
++	  (SBOM_EDK2_GOP_PATH) is strongly preferred.
++	  If disabled, set SBOM_EDK2_GOP_PATH to a custom file.
++
++config SBOM_EDK2_GOP_PATH
++	string "Path to SBOM file for the Intel GOP driver"
++	depends on SBOM_EDK2_GOP && !SBOM_EDK2_GOP_GENERATE
++	default "src/sbom/edk2-gop.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
++config SBOM_EDK2_LAN_ROM
++	bool "Include LAN Option ROM driver metadata in SBOM"
++	depends on SBOM_PAYLOAD && PAYLOAD_EDK2 && EDK2_LAN_ROM_DRIVER != ""
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the external LAN Option
++	  ROM network driver (EDK2_LAN_ROM_DRIVER) compiled into the edk2 payload
++	  into the SBOM (Software Bill of Materials) File.
++
++config SBOM_EDK2_LAN_ROM_GENERATE
++	bool "Auto-generate LAN Option ROM driver info in SBOM"
++	depends on SBOM_EDK2_LAN_ROM
++	default y
++	help
++	  When enabled, coreboot records the sha256 hash of the LAN Option ROM
++	  driver binary (EDK2_LAN_ROM_DRIVER) in the SBOM.  The proprietary
++	  network driver carries no extractable semantic version, so a
++	  vendor-supplied SBOM (SBOM_EDK2_LAN_ROM_PATH) is strongly preferred.
++	  If disabled, set SBOM_EDK2_LAN_ROM_PATH to a custom file.
++
++config SBOM_EDK2_LAN_ROM_PATH
++	string "Path to SBOM file for the LAN Option ROM driver"
++	depends on SBOM_EDK2_LAN_ROM && !SBOM_EDK2_LAN_ROM_GENERATE
++	default "src/sbom/edk2-lan-rom.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
+ endif
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index feb02ba434..099e813210 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -37,6 +37,19 @@ CONFIG_INTEL_TXT_CBFS_SINIT_ACM  := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS
+ CONFIG_SBOM_COMPILER_PATH  := $(call strip_quotes, $(CONFIG_SBOM_COMPILER_PATH))
+ CONFIG_EDK2_REPOSITORY     := $(call strip_quotes, $(CONFIG_EDK2_REPOSITORY))
+ CONFIG_SBOM_EDK2_PLATFORMS_PATH := $(call strip_quotes, $(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
++CONFIG_VGA_BIOS_FILE            := $(call strip_quotes, $(CONFIG_VGA_BIOS_FILE))
++CONFIG_VGA_BIOS_ID              := $(call strip_quotes, $(CONFIG_VGA_BIOS_ID))
++CONFIG_VGA_BIOS_SECOND_FILE     := $(call strip_quotes, $(CONFIG_VGA_BIOS_SECOND_FILE))
++CONFIG_VGA_BIOS_SECOND_ID       := $(call strip_quotes, $(CONFIG_VGA_BIOS_SECOND_ID))
++CONFIG_VGA_BIOS_DGPU_FILE       := $(call strip_quotes, $(CONFIG_VGA_BIOS_DGPU_FILE))
++CONFIG_VGA_BIOS_DGPU_ID         := $(call strip_quotes, $(CONFIG_VGA_BIOS_DGPU_ID))
++CONFIG_EDK2_GOP_FILE            := $(call strip_quotes, $(CONFIG_EDK2_GOP_FILE))
++CONFIG_EDK2_LAN_ROM_DRIVER      := $(call strip_quotes, $(CONFIG_EDK2_LAN_ROM_DRIVER))
++CONFIG_SBOM_VGA_BIOS_PATH        := $(call strip_quotes, $(CONFIG_SBOM_VGA_BIOS_PATH))
++CONFIG_SBOM_VGA_BIOS_SECOND_PATH := $(call strip_quotes, $(CONFIG_SBOM_VGA_BIOS_SECOND_PATH))
++CONFIG_SBOM_VGA_BIOS_DGPU_PATH   := $(call strip_quotes, $(CONFIG_SBOM_VGA_BIOS_DGPU_PATH))
++CONFIG_SBOM_EDK2_GOP_PATH        := $(call strip_quotes, $(CONFIG_SBOM_EDK2_GOP_PATH))
++CONFIG_SBOM_EDK2_LAN_ROM_PATH    := $(call strip_quotes, $(CONFIG_SBOM_EDK2_LAN_ROM_PATH))
+ CONFIG_SBOM_IPXE_PATH      := $(call strip_quotes, $(CONFIG_SBOM_IPXE_PATH))
+ CONFIG_PAYLOAD_FILE        := $(call strip_quotes, $(CONFIG_PAYLOAD_FILE))
+ CONFIG_SBOM_MANUFACTURER   := $(call strip_quotes, $(CONFIG_SBOM_MANUFACTURER))
+@@ -122,6 +135,14 @@ swid-files-$(CONFIG_SBOM_SINIT_ACM) += \
+ 		$(CONFIG_SBOM_SINIT_ACM_PATH))
+ 
+ swid-files-$(CONFIG_SBOM_IPXE) += $(if $(CONFIG_SBOM_IPXE_GENERATE),$(build-dir)/payload-iPXE.json,$(CONFIG_SBOM_IPXE_PATH))
++# Proprietary graphics/network binary blobs (VGA BIOS OptionROMs, edk2 GOP and
++# LAN drivers).  In GENERATE mode a minimal template + blob hash is emitted;
++# vendors should prefer supplying a full SBOM via the matching _PATH option.
++swid-files-$(CONFIG_SBOM_VGA_BIOS) += $(if $(CONFIG_SBOM_VGA_BIOS_GENERATE),$(build-dir)/vga-bios.json,$(CONFIG_SBOM_VGA_BIOS_PATH))
++swid-files-$(CONFIG_SBOM_VGA_BIOS_SECOND) += $(if $(CONFIG_SBOM_VGA_BIOS_SECOND_GENERATE),$(build-dir)/vga-bios-second.json,$(CONFIG_SBOM_VGA_BIOS_SECOND_PATH))
++swid-files-$(CONFIG_SBOM_VGA_BIOS_DGPU) += $(if $(CONFIG_SBOM_VGA_BIOS_DGPU_GENERATE),$(build-dir)/vga-bios-dgpu.json,$(CONFIG_SBOM_VGA_BIOS_DGPU_PATH))
++swid-files-$(CONFIG_SBOM_EDK2_GOP) += $(if $(CONFIG_SBOM_EDK2_GOP_GENERATE),$(build-dir)/edk2-gop.json,$(CONFIG_SBOM_EDK2_GOP_PATH))
++swid-files-$(CONFIG_SBOM_EDK2_LAN_ROM) += $(if $(CONFIG_SBOM_EDK2_LAN_ROM_GENERATE),$(build-dir)/edk2-lan-rom.json,$(CONFIG_SBOM_EDK2_LAN_ROM_PATH))
+ 
+ # AMD PSP FW SBOM files are generated by amdfwtool into build/sbom/amdfw.
+ # We extend the swid-files-y with JSON files produced by amdfwtool once
+@@ -328,18 +349,28 @@ $(build-dir)/intel-sinit-acm.json: $(src-dir)/intel-sinit-acm.json | $(build-dir
+ $(build-dir)/intel-fsp.json: $(src-dir)/intel-fsp.json $(CONFIG_FSP_S_FILE) $(CONFIG_FSP_T_FILE) $(CONFIG_FSP_M_FILE) | $(build-dir)/goswid
+ 	cp $< $@
+ ifeq ($(CONFIG_FSP_USE_REPO),y)
++	# Extract three facts from the FD's git history + path:
++	#   - FSP release version (e.g. A.0.7E.70 or 2.11.E026.1930) -> software-version
++	#   - BIOS build number   (e.g. 6114_54, from a "(NNNN_NN)" or "vNNNN_NN" token) -> colloquial-version
++	#   - target + SoC package from the FD path (.../<SoC>FspBinPkg/<target>/...) -> edition / product-family
++	# The commit subject holds both version tokens, e.g.
++	#   "Edge Platforms PTL-H PV2 (4063_65) FSP ver 2.11.E026.1930".
+ 	set -e; \
+ 	fsp_git_root=$$(git -C "$$(dirname "$(CONFIG_FSP_FD_PATH)")" rev-parse --show-toplevel 2>/dev/null); \
+ 	fsp_fd_abs=$$(realpath "$(CONFIG_FSP_FD_PATH)" 2>/dev/null || printf '%s\n' "$(CONFIG_FSP_FD_PATH)"); \
+ 	fsp_rel=$${fsp_fd_abs#$$fsp_git_root/}; \
+-	fsp_version=$$(git -C "$$fsp_git_root" log --format=%s -- "$$fsp_rel" 2>/dev/null | grep -o -m1 -E '\([0-9]+_[0-9]+\)|[A-Z]\.[0-9]+\.[A-Fa-f0-9]+\.[0-9]+'); \
+-	if [ -n "$$fsp_version" ]; then \
+-		sed -i "s|<software_version>|$$fsp_version|" $@; \
+-	else \
+-		sed -i "/software-version/d" $@; \
+-	fi
++	fsp_subject=$$(git -C "$$fsp_git_root" log -n1 --format=%s -- "$$fsp_rel" 2>/dev/null); \
++	fsp_release=$$(printf '%s\n' "$$fsp_subject" | grep -o -m1 -E '[A-Z0-9]\.[0-9]+\.[A-Fa-f0-9]+\.[0-9]+' || true); \
++	fsp_bios=$$(printf '%s\n' "$$fsp_subject" | grep -o -m1 -E '\(?v?[0-9]+_[0-9]+\)?' | tr -d '()v' || true); \
++	fsp_target=$$(printf '%s\n' "$(CONFIG_FSP_FD_PATH)" | sed -n 's#.*FspBinPkg/\([^/]*\)/.*#\1#p'); \
++	fsp_package=$$(printf '%s\n' "$(CONFIG_FSP_FD_PATH)" | sed -n 's#.*/\([A-Za-z0-9]*\)FspBinPkg/.*#\1#p'); \
++	fsp_ver="$$fsp_release"; [ -n "$$fsp_ver" ] || fsp_ver="$$fsp_bios"; \
++	if [ -n "$$fsp_ver" ]; then sed -i "s|<software_version>|$$fsp_ver|" $@; else sed -i "/<software_version>/d" $@; fi; \
++	if [ -n "$$fsp_bios" ]; then sed -i "s|<colloquial_version>|$$fsp_bios|" $@; else sed -i "/<colloquial_version>/d" $@; fi; \
++	if [ -n "$$fsp_target" ]; then sed -i "s|<fsp_target>|$$fsp_target|" $@; else sed -i "/<fsp_target>/d" $@; fi; \
++	if [ -n "$$fsp_package" ]; then sed -i "s|<fsp_package>|$$fsp_package|" $@; else sed -i "/<fsp_package>/d" $@; fi
+ else
+-	sed -i "/software-version/d" $@
++	sed -i -e "/<software_version>/d" -e "/<colloquial_version>/d" -e "/<fsp_target>/d" -e "/<fsp_package>/d" $@
+ endif
+ ifneq ($(CONFIG_FSP_S_FILE),)
+ 	echo "    SBOM      Adding FSP-S"
+@@ -480,12 +511,16 @@ $(build-dir)/payload-iPXE.json: $(src-dir)/payload-iPXE.json $(ipxe-gitdir) | $(
+ # Record its commit hash (source-version) and tree hash (colloquial-version),
+ # mirroring the iPXE/payload git-backed component rules.  The checkout lives at
+ # a deterministic path created during the edk2 payload build.
+-ifeq ($(CONFIG_EDK2_USE_EDK2_PLATFORMS),y)
++#
++# edk2-platforms has no standalone binary artifact (it is linked into the edk2
++# payload FD), so for a component-integrity hash we record a sha256 over its
++# exact source tree via `git archive HEAD`.  The archive is deterministic for a
++# given commit (git sets entry mtimes to the commit time and prepends the commit
++# id), so this is a stable, reproducible digest of what was actually built.  It
++# lets the component carry a CRA payload.file[].hash like the binary blobs do.
++ifeq ($(CONFIG_SBOM_EDK2_PLATFORMS_GENERATE),y)
+ edk2-platforms-git-dir := payloads/external/edk2/workspace/edk2-platforms
+ edk2-platforms-gitdir := $(shell git -C $(edk2-platforms-git-dir) rev-parse --absolute-git-dir 2>/dev/null)
+-else 
+-edk2-platforms-git-dir :=
+-edk2-platforms-gitdir :=
+ endif
+ 
+ $(build-dir)/payload-edk2-platforms.json: $(src-dir)/payload-edk2-platforms.json $(edk2-platforms-gitdir) | $(build-dir) $(build-dir)/goswid $(edk2-platforms-swid-ready-dep)
+@@ -495,10 +530,89 @@ $(build-dir)/payload-edk2-platforms.json: $(src-dir)/payload-edk2-platforms.json
+ 		git_tree_hash=$$(git --git-dir $(edk2-platforms-git-dir)/.git log -n 1 --format=%T); \
+ 		git_comm_hash=$$(git --git-dir $(edk2-platforms-git-dir)/.git log -n 1 --format=%H); \
+ 		sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@; \
++		src_hash=$$(git --git-dir $(edk2-platforms-git-dir)/.git archive HEAD | sha256sum | cut -d' ' -f1); \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "edk2-platforms-source.tar" \
++			--hash "$$src_hash"; \
+ 	else \
+ 		sed -i -e "/<colloquial_version>/d" -e "/<software_version>/d" $@; \
+ 	fi
+ 
++# VGA BIOS OptionROMs and edk2 GOP/LAN drivers are proprietary binary blobs with
++# no extractable semantic version.  Record a sha256 hash of each blob (and, for
++# VGA BIOS, the target PCI vendor:device ID) so the component carries integrity
++# and identity info.  Vendors should prefer supplying a full SBOM via the
++# matching CONFIG_SBOM_*_PATH option.  The blob is a wildcard prerequisite so the
++# entry regenerates when the blob changes but a missing file never breaks make.
++$(build-dir)/vga-bios.json: $(src-dir)/vga-bios.json $(wildcard $(CONFIG_VGA_BIOS_FILE)) | $(build-dir) $(build-dir)/goswid
++	cp $< $@
++	if [ -n "$(CONFIG_VGA_BIOS_ID)" ]; then \
++		sed -i "s|<software_version>|$(CONFIG_VGA_BIOS_ID)|" $@; \
++	else \
++		sed -i "/<software_version>/d" $@; \
++	fi
++	if [ -s "$(CONFIG_VGA_BIOS_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "pci$(CONFIG_VGA_BIOS_ID).rom" \
++			--hash "$$(sha256sum "$(CONFIG_VGA_BIOS_FILE)" | cut -d' ' -f1)"; \
++	fi
++
++$(build-dir)/vga-bios-second.json: $(src-dir)/vga-bios-second.json $(wildcard $(CONFIG_VGA_BIOS_SECOND_FILE)) | $(build-dir) $(build-dir)/goswid
++	cp $< $@
++	if [ -n "$(CONFIG_VGA_BIOS_SECOND_ID)" ]; then \
++		sed -i "s|<software_version>|$(CONFIG_VGA_BIOS_SECOND_ID)|" $@; \
++	else \
++		sed -i "/<software_version>/d" $@; \
++	fi
++	if [ -s "$(CONFIG_VGA_BIOS_SECOND_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "pci$(CONFIG_VGA_BIOS_SECOND_ID).rom" \
++			--hash "$$(sha256sum "$(CONFIG_VGA_BIOS_SECOND_FILE)" | cut -d' ' -f1)"; \
++	fi
++
++$(build-dir)/vga-bios-dgpu.json: $(src-dir)/vga-bios-dgpu.json $(wildcard $(CONFIG_VGA_BIOS_DGPU_FILE)) | $(build-dir) $(build-dir)/goswid
++	cp $< $@
++	if [ -n "$(CONFIG_VGA_BIOS_DGPU_ID)" ]; then \
++		sed -i "s|<software_version>|$(CONFIG_VGA_BIOS_DGPU_ID)|" $@; \
++	else \
++		sed -i "/<software_version>/d" $@; \
++	fi
++	if [ -s "$(CONFIG_VGA_BIOS_DGPU_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "pci$(CONFIG_VGA_BIOS_DGPU_ID).rom" \
++			--hash "$$(sha256sum "$(CONFIG_VGA_BIOS_DGPU_FILE)" | cut -d' ' -f1)"; \
++	fi
++
++$(build-dir)/edk2-gop.json: $(src-dir)/edk2-gop.json $(wildcard $(CONFIG_EDK2_GOP_FILE)) | $(build-dir) $(build-dir)/goswid
++	cp $< $@
++	# The GOP driver blob carries no embedded version; use the enclosing git
++	# repo's HEAD commit hash as a proxy (tree hash as colloquial-version),
++	# mirroring the Intel Flash Descriptor rule.
++	set -e; \
++	gop_git_root=$$(git -C "$$(dirname "$(CONFIG_EDK2_GOP_FILE)")" rev-parse --show-toplevel 2>/dev/null); \
++	if [ -n "$$gop_git_root" ]; then \
++		gop_comm_hash=$$(git -C "$$gop_git_root" log -n 1 --format=%H); \
++		gop_tree_hash=$$(git -C "$$gop_git_root" log -n 1 --format=%T); \
++		sed -i -e "s/<software_version>/$$gop_comm_hash/" \
++		       -e "s/<colloquial_version>/$$gop_tree_hash/" $@; \
++	else \
++		sed -i -e "/<software_version>/d" -e "/<colloquial_version>/d" $@; \
++	fi
++	if [ -s "$(CONFIG_EDK2_GOP_FILE)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "$(notdir $(CONFIG_EDK2_GOP_FILE))" \
++			--hash "$$(sha256sum "$(CONFIG_EDK2_GOP_FILE)" | cut -d' ' -f1)"; \
++	fi
++
++$(build-dir)/edk2-lan-rom.json: $(src-dir)/edk2-lan-rom.json $(wildcard $(CONFIG_EDK2_LAN_ROM_DRIVER)) | $(build-dir) $(build-dir)/goswid
++	cp $< $@
++	sed -i "/<software_version>/d" $@
++	if [ -s "$(CONFIG_EDK2_LAN_ROM_DRIVER)" ]; then \
++		$(build-dir)/goswid add-payload-file -o $@ -i $@ \
++			--name "$(notdir $(CONFIG_EDK2_LAN_ROM_DRIVER))" \
++			--hash "$$(sha256sum "$(CONFIG_EDK2_LAN_ROM_DRIVER)" | cut -d' ' -f1)"; \
++	fi
++
+ # Build payload SBOM metadata only after the payload is ready in regular builds.
+ # For standalone `make sbom`, use an existing checkout only.
+ $(payload-swid): $(payload-swid-template) | $(build-dir) $(build-dir)/goswid $(payload-swid-ready-dep)
+diff --git a/src/sbom/edk2-gop.json b/src/sbom/edk2-gop.json
+new file mode 100644
+index 0000000000..ac14c445a0
+--- /dev/null
++++ b/src/sbom/edk2-gop.json
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "dbdf7a7b-9e65-56e1-afc2-733f8808e044",
++  "tag-version": 0,
++  "software-name": "Intel GOP driver",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "Intel Graphics Output Protocol driver",
++      "colloquial-version": "<colloquial_version>",
++      "summary": "Proprietary Intel GOP (Graphics Output Protocol) UEFI driver used by the edk2 payload for display initialization. Prefer a vendor-supplied SBOM via CONFIG_SBOM_EDK2_GOP_PATH."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/edk2-lan-rom.json b/src/sbom/edk2-lan-rom.json
+new file mode 100644
+index 0000000000..fb707f66c1
+--- /dev/null
++++ b/src/sbom/edk2-lan-rom.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "0c9962a8-a3c4-5037-a3b6-77fad31b0d68",
++  "tag-version": 0,
++  "software-name": "UEFI LAN Option ROM",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "UEFI LAN Option ROM driver",
++      "summary": "Proprietary network controller UEFI driver (LAN Option ROM) integrated into the edk2 payload for network boot support. Prefer a vendor-supplied SBOM via CONFIG_SBOM_EDK2_LAN_ROM_PATH."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/intel-fsp.json b/src/sbom/intel-fsp.json
+index 3ee17b5b09..1e10a2556f 100644
+--- a/src/sbom/intel-fsp.json
++++ b/src/sbom/intel-fsp.json
+@@ -5,9 +5,13 @@
+   "tag-version": 0,
+   "software-name": "Intel Firmware Support Package",
+   "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
+   "software-meta": [
+     {
+       "product": "Intel Firmware Support Package",
++      "product-family": "<fsp_package>",
++      "edition": "<fsp_target>",
++      "colloquial-version": "<colloquial_version>",
+       "persistent-id": "com.intel.fsp",
+       "summary": "Intel Firmware Support Package (FSP) is a binary blob providing memory initialization and silicon bring-up for Intel platforms"
+     }
+diff --git a/src/sbom/vga-bios-dgpu.json b/src/sbom/vga-bios-dgpu.json
+new file mode 100644
+index 0000000000..d967a18784
+--- /dev/null
++++ b/src/sbom/vga-bios-dgpu.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "0d97e9f1-fd3f-571e-9570-057738da3ea7",
++  "tag-version": 0,
++  "software-name": "VGA Option ROM (discrete GPU)",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "VGA BIOS Option ROM",
++      "summary": "Proprietary VGA BIOS OptionROM used for legacy graphics initialization of a discrete GPU. software-version records the target PCI vendor:device ID. Prefer a vendor-supplied SBOM via CONFIG_SBOM_VGA_BIOS_DGPU_PATH."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/vga-bios-second.json b/src/sbom/vga-bios-second.json
+new file mode 100644
+index 0000000000..8777fbbe61
+--- /dev/null
++++ b/src/sbom/vga-bios-second.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "1f9694f0-dbeb-50fa-912a-4cd73c6415f2",
++  "tag-version": 0,
++  "software-name": "VGA Option ROM (second display)",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "VGA BIOS Option ROM",
++      "summary": "Proprietary VGA BIOS OptionROM used for legacy graphics initialization of a second display device. software-version records the target PCI vendor:device ID. Prefer a vendor-supplied SBOM via CONFIG_SBOM_VGA_BIOS_SECOND_PATH."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/sbom/vga-bios.json b/src/sbom/vga-bios.json
+new file mode 100644
+index 0000000000..70e5bf18ac
+--- /dev/null
++++ b/src/sbom/vga-bios.json
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "1582ca7e-b2e9-5c94-a8fb-3cbaddf5d52d",
++  "tag-version": 0,
++  "software-name": "VGA Option ROM (primary display)",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "VGA BIOS Option ROM",
++      "summary": "Proprietary VGA BIOS OptionROM used for legacy graphics initialization of the primary display device. software-version records the target PCI vendor:device ID. Prefer a vendor-supplied SBOM via CONFIG_SBOM_VGA_BIOS_PATH."
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}

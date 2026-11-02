@@ -1,0 +1,28 @@
+From d1f7d189cf91b2f3eac7c993fe225a41275e630c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Thu, 23 Jul 2026 14:28:24 +0200
+Subject: [PATCH 137/158] src/sbom/Makefile.mk: guard variable assignment only
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 0db5aa515065d6a5e449d40714dabc55d624457f)
+(cherry picked from commit 9e4baeca5b150e9c57a2dc2357f4ddc8b1bba636)
+---
+ src/sbom/Makefile.mk | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index f0bf4411b3..0c82c6e6c0 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -639,7 +639,6 @@ $(build-dir)/payload-edk2-platforms.json: $(src-dir)/payload-edk2-platforms.json
+ 	else \
+ 		sed -i -e "/<colloquial_version>/d" -e "/<software_version>/d" $@; \
+ 	fi
+-endif
+ 
+ # VGA BIOS OptionROMs and edk2 GOP/LAN drivers are proprietary binary blobs with
+ # no extractable semantic version.  Record a sha256 hash of each blob (and, for

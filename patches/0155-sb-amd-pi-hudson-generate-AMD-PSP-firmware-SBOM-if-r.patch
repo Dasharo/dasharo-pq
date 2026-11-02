@@ -1,0 +1,57 @@
+From d31503c94399cfbb25e98372ff08405d981e6862 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 14:53:13 +0100
+Subject: [PATCH 155/158] sb/amd/pi/hudson: generate AMD PSP firmware SBOM if
+ requested
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Pass --sbom-dir (and --sbom-license) to amdfwtool when SBOM_AMD_PSP_FW
+is selected, like src/soc/amd/common does, so that the PSP blobs listed
+in the amdfwtool config file (e.g. fw_avl.cfg) get CoSWID tags which
+src/sbom adds to the SBOM. amdfwtool creates only the last directory
+level, so create the output directory first.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/southbridge/amd/pi/hudson/Makefile.mk | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/southbridge/amd/pi/hudson/Makefile.mk b/src/southbridge/amd/pi/hudson/Makefile.mk
+index efb9cadce9..7d602d7bc6 100644
+--- a/src/southbridge/amd/pi/hudson/Makefile.mk
++++ b/src/southbridge/amd/pi/hudson/Makefile.mk
+@@ -56,12 +56,23 @@ add_opt_prefix=$(if $(call strip_quotes, $(1)), $(2) $(call strip_quotes, $(1)),
+ OPT_HUDSON_XHCI_FWM_FILE=$(call add_opt_prefix, $(CONFIG_HUDSON_XHCI_FWM_FILE), --xhci)
+ OPT_HUDSON_IMC_FWM_FILE=$(call add_opt_prefix, $(CONFIG_HUDSON_IMC_FWM_FILE), --imc)
+ 
++ifeq ($(CONFIG_SBOM_AMD_PSP_FW),y)
++OPT_SBOM_DIR = --sbom-dir $(obj)/sbom/amdfw
++# The PSP blobs have no SPDX license, so record the redistribution terms they
++# are covered by.
++sbom-amd-blob-license := $(call strip_quotes, $(CONFIG_SBOM_AMD_BLOB_LICENSE))
++ifneq ($(sbom-amd-blob-license),)
++OPT_SBOM_DIR += --sbom-license "$(sbom-amd-blob-license)"
++endif
++endif
++
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE)) \
+ 			$(call strip_quotes, $(CONFIG_HUDSON_IMC_FWM_FILE)) \
+ 			$(call strip_quotes, $(CONFIG_AMD_PUBKEY_FILE)) \
+ 			$(DEP_FILES) \
+ 			$(AMDFWTOOL)
+ 	rm -f $@
++	$(if $(OPT_SBOM_DIR),mkdir -p $(obj)/sbom/amdfw)
+ 	@printf "    AMDFWTOOL  $(subst $(obj)/,,$(@))\n"
+ 	$(AMDFWTOOL) \
+ 		$(OPT_HUDSON_XHCI_FWM_FILE) \
+@@ -69,6 +80,7 @@ $(obj)/amdfw.rom:	$(call strip_quotes, $(CONFIG_HUDSON_XHCI_FWM_FILE)) \
+ 		--flashsize $(CONFIG_ROM_SIZE) \
+ 		--location $(HUDSON_FWM_POSITION) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
++		$(OPT_SBOM_DIR) \
+ 		--output	$@
+ 
+ cbfs-files-y += apu/amdfw

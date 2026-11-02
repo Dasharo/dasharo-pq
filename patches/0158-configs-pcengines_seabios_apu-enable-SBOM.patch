@@ -1,0 +1,106 @@
+From 48d3d977297da3de72fdc38446f0eb45f7f91f5b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 14:53:32 +0100
+Subject: [PATCH 158/158] configs/pcengines_seabios_apu*: enable SBOM
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Embed the SBOM describing all components of the image: coreboot, the
+compiler, SeaBIOS, iPXE, sortbootorder, Memtest86+, AMD AGESA, AMD PSP
+firmware, AMD FCH xHCI firmware and AMD microcode (when
+AGESA_UCODE_EXPERIMENTAL is used).
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ configs/config.pcengines_seabios_apu2 | 10 ++++++++++
+ configs/config.pcengines_seabios_apu3 | 10 ++++++++++
+ configs/config.pcengines_seabios_apu4 | 10 ++++++++++
+ configs/config.pcengines_seabios_apu6 | 10 ++++++++++
+ 4 files changed, 40 insertions(+)
+
+diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
+index 08ce4428e4..ee72aba4eb 100644
+--- a/configs/config.pcengines_seabios_apu2
++++ b/configs/config.pcengines_seabios_apu2
+@@ -19,6 +19,16 @@ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,157b"
++CONFIG_SBOM=y
++CONFIG_SBOM_AGESA=y
++CONFIG_SBOM_AMD_MICROCODE=y
++CONFIG_SBOM_AMD_PSP_FW=y
++CONFIG_SBOM_COMPILER=y
++CONFIG_SBOM_HUDSON_XHCI_FW=y
++CONFIG_SBOM_IPXE=y
++CONFIG_SBOM_MEMTEST=y
++CONFIG_SBOM_PAYLOAD=y
++CONFIG_SBOM_SORTBOOTORDER=y
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
+index 07fb75a8dd..4440fd3dd8 100644
+--- a/configs/config.pcengines_seabios_apu3
++++ b/configs/config.pcengines_seabios_apu3
+@@ -20,6 +20,16 @@ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SBOM=y
++CONFIG_SBOM_AGESA=y
++CONFIG_SBOM_AMD_MICROCODE=y
++CONFIG_SBOM_AMD_PSP_FW=y
++CONFIG_SBOM_COMPILER=y
++CONFIG_SBOM_HUDSON_XHCI_FW=y
++CONFIG_SBOM_IPXE=y
++CONFIG_SBOM_MEMTEST=y
++CONFIG_SBOM_PAYLOAD=y
++CONFIG_SBOM_SORTBOOTORDER=y
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
+index 309f1a4291..112bb73cf9 100644
+--- a/configs/config.pcengines_seabios_apu4
++++ b/configs/config.pcengines_seabios_apu4
+@@ -20,6 +20,16 @@ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SBOM=y
++CONFIG_SBOM_AGESA=y
++CONFIG_SBOM_AMD_MICROCODE=y
++CONFIG_SBOM_AMD_PSP_FW=y
++CONFIG_SBOM_COMPILER=y
++CONFIG_SBOM_HUDSON_XHCI_FW=y
++CONFIG_SBOM_IPXE=y
++CONFIG_SBOM_MEMTEST=y
++CONFIG_SBOM_PAYLOAD=y
++CONFIG_SBOM_SORTBOOTORDER=y
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0
+diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
+index ee7e3ea4f5..dd81a5bbe0 100644
+--- a/configs/config.pcengines_seabios_apu6
++++ b/configs/config.pcengines_seabios_apu6
+@@ -20,6 +20,16 @@ CONFIG_PAYLOAD_CONFIGFILE="$(top)/src/mainboard/$(MAINBOARDDIR)/seabios_config"
+ CONFIG_POST_IO_PORT=0x80
+ CONFIG_PXE=y
+ CONFIG_PXE_ROM_ID="8086,1539"
++CONFIG_SBOM=y
++CONFIG_SBOM_AGESA=y
++CONFIG_SBOM_AMD_MICROCODE=y
++CONFIG_SBOM_AMD_PSP_FW=y
++CONFIG_SBOM_COMPILER=y
++CONFIG_SBOM_HUDSON_XHCI_FW=y
++CONFIG_SBOM_IPXE=y
++CONFIG_SBOM_MEMTEST=y
++CONFIG_SBOM_PAYLOAD=y
++CONFIG_SBOM_SORTBOOTORDER=y
+ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(CONFIG_VARIANT_DIR)/bootorder"
+ CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
+ CONFIG_SEABIOS_DEBUG_LEVEL=0

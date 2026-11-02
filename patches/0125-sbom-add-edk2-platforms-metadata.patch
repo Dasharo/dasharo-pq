@@ -1,0 +1,188 @@
+From 8f3060b49401ca73f904eb0fadb8c6e65a5ea778 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Thu, 16 Jul 2026 10:31:23 +0200
+Subject: [PATCH 125/158] sbom: add edk2-platforms metadata
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+edk2-platforms is a separate git repository compiled into the edk2 UEFI
+payload, but it was previously absent from the embedded SBOM. Add a new
+SBOM_EDK2_PLATFORMS component following the existing per-component
+pattern (SBOM_<X> / _GENERATE / _PATH + CoSWID template + Makefile rule).
+
+GENERATE mode records the commit hash (software-version) and tree hash
+(colloquial-version) of the checkout at
+payloads/external/edk2/workspace/edk2-platforms, mirroring the iPXE and
+edk2 payload git-backed component rules. The _PATH option lets a vendor
+supply a full external SBOM JSON instead. The option defaults to n, so
+existing boards' SBOMs are unchanged.
+
+Upstream-Status: Pending
+Change-Id: I9f3f7bc8248da2d780764bca7d7eee2e8e4c7dea
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 2a1c73f900733000e5e5f988daa6de34b8dc09d5)
+---
+ src/sbom/Kconfig                     | 30 ++++++++++++++++++++
+ src/sbom/Makefile.mk                 | 42 ++++++++++++++++++++++++++++
+ src/sbom/payload-edk2-platforms.json | 31 ++++++++++++++++++++
+ 3 files changed, 103 insertions(+)
+ create mode 100644 src/sbom/payload-edk2-platforms.json
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 2ba67ff727..9619f192c3 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -58,6 +58,36 @@ config SBOM_PAYLOAD_PATH
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+ 
++config SBOM_EDK2_PLATFORMS
++	bool "Include edk2-platforms metadata in SBOM"
++	depends on SBOM_PAYLOAD && PAYLOAD_EDK2 && EDK2_USE_EDK2_PLATFORMS
++	default n
++	help
++	  Select this option if you want to include a
++	  coswid (Concise Software Identification Tag) of the edk2-platforms
++	  source tree into the SBOM (Software Bill of Materials) File in your
++	  build. edk2-platforms is a separate git repository compiled into the
++	  edk2 UEFI payload, so it needs its own SBOM entry in addition to the
++	  edk2 payload itself.
++
++config SBOM_EDK2_PLATFORMS_GENERATE
++	bool "Auto-generate edk2-platforms revision in SBOM"
++	depends on SBOM_EDK2_PLATFORMS
++	default y
++	help
++	  When enabled, coreboot reads the git commit hash of the edk2-platforms
++	  source tree (payloads/external/edk2/workspace/edk2-platforms) and records
++	  it as the SBOM version, with the tree hash stored as colloquial-version.
++	  If disabled, set SBOM_EDK2_PLATFORMS_PATH to a custom file.
++
++config SBOM_EDK2_PLATFORMS_PATH
++	string "Path to SBOM file for edk2-platforms"
++	depends on SBOM_EDK2_PLATFORMS && !SBOM_EDK2_PLATFORMS_GENERATE
++	default "src/sbom/payload-edk2-platforms.json"
++	help
++	  The path of the SBOM file describing the Software included in the build
++	  File can be a .json, .xml, .cbor, .uswid, or .pc
++
+ config SBOM_ME
+ 	bool "Include ME metadata in SBOM"
+ 	depends on HAVE_ME_BIN
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 0222ffe26c..26cf3438fa 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -36,6 +36,7 @@ CONFIG_INTEL_TXT_CBFS_BIOS_ACM   := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS
+ CONFIG_INTEL_TXT_CBFS_SINIT_ACM  := $(call strip_quotes, $(CONFIG_INTEL_TXT_CBFS_SINIT_ACM))
+ CONFIG_SBOM_COMPILER_PATH  := $(call strip_quotes, $(CONFIG_SBOM_COMPILER_PATH))
+ CONFIG_EDK2_REPOSITORY     := $(call strip_quotes, $(CONFIG_EDK2_REPOSITORY))
++CONFIG_SBOM_EDK2_PLATFORMS_PATH := $(call strip_quotes, $(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
+ CONFIG_SBOM_IPXE_PATH      := $(call strip_quotes, $(CONFIG_SBOM_IPXE_PATH))
+ CONFIG_PAYLOAD_FILE        := $(call strip_quotes, $(CONFIG_PAYLOAD_FILE))
+ 
+@@ -72,6 +73,22 @@ endif # ifneq ($(payload-git-dir-y),)
+ endif
+ endif # ifeq ($(CONFIG_SBOM_PAYLOAD_GENERATE), y)
+ 
++
++# Keep standalone "make sbom" rebuilds read-only with respect to payloads:
++# use already checked-out repositories for version extraction and avoid
++# re-triggering payload fetch/build targets (especially with `make -B sbom`).
++ifeq ($(filter sbom,$(MAKECMDGOALS)),sbom)
++payload-swid-ready-dep := $(wildcard $(payload-git-dir-y)/.git)
++ipxe-swid-ready-dep := $(wildcard payloads/external/iPXE/ipxe/.git)
++edk2-platforms-swid-ready-dep := $(wildcard payloads/external/edk2/workspace/edk2-platforms/.git)
++else
++payload-swid-ready-dep := $(CONFIG_PAYLOAD_FILE)
++ipxe-swid-ready-dep := payloads/external/iPXE/ipxe/ipxe.rom
++# edk2-platforms is checked out as part of the edk2 payload build, so gate its
++# SBOM extraction on the built payload file being ready.
++edk2-platforms-swid-ready-dep := $(CONFIG_PAYLOAD_FILE)
++endif
++
+ # Add all SBOM files into the swid-files-y target. This target contains all
+ # .json, .ini, .uswid, .xml, .pc SBOM files that are later merged into one uSWID SBOM file.
+ # Some of these have an option that this Makefile generates/extracts some information from
+@@ -79,6 +96,7 @@ endif # ifeq ($(CONFIG_SBOM_PAYLOAD_GENERATE), y)
+ # These files are either in src/sbom/ or build/sbom (if they are generated).
+ swid-files-$(CONFIG_SBOM_ME) += $(if $(CONFIG_SBOM_ME_GENERATE), $(build-dir)/intel-me.json, $(CONFIG_SBOM_ME_PATH))
+ swid-files-$(CONFIG_SBOM_PAYLOAD) += $(if $(CONFIG_SBOM_PAYLOAD_GENERATE),$(payload-swid),$(if $(CONFIG_PAYLOAD_EDK2),$(payload-swid),$(CONFIG_SBOM_PAYLOAD_PATH)))
++swid-files-$(CONFIG_SBOM_EDK2_PLATFORMS) += $(if $(CONFIG_SBOM_EDK2_PLATFORMS_GENERATE),$(build-dir)/payload-edk2-platforms.json,$(CONFIG_SBOM_EDK2_PLATFORMS_PATH))
+ # TODO think about just using one CoSWID tag for all intel-microcode instead of one for each. maybe put each microcode into files entity of CoSWID tag?
+ swid-files-$(CONFIG_SBOM_INTEL_MICROCODE) += $(patsubst 3rdparty/intel-microcode/intel-ucode/%, $(build-dir)/intel-microcode-%.json, $(filter 3rdparty/intel-microcode/intel-ucode/%, $(cpu_microcode_bins)))
+ swid-files-$(CONFIG_SBOM_AMD_MICROCODE) += $(foreach ucode,$(amd_microcode_bins),$(build-dir)/amd-microcode-$(basename $(notdir $(ucode))).json)
+@@ -417,11 +435,35 @@ $(build-dir)/payload-iPXE.json: $(src-dir)/payload-iPXE.json $(ipxe-gitdir)
+ 	git_comm_hash=$$(git --git-dir payloads/external/iPXE/ipxe/.git log -n 1 --format=%H); \
+ 	sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@
+ 
++<<<<<<< HEAD
+ # Order-only dep on the .git dir ensures the payload is cloned before we try
+ # to read it.  We do NOT depend on the payload binary ($(CONFIG_PAYLOAD_FILE))
+ # because: (a) the recipe never reads the binary, only .git; (b) with make -B
+ # an order-only dep on the binary would still force a full payload rebuild.
+ $(payload-swid): $(payload-swid-template) | $(build-dir) $(payload-git-dir-y)/.git
++=======
++# edk2-platforms is a separate git repository compiled into the edk2 payload.
++# Record its commit hash (source-version) and tree hash (colloquial-version),
++# mirroring the iPXE/payload git-backed component rules.  The checkout lives at
++# a deterministic path created during the edk2 payload build.
++edk2-platforms-git-dir := payloads/external/edk2/workspace/edk2-platforms
++edk2-platforms-gitdir := $(shell git -C $(edk2-platforms-git-dir) rev-parse --absolute-git-dir 2>/dev/null)
++
++$(build-dir)/payload-edk2-platforms.json: $(src-dir)/payload-edk2-platforms.json $(if $(edk2-platforms-gitdir),$(edk2-platforms-gitdir)/HEAD,) | $(build-dir) $(build-dir)/goswid $(edk2-platforms-swid-ready-dep)
++	cp $< $@
++	set -e; \
++	if [ -e "$(edk2-platforms-git-dir)/.git" ]; then \
++		git_tree_hash=$$(git --git-dir $(edk2-platforms-git-dir)/.git log -n 1 --format=%T); \
++		git_comm_hash=$$(git --git-dir $(edk2-platforms-git-dir)/.git log -n 1 --format=%H); \
++		sed -i -e "s/<colloquial_version>/$$git_tree_hash/" -e "s/<software_version>/$$git_comm_hash/" $@; \
++	else \
++		sed -i -e "/<colloquial_version>/d" -e "/<software_version>/d" $@; \
++	fi
++
++# Build payload SBOM metadata only after the payload is ready in regular builds.
++# For standalone `make sbom`, use an existing checkout only.
++$(payload-swid): $(payload-swid-template) | $(build-dir) $(payload-swid-ready-dep)
++>>>>>>> b75fa7e56a34 (sbom: add edk2-platforms metadata)
+ 	cp $< $@;\
+ 	git_tree_hash=$$(git --git-dir $(payload-git-dir-y)/.git log -n 1 --format=%T);\
+ 	git_comm_hash=$$(git --git-dir $(payload-git-dir-y)/.git log -n 1 --format=%H);\
+diff --git a/src/sbom/payload-edk2-platforms.json b/src/sbom/payload-edk2-platforms.json
+new file mode 100644
+index 0000000000..6a592bee68
+--- /dev/null
++++ b/src/sbom/payload-edk2-platforms.json
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "c062f4db-917e-533a-8b42-c704759ec6d8",
++  "tag-version": 0,
++  "software-name": "edk2-platforms",
++  "software-version": "<software_version>",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "colloquial-version": "<colloquial_version>",
++      "persistent-id": "org.tianocore.edk2-platforms",
++      "summary": "edk2-platforms provides sample platform and silicon support packages for EDK II. This build uses the Dasharo fork (github.com/Dasharo/edk2-platforms), a fork of tianocore/edk2-platforms, integrated into the edk2 UEFI payload build."
++    }
++  ],
++  "link": [
++    {
++      "rel": "license",
++      "href": "https://spdx.org/licenses/BSD-2-Clause-Patent.html"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "coreboot",
++      "reg-id": "coreboot.org",
++      "role": [
++        "tagCreator"
++      ]
++    }
++  ]
++}

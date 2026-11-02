@@ -1,0 +1,35 @@
+From f5849febcf3b8aebb7f85ca0d3e0ade4df3f87a6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 14:53:13 +0100
+Subject: [PATCH 154/158] src/sbom/payload-SeaBIOS.json: add the license link
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+SeaBIOS is distributed under LGPL-3.0-only (COPYING.LESSER), but its
+CoSWID tag carried no license information unlike the other open source
+payloads.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/sbom/payload-SeaBIOS.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/sbom/payload-SeaBIOS.json b/src/sbom/payload-SeaBIOS.json
+index e46ef459f4..f02dc4c306 100644
+--- a/src/sbom/payload-SeaBIOS.json
++++ b/src/sbom/payload-SeaBIOS.json
+@@ -13,6 +13,12 @@
+       "summary": "SeaBIOS is an open-source legacy BIOS implementation which can be used as a coreboot payload. It implements the standard BIOS calling interfaces that a typical x86 proprietary BIOS implements"
+     }
+   ],
++  "link": [
++    {
++      "rel": "license",
++      "href": "https://spdx.org/licenses/LGPL-3.0-only.html"
++    }
++  ],
+   "entity": [
+     {
+       "entity-name": "coreboot",

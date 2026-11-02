@@ -1,0 +1,114 @@
+From 6316a617cc2814752ed5aa5ae8354086b1c29aa0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Mon, 16 Mar 2026 12:43:16 +0100
+Subject: [PATCH 111/158] src/sbom: review amendments
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+1. Kconfig SBOM_INTEL_FSP_PATH default: Changed
+"build/sbom/intel-fsp.json" → "src/sbom/intel-fsp.json" (static path for
+user-supplied files belongs in src/, not build/).
+2. cp $< $@: Replaced cp $(src-dir)/intel-fsp.json $@ with cp $< $@
+(line 263), consistent with other rules.
+3. strip_quotes for CONFIG_FSP_FD_PATH: Added it to the top strip
+section (line 20) and replaced the inline patsubst "%",%,... shell
+assignment with direct use of $(CONFIG_FSP_FD_PATH).
+4. Redundant | head -1: Removed from the AGESA version extraction
+pipeline (line 299) — grep -m1 already limits to one match.
+5. vboot-gitdir simplification: Replaced the 7-line manual .git file
+--detection with git -C 3rdparty/vboot rev-parse absolute-git-dir
+--2>/dev/null (one line, handles both regular checkouts and submodules).
+6. sbom in help target: Added make sbom entry to the Makefile help
+output.
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit ebab8bf660a733b0356e0b3f382020e893a7ebea)
+---
+ Makefile             |  1 +
+ src/sbom/Kconfig     |  2 +-
+ src/sbom/Makefile.mk | 22 ++++++----------------
+ 3 files changed, 8 insertions(+), 17 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6a36b5968f..985122fdb4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -90,6 +90,7 @@ help_coreboot help::
+ 	@echo  '*** coreboot platform targets ***'
+ 	@echo  '  Use "make [target] V=1" for extra build debug information'
+ 	@echo  '  all                     - Build coreboot'
++	@echo  '  sbom                    - Rebuild SBOM (sbom.uswid) from existing build artifacts'
+ 	@echo  '  clean                   - Remove coreboot build artifacts'
+ 	@echo  '  distclean               - Remove build artifacts and config files'
+ 	@echo  '  sphinx                  - Build sphinx documentation for coreboot'
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 41a0a2f8a2..ea21bdd16a 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -237,7 +237,7 @@ config SBOM_INTEL_FSP_GENERATE
+ config SBOM_INTEL_FSP_PATH
+ 	string "Path to SBOM file for the Intel FSP firmware"
+ 	depends on SBOM_INTEL_FSP && !SBOM_INTEL_FSP_GENERATE
+-	default "build/sbom/intel-fsp.json"
++	default "src/sbom/intel-fsp.json"
+ 	help
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index a0143c7686..88aa3e3ad7 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -17,6 +17,7 @@ CONFIG_SBOM_ME_PATH        := $(call strip_quotes, $(CONFIG_SBOM_ME_PATH))
+ CONFIG_FSP_S_FILE               := $(call strip_quotes, $(CONFIG_FSP_S_FILE))
+ CONFIG_FSP_M_FILE               := $(call strip_quotes, $(CONFIG_FSP_M_FILE))
+ CONFIG_FSP_T_FILE               := $(call strip_quotes, $(CONFIG_FSP_T_FILE))
++CONFIG_FSP_FD_PATH              := $(call strip_quotes, $(CONFIG_FSP_FD_PATH))
+ CONFIG_SBOM_INTEL_FSP_PATH      := $(call strip_quotes, $(CONFIG_SBOM_INTEL_FSP_PATH))
+ CONFIG_AGESA_BINARY_PI_FILE     := $(call strip_quotes, $(CONFIG_AGESA_BINARY_PI_FILE))
+ CONFIG_SBOM_AGESA_PATH          := $(call strip_quotes, $(CONFIG_SBOM_AGESA_PATH))
+@@ -260,12 +261,11 @@ $(build-dir)/intel-sinit-acm.json: $(src-dir)/intel-sinit-acm.json | $(build-dir
+ 	rm -f $$acm_tmp
+ 
+ $(build-dir)/intel-fsp.json: $(src-dir)/intel-fsp.json $(CONFIG_FSP_S_FILE) $(CONFIG_FSP_T_FILE) $(CONFIG_FSP_M_FILE) | $(build-dir)/goswid
+-	cp $(src-dir)/intel-fsp.json $@
++	cp $< $@
+ ifeq ($(CONFIG_FSP_USE_REPO),y)
+ 	set -e; \
+-	fsp_fd='$(patsubst "%",%,$(CONFIG_FSP_FD_PATH))'; \
+-	fsp_git_root=$$(git -C "$$(dirname "$$fsp_fd")" rev-parse --show-toplevel 2>/dev/null); \
+-	fsp_fd_abs=$$(realpath "$$fsp_fd" 2>/dev/null || printf '%s\n' "$$fsp_fd"); \
++	fsp_git_root=$$(git -C "$$(dirname "$(CONFIG_FSP_FD_PATH)")" rev-parse --show-toplevel 2>/dev/null); \
++	fsp_fd_abs=$$(realpath "$(CONFIG_FSP_FD_PATH)" 2>/dev/null || printf '%s\n' "$(CONFIG_FSP_FD_PATH)"); \
+ 	fsp_rel=$${fsp_fd_abs#$$fsp_git_root/}; \
+ 	fsp_version=$$(git -C "$$fsp_git_root" log --format=%s -- "$$fsp_rel" 2>/dev/null | grep -o -m1 -E '\([0-9]+_[0-9]+\)|[A-Z]\.[0-9]+\.[A-Fa-f0-9]+\.[0-9]+'); \
+ 	if [ -n "$$fsp_version" ]; then \
+@@ -297,8 +297,7 @@ $(build-dir)/amd-agesa.json: $(src-dir)/amd-agesa.json $(CONFIG_AGESA_BINARY_PI_
+ 	cp $< $@
+ 	set -e; \
+ 	agesa_ver=$$(strings -a "$(CONFIG_AGESA_BINARY_PI_FILE)" \
+-		| grep -m1 -Eo 'AGESA![A-Za-z0-9_]+|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' \
+-		| head -1); \
++		| grep -m1 -Eo 'AGESA![A-Za-z0-9_]+|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'); \
+ 	if [ -n "$$agesa_ver" ]; then \
+ 		sed -i "s/<software_version>/$$agesa_ver/" $@; \
+ 	else \
+@@ -361,16 +360,7 @@ endef
+ # Makefile.mks have been processed and amd_microcode_bins is fully populated.
+ postinclude-hooks += $$(foreach ucode,$$(amd_microcode_bins),$$(eval $$(call amd-ucode-sbom-rule,$$(ucode))))
+ 
+-# Resolve the real .git dir for the vboot submodule.
+-# When vboot is a submodule, 3rdparty/vboot/.git is a file (gitdir pointer), not a directory.
+-# NOTE: avoid case/pattern syntax inside $(shell) — make parses ')' as closing the $(shell) call.
+-vboot-gitdir := $(shell \
+-  if [ -d 3rdparty/vboot/.git ]; then \
+-    echo 3rdparty/vboot/.git; \
+-  elif [ -f 3rdparty/vboot/.git ]; then \
+-    realpath --relative-to=. \
+-      "3rdparty/vboot/$$(sed 's/^gitdir: //' 3rdparty/vboot/.git)"; \
+-  fi)
++vboot-gitdir := $(shell git -C 3rdparty/vboot rev-parse --absolute-git-dir 2>/dev/null)
+ 
+ $(build-dir)/vboot.json: $(src-dir)/vboot.json $(if $(vboot-gitdir),$(vboot-gitdir)/HEAD,) | $(build-dir)
+ 	cp $< $@

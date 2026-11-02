@@ -1,0 +1,130 @@
+From ea9b35223f3a12a1bc0ae954fd6ff45a9bd798c8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>
+Date: Fri, 7 Aug 2026 10:08:29 +0000
+Subject: [PATCH 142/158] src/sbom: add license and hash info for AMD blobs and
+ GCC
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add SBOM_AMD_BLOB_LICENSE and pass it to amdfwtool via --sbom-license for
+the PSP firmware tags. Apply the same license link, plus a SHA-256 payload
+hash, to the AMD microcode tags, which carried neither.
+
+Also record GCC's actual licenses (GPL-3.0-or-later and the GCC runtime
+library exception), which were missing entirely.
+
+Together with the amdfwtool change this takes an AMD build from 3 of 87
+components carrying an integrity hash to 84, and from 3 to 86 carrying
+license information, addressing the CRA Art. 13(5) license and Annex I
+integrity findings.
+
+openSIL is deliberately left alone: it ships several licenses
+(BSD-2-Clause-Patent, ISC and others under its LICENSES directory), so
+asserting a single one would be wrong.
+
+Change-Id: I289ed75a41a70b60042dcf250cd74692db0c4ca8
+Signed-off-by: Michał Kopeć <michal.kopec@3mdeb.com>
+(cherry picked from commit 641b4e4f5e86dfde6eab1a950e4f68b938604691)
+---
+ src/sbom/Kconfig               | 12 ++++++++++++
+ src/sbom/Makefile.mk           |  9 ++++++++-
+ src/sbom/compiler-gcc.json     | 10 ++++++++++
+ src/soc/amd/common/Makefile.mk |  7 +++++++
+ 4 files changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index 8cc1c414f9..fca9673375 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -20,6 +20,18 @@ config SBOM_MANUFACTURER
+ 	  CycloneDX as metadata.manufacture - satisfying CRA Art. 13(15)
+ 	  manufacturer identification. Defaults to BIOS_VENDOR.
+ 
++config SBOM_AMD_BLOB_LICENSE
++	string "License link for AMD firmware blobs (CRA license information)"
++	default "https://www.dasharo.com/pages/terms/"
++	help
++	  Link recorded as the license of the redistributable AMD firmware blobs
++	  (PSP firmware and CPU microcode) in the SBOM, satisfying CRA Art. 13(5)
++	  license information. These blobs carry no SPDX license identifier, so
++	  this points at the redistribution terms they are covered by rather than
++	  at an spdx.org URL like the open source components use.
++
++	  Set to an empty string to omit the license link.
++
+ config SBOM_COMPILER
+ 	bool "Include compiler metadata in SBOM"
+ 	default n
+diff --git a/src/sbom/Makefile.mk b/src/sbom/Makefile.mk
+index 0894675739..d82ce083c9 100644
+--- a/src/sbom/Makefile.mk
++++ b/src/sbom/Makefile.mk
+@@ -51,6 +51,9 @@ CONFIG_SBOM_VGA_BIOS_DGPU_PATH   := $(call strip_quotes, $(CONFIG_SBOM_VGA_BIOS_
+ CONFIG_SBOM_EDK2_GOP_PATH        := $(call strip_quotes, $(CONFIG_SBOM_EDK2_GOP_PATH))
+ CONFIG_SBOM_EDK2_LAN_ROM_PATH    := $(call strip_quotes, $(CONFIG_SBOM_EDK2_LAN_ROM_PATH))
+ CONFIG_SBOM_IPXE_PATH      := $(call strip_quotes, $(CONFIG_SBOM_IPXE_PATH))
++CONFIG_SBOM_AMD_BLOB_LICENSE    := $(call strip_quotes, $(CONFIG_SBOM_AMD_BLOB_LICENSE))
++CONFIG_LINUXBOOT_KERNEL_VERSION := $(call strip_quotes, $(CONFIG_LINUXBOOT_KERNEL_VERSION))
++CONFIG_LINUXBOOT_UROOT_VERSION  := $(call strip_quotes, $(CONFIG_LINUXBOOT_UROOT_VERSION))
+ CONFIG_PAYLOAD_FILE        := $(call strip_quotes, $(CONFIG_PAYLOAD_FILE))
+ CONFIG_SBOM_MANUFACTURER   := $(call strip_quotes, $(CONFIG_SBOM_MANUFACTURER))
+ 
+@@ -557,13 +560,17 @@ $(build-dir)/intel-microcode-%.json: $(src-dir)/intel-microcode.json 3rdparty/in
+ #   offset 0x03, 1 byte:     month (BCD)
+ #   offset 0x04, 4 bytes:    patch ID (HEX)
+ define amd-ucode-sbom-rule
+-$(build-dir)/amd-microcode-$(basename $(notdir $(1))).json: $(src-dir)/amd-microcode.json $(1)
++$(build-dir)/amd-microcode-$(basename $(notdir $(1))).json: $(src-dir)/amd-microcode.json $(1) | $(build-dir) $(build-dir)/goswid
+ 	cp $$< $$@
+ 	year=$$$$(hexdump --skip 0 --length 2 --format '"%04x"' $(1)); \
+ 	day=$$$$(hexdump --skip 2 --length 1 --format '"%02x"' $(1)); \
+ 	month=$$$$(hexdump --skip 3 --length 1 --format '"%02x"' $(1)); \
+ 	patch=$$$$(hexdump --skip 4 --length 4 --format '"0x%08x"' $(1)); \
+ 	sed -i "s/<software_version>/$$$$patch $$$$year-$$$$month-$$$$day/" $$@
++	$(build-dir)/goswid add-payload-file -o $$@ -i $$@ \
++		--name "$(notdir $(1))" \
++		--hash "$$$$(sha256sum "$(1)" | cut -d' ' -f1)"
++	$(if $(CONFIG_SBOM_AMD_BLOB_LICENSE),$(build-dir)/goswid add-license -o $$@ -i $$@ "$(CONFIG_SBOM_AMD_BLOB_LICENSE)",:)
+ endef
+ # amd_microcode_bins is populated in src/soc/amd/common/block/cpu/Makefile.mk,
+ # which is included several rounds after src/sbom (breadth-first traversal).
+diff --git a/src/sbom/compiler-gcc.json b/src/sbom/compiler-gcc.json
+index c9defa4793..27038560e3 100644
+--- a/src/sbom/compiler-gcc.json
++++ b/src/sbom/compiler-gcc.json
+@@ -11,6 +11,16 @@
+       "persistent-id": "org.gnu.gcc"
+     }
+   ],
++  "link": [
++    {
++      "rel": "license",
++      "href": "https://spdx.org/licenses/GPL-3.0-or-later.html"
++    },
++    {
++      "rel": "license",
++      "href": "https://spdx.org/licenses/GCC-exception-3.1.html"
++    }
++  ],
+   "entity": [
+     {
+       "entity-name": "coreboot",
+diff --git a/src/soc/amd/common/Makefile.mk b/src/soc/amd/common/Makefile.mk
+index ff027352d9..a9ca5ec08c 100644
+--- a/src/soc/amd/common/Makefile.mk
++++ b/src/soc/amd/common/Makefile.mk
+@@ -13,6 +13,13 @@ endif
+ 
+ ifeq ($(CONFIG_SBOM_AMD_PSP_FW),y)
+ OPT_SBOM_DIR = --sbom-dir $(obj)/sbom/amdfw
++# The PSP blobs have no SPDX license, so record the redistribution terms they
++# are covered by. Quoted because the href usually carries a '#' fragment, and
++# strip_quotes is idempotent whether or not src/sbom normalised it already.
++sbom-amd-blob-license := $(call strip_quotes, $(CONFIG_SBOM_AMD_BLOB_LICENSE))
++ifneq ($(sbom-amd-blob-license),)
++OPT_SBOM_DIR += --sbom-license "$(sbom-amd-blob-license)"
++endif
+ endif
+ 
+ ifneq ($(call strip_quotes, $(CONFIG_AMDFW_CONFIG_FILE)),)

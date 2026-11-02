@@ -1,0 +1,169 @@
+From 745747bd952e0141d6c00d22634bd6771fe916e3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 17 Apr 2026 15:33:52 +0200
+Subject: [PATCH 117/158] soc/amd: Generate AMD PSP FW SBOM if requested
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+(cherry picked from commit de54d62762abc7eed0241b52f66bfb3afcc8cf88)
+---
+ src/sbom/Kconfig                  | 24 ++++++++++++++++++++++++
+ src/soc/amd/cezanne/Makefile.mk   |  3 ++-
+ src/soc/amd/common/Makefile.mk    |  4 ++++
+ src/soc/amd/genoa_poc/Makefile.mk |  3 ++-
+ src/soc/amd/glinda/Makefile.mk    |  3 ++-
+ src/soc/amd/mendocino/Makefile.mk |  3 ++-
+ src/soc/amd/phoenix/Makefile.mk   |  3 ++-
+ src/soc/amd/picasso/Makefile.mk   |  3 ++-
+ src/soc/amd/turin_poc/Makefile.mk |  3 ++-
+ 9 files changed, 42 insertions(+), 7 deletions(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index fb2c6a9f1f..2ba67ff727 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -380,4 +380,28 @@ config SBOM_IPXE_PATH
+ 	  The path of the SBOM file describing the Software included in the build
+ 	  File can be a .json, .xml, .cbor, .uswid, or .pc
+ 
++config SBOM_AMD_PSP_FW
++	bool "Include AMD PSP firmware metadata in SBOM"
++	default n
++	depends on USE_AMDFWTOOL
++	help
++	  When enabled, amdfwtool generates a CoSWID (Concise Software
++	  Identification) SBOM JSON file for each AMD Platform Security
++	  Processor (PSP) firmware blob included in the build.
++
++	  Output files are written to build/sbom/ as
++	  amd-pspfw-<firmware-filename>.json.  A Makefile fragment
++	  (build/sbom/amd-pspfw-sbom.mk) is also generated so that the
++	  SBOM assembly step can incorporate the per-blob tags into the
++	  final sbom.uswid.
++
++	  Type classifications follow PSPTool conventions
++	  (https://github.com/PSPReverse/PSPTool):
++	    - Public key types use a dedicated tag template.
++	    - No-header types are skipped (soft fuse is never included).
++	    - Wrapped KEK types (0x21, 0x82, 0x84, 0x8d) use a template
++	      that stores the raw blob content as the version field.
++	    - Key store types (0x50, 0x51) and SEV driver (0x1a, if the
++	      $PS1 magic is present) are treated as regular PSP FW.
++
+ endif
+diff --git a/src/soc/amd/cezanne/Makefile.mk b/src/soc/amd/cezanne/Makefile.mk
+index c13524b75c..bd26934a41 100644
+--- a/src/soc/amd/cezanne/Makefile.mk
++++ b/src/soc/amd/cezanne/Makefile.mk
+@@ -239,7 +239,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_PSP_AB_NVRAM_BASE) \
+ 		$(OPT_PSP_AB_NVRAM_SIZE) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+-		--flashsize $(CONFIG_ROM_SIZE)
++		--flashsize $(CONFIG_ROM_SIZE) \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$(PSP_VERSTAGE_FILE) \
+diff --git a/src/soc/amd/common/Makefile.mk b/src/soc/amd/common/Makefile.mk
+index a078c28d14..ff027352d9 100644
+--- a/src/soc/amd/common/Makefile.mk
++++ b/src/soc/amd/common/Makefile.mk
+@@ -11,6 +11,10 @@ ifneq ($(V),)
+ OPT_DEBUG_AMDFWTOOL = --debug
+ endif
+ 
++ifeq ($(CONFIG_SBOM_AMD_PSP_FW),y)
++OPT_SBOM_DIR = --sbom-dir $(obj)/sbom/amdfw
++endif
++
+ ifneq ($(call strip_quotes, $(CONFIG_AMDFW_CONFIG_FILE)),)
+ FIRMWARE_LOCATION=$(shell grep -e FIRMWARE_LOCATION $(CONFIG_AMDFW_CONFIG_FILE) | awk '{print $$2}')
+ 
+diff --git a/src/soc/amd/genoa_poc/Makefile.mk b/src/soc/amd/genoa_poc/Makefile.mk
+index 2292f0e6e9..f6591993a0 100644
+--- a/src/soc/amd/genoa_poc/Makefile.mk
++++ b/src/soc/amd/genoa_poc/Makefile.mk
+@@ -126,7 +126,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_EFS_SPI_MICRON_FLAG) \
+ 		$(OPT_BIOS_FWCOMPRESS) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+-		--flashsize 0x1000000
++		--flashsize 0x1000000 \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$$(PSP_APCB_FILES) \
+diff --git a/src/soc/amd/glinda/Makefile.mk b/src/soc/amd/glinda/Makefile.mk
+index 1184f3d48a..f1add95888 100644
+--- a/src/soc/amd/glinda/Makefile.mk
++++ b/src/soc/amd/glinda/Makefile.mk
+@@ -203,7 +203,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		--flashsize $(CONFIG_ROM_SIZE) \
+ 		$(OPT_BIOS_NV_ST_BASE) \
+ 		$(OPT_BIOS_NV_ST_SIZE) \
+-		$(OPT_BIOS_FWCOMPRESS)
++		$(OPT_BIOS_FWCOMPRESS) \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$$(PSP_APCB_FILES) \
+diff --git a/src/soc/amd/mendocino/Makefile.mk b/src/soc/amd/mendocino/Makefile.mk
+index 5bf7c091ff..5449994276 100644
+--- a/src/soc/amd/mendocino/Makefile.mk
++++ b/src/soc/amd/mendocino/Makefile.mk
+@@ -246,7 +246,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_BIOS_FWCOMPRESS) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+ 		--flashsize $(CONFIG_ROM_SIZE) \
+-		$(OPT_RECOVERY_AB_SINGLE_COPY)
++		$(OPT_RECOVERY_AB_SINGLE_COPY) \
++		$(OPT_SBOM_DIR)
+ 
+ # If vBOOT is not enabled, we want the MP2 firmware in the common AMDFW
+ ifeq ($(CONFIG_VBOOT),)
+diff --git a/src/soc/amd/phoenix/Makefile.mk b/src/soc/amd/phoenix/Makefile.mk
+index af065b8ed2..c6d159bfe9 100644
+--- a/src/soc/amd/phoenix/Makefile.mk
++++ b/src/soc/amd/phoenix/Makefile.mk
+@@ -194,7 +194,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_BIOS_FWCOMPRESS) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+ 		--flashsize $(CONFIG_ROM_SIZE) \
+-		$(OPT_RECOVERY_AB_SINGLE_COPY)
++		$(OPT_RECOVERY_AB_SINGLE_COPY) \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$$(PSP_APCB_FILES) \
+diff --git a/src/soc/amd/picasso/Makefile.mk b/src/soc/amd/picasso/Makefile.mk
+index 91be863e77..d89d7d2fc5 100644
+--- a/src/soc/amd/picasso/Makefile.mk
++++ b/src/soc/amd/picasso/Makefile.mk
+@@ -205,7 +205,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_EFS_SPI_SPEED) \
+ 		$(OPT_EFS_SPI_MICRON_FLAG) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+-		--flashsize $(CONFIG_ROM_SIZE)
++		--flashsize $(CONFIG_ROM_SIZE) \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$(PSP_VERSTAGE_FILE) \
+diff --git a/src/soc/amd/turin_poc/Makefile.mk b/src/soc/amd/turin_poc/Makefile.mk
+index 9b4f66508a..9165e074b2 100644
+--- a/src/soc/amd/turin_poc/Makefile.mk
++++ b/src/soc/amd/turin_poc/Makefile.mk
+@@ -171,7 +171,8 @@ AMDFW_COMMON_ARGS=$(OPT_PSP_APCB_FILES) \
+ 		$(OPT_EFS_ESPI_CONFIG) \
+ 		$(OPT_VGA_IMAGE) \
+ 		--config $(CONFIG_AMDFW_CONFIG_FILE) \
+-		--flashsize $(call strip_quotes, $(CONFIG_ROM_SIZE))
++		--flashsize $(call strip_quotes, $(CONFIG_ROM_SIZE)) \
++		$(OPT_SBOM_DIR)
+ 
+ $(obj)/amdfw.rom:	$(call strip_quotes, $(PSP_BIOSBIN_FILE)) \
+ 			$$(PSP_APCB_FILES) \

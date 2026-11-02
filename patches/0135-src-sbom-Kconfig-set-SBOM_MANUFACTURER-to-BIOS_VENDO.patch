@@ -1,0 +1,44 @@
+From 48160be4505d5cd8da547042fa6fe9c0600e3947 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Filip=20Lewi=C5=84ski?= <filip.lewinski@3mdeb.com>
+Date: Thu, 23 Jul 2026 12:33:32 +0200
+Subject: [PATCH 135/158] src/sbom/Kconfig: set SBOM_MANUFACTURER to
+ BIOS_VENDOR
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Set it to the author of the firmware covered by the SBOM, not the
+hardware distributor.
+
+Upstream-Status: Pending
+Signed-off-by: Filip Lewiński <filip.lewinski@3mdeb.com>
+(cherry picked from commit 2b5950d4e242293f03c11a17ac5148598d9ac1a1)
+Signed-off-by: Filip Gołaś <filip.golas@3mdeb.com>
+(cherry picked from commit a5e84652d1214a3145e5e61e56e0c24142487f7e)
+---
+ src/sbom/Kconfig | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index a6f0cd4255..cf9997df8e 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -14,13 +14,11 @@ config SBOM_MANUFACTURER
+ 	string "Product manufacturer for SBOM (CRA manufacturer identification)"
+ 	default BIOS_VENDOR
+ 	help
+-	  Organization identified as the product manufacturer in the SBOM.
+-	  When set, it is added to the coreboot (parent) CoSWID tag as an
+-	  entity with the softwareCreator and maintainer roles, and surfaces
+-	  in the decoded CycloneDX as metadata.manufacture - satisfying CRA
+-	  Art. 13(15) manufacturer identification. Set this to the entity
+-	  placing the product on the market (e.g. the board vendor or
+-	  integrator). Defaults to BIOS_VENDOR.
++	  Organization identified as the product manufacturer in the SBOM. When
++	  set, it is added to the coreboot (parent) CoSWID tag as an entity with
++	  the softwareCreator and maintainer roles, and surfaces in the decoded
++	  CycloneDX as metadata.manufacture - satisfying CRA Art. 13(15)
++	  manufacturer identification. Defaults to BIOS_VENDOR.
+ 
+ config SBOM_COMPILER
+ 	bool "Include compiler metadata in SBOM"

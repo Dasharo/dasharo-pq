@@ -1,0 +1,29 @@
+From 3ea38ad497a904bb72a28014a9164780414bd410 Mon Sep 17 00:00:00 2001
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+Date: Wed, 23 Sep 2026 20:28:30 +0300
+Subject: [PATCH 144/158] sbom/Kconfig: disable SBOM_EC without EC_UPDATE
+
+When EC is updated via a capsule, its firmware image doesn't get
+embedded into the main firmware.
+
+Change-Id: If1eb7fac27a05f784cb1420190e7e22934b166b0
+Upstream-Status: Pending
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+(cherry picked from commit 4068f6c20d14241eecd134a83ad49a3734e58329)
+---
+ src/sbom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/sbom/Kconfig b/src/sbom/Kconfig
+index b0d7a638f0..518be9e8b4 100644
+--- a/src/sbom/Kconfig
++++ b/src/sbom/Kconfig
+@@ -145,7 +145,7 @@ config SBOM_ME_PATH
+ 
+ config SBOM_EC
+ 	bool "Include EC metadata in SBOM"
+-	depends on HAVE_EC_BIN || EC_DASHARO_EC || EC_SYSTEM76_EC
++	depends on HAVE_EC_BIN || (EC_DASHARO_EC && EC_DASHARO_EC_UPDATE) || EC_SYSTEM76_EC
+ 	default n
+ 	help
+ 	  Select this option if you want to include a

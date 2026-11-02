@@ -1,0 +1,91 @@
+From 66d6c26736204ef767758dfa8e789e369926abd4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Mon, 2 Nov 2026 14:53:13 +0100
+Subject: [PATCH 153/158] util/amdfwtool/sbom.c: give each PSP firmware SBOM
+ tag its own tag-id
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+All PSP firmware blobs of one template class were written with the same
+CoSWID tag-id, e.g. the PSP bootloader and the SMU firmware of PC Engines
+apu2 both got 064a09b4-429a-5070-9f41-889708b12456. Tag-ids identify the
+component, so consumers of the SBOM may merge or drop such entries.
+
+Derive the tag-id of each blob as a name-based (SHA-1, version 5) UUID
+in the DNS namespace from "<persistent-id>:<file name>", the same scheme
+'goswid generate-tag-id' uses. It stays stable between builds. The class
+tag-id is kept as fallback if the digest cannot be computed.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ util/amdfwtool/sbom.c | 48 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/util/amdfwtool/sbom.c b/util/amdfwtool/sbom.c
+index 9325110594..5140a82b60 100644
+--- a/util/amdfwtool/sbom.c
++++ b/util/amdfwtool/sbom.c
+@@ -528,6 +528,50 @@ static char *file_sha256_base64(const char *filename)
+  * to point at the redistribution terms they are covered by.  Both are omitted
+  * when unavailable rather than emitted empty.
+  */
++/*
++ * Derive a per-blob CoSWID tag-id: a name-based (SHA-1, version 5) UUID in
++ * the DNS namespace, the same scheme `goswid generate-tag-id` uses, computed
++ * from "<persistent-id>:<file name>".  Tag-ids identify components, so blobs
++ * of the same template class must not share one.  Returns false if the
++ * digest cannot be computed, the caller then falls back to the class tag-id.
++ */
++static bool make_tag_id(const char *persistent_id, const char *fs_name,
++			char out[37])
++{
++	static const uint8_t ns_dns[16] = {
++		0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1,
++		0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
++	};
++	unsigned char md[EVP_MAX_MD_SIZE];
++	unsigned int md_len = 0;
++	EVP_MD_CTX *ctx;
++	bool ok;
++
++	if (!persistent_id || !fs_name)
++		return false;
++
++	ctx = EVP_MD_CTX_new();
++	if (!ctx)
++		return false;
++	ok = EVP_DigestInit_ex(ctx, EVP_sha1(), NULL) &&
++	     EVP_DigestUpdate(ctx, ns_dns, sizeof(ns_dns)) &&
++	     EVP_DigestUpdate(ctx, persistent_id, strlen(persistent_id)) &&
++	     EVP_DigestUpdate(ctx, ":", 1) &&
++	     EVP_DigestUpdate(ctx, fs_name, strlen(fs_name)) &&
++	     EVP_DigestFinal_ex(ctx, md, &md_len) && md_len >= 16;
++	EVP_MD_CTX_free(ctx);
++	if (!ok)
++		return false;
++
++	md[6] = (md[6] & 0x0f) | 0x50;	/* version 5 */
++	md[8] = (md[8] & 0x3f) | 0x80;	/* RFC 4122 variant */
++	snprintf(out, 37,
++		 "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
++		 md[0], md[1], md[2], md[3], md[4], md[5], md[6], md[7],
++		 md[8], md[9], md[10], md[11], md[12], md[13], md[14], md[15]);
++	return true;
++}
++
+ static bool write_sbom_json(const char *path, const char *tag_id,
+ 			    const char *sw_name, const char *sw_version,
+ 			    const char *persistent_id, const char *summary,
+@@ -536,6 +580,10 @@ static bool write_sbom_json(const char *path, const char *tag_id,
+ {
+ 	FILE *f;
+ 	char *hash_b64 = NULL;
++	char blob_tag_id[37];
++
++	if (make_tag_id(persistent_id, fs_name, blob_tag_id))
++		tag_id = blob_tag_id;
+ 
+ 	if (src_file)
+ 		hash_b64 = file_sha256_base64(src_file);

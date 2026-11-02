@@ -1,0 +1,102 @@
+From ca17763abeada7f20448ca8d3e4ad485922378c6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Tue, 3 Nov 2026 13:36:40 +0100
+Subject: [PATCH] sb/amd/pi/hudson: add SBOM files describing the xHCI firmware
+ and AGESA
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The xHCI firmware blob (HUDSON_XHCI_FWM_FILE, xhci.bin of AMD
+Avalon/Mullins) carries no version string, so the SBOM tag generated
+for it can only record the commit of the blobs repository. Add a CoSWID
+tag describing the firmware version 1.1.0.0068 to be used as external
+SBOM file with SBOM_HUDSON_XHCI_FW_PATH.
+
+Add also a CoSWID tag describing the AMD AGESA Mullins PI 1.0.0.4 binary
+(AGESA_BINARY_PI_FILE) with its license, to be used as external SBOM
+file with SBOM_AGESA_PATH.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ src/southbridge/amd/pi/hudson/amd-agesa.json | 30 +++++++++++++++++++
+ src/southbridge/amd/pi/hudson/xhci_sbom.json | 31 ++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+ create mode 100644 src/southbridge/amd/pi/hudson/amd-agesa.json
+ create mode 100644 src/southbridge/amd/pi/hudson/xhci_sbom.json
+
+diff --git a/src/southbridge/amd/pi/hudson/amd-agesa.json b/src/southbridge/amd/pi/hudson/amd-agesa.json
+new file mode 100644
+index 0000000000..6140552c3d
+--- /dev/null
++++ b/src/southbridge/amd/pi/hudson/amd-agesa.json
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "75efb0da-7a82-524f-bd46-86fdc9e802b9",
++  "tag-version": 0,
++  "software-name": "AMD AGESA Mullins PI",
++  "software-version": "1.0.0.4",
++  "software-meta": [
++    {
++      "product": "AMD AGESA",
++      "persistent-id": "com.amd.agesa",
++      "summary": "AMD AGESA (AMD Generic Encapsulated Software Architecture) is a binary PI (Platform Initialization) blob providing memory and silicon initialization for AMD platforms"
++    }
++  ],
++  "link": [
++    {
++      "rel": "license",
++      "href": "https://github.com/coreboot/blobs/blob/main/pi/amd/00730F01/FT3b/license.txt"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "AMD",
++      "reg-id": "amd.com",
++      "role": [
++        "softwareCreator"
++      ]
++    }
++  ]
++}
+diff --git a/src/southbridge/amd/pi/hudson/xhci_sbom.json b/src/southbridge/amd/pi/hudson/xhci_sbom.json
+new file mode 100644
+index 0000000000..086a2fce3d
+--- /dev/null
++++ b/src/southbridge/amd/pi/hudson/xhci_sbom.json
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++{
++  "lang": "en-US",
++  "tag-id": "dbdf7a7b-9e65-56e1-afc2-733f8808e044",
++  "tag-version": 0,
++  "software-name": "AMD FCH XHCI firmware",
++  "software-version": "1.1.0.0068",
++  "version-scheme": "alphanumeric",
++  "software-meta": [
++    {
++      "product": "AMD FCH XHCI controller firmware",
++      "colloquial-version": "2a6e5986c759865a2e797e8d24a883836c687f515dbd35e264380bbc732426f9",
++      "summary": "Proprietary AMD firmware for FCH XHCI controller initialization."
++    }
++  ],
++  "link": [
++    {
++      "rel": "license",
++      "href": "https://github.com/coreboot/blobs/blob/main/southbridge/amd/avalon/license.txt"
++    }
++  ],
++  "entity": [
++    {
++      "entity-name": "AMD",
++      "reg-id": "amd.com",
++      "role": [
++        "softwareCreator"
++      ]
++    }
++  ]
++}
+\ No newline at end of file
