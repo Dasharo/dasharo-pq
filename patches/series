@@ -152,3 +152,4 @@
 0160-util-amdfwtool-add-sbom-tag-id-option.patch
 0161-sb-amd-pi-hudson-src-sbom-share-one-tag-id-among-the.patch
 0162-sb-amd-pi-hudson-add-SBOM-files-describing-the-xHCI-.patch
+0163-configs-pcengines_seabios_apu-use-external-xHCI-and-.patch
