@@ -155,3 +155,13 @@
 0163-configs-pcengines_seabios_apu-use-external-xHCI-and-.patch
 0164-payloads-external-SeaBIOS-allow-CBMEM-only-debug-out.patch
 0165-configs-pcengines_seabios_apu-log-SeaBIOS-debug-to-CB.patch
+0166-northbridge-amd-pi-00730F01-acpi-northbridge.asl-Add.patch
+0167-src-mainboard-pcengines-apu2-acpi-routing.asl-Add-PC.patch
+0168-northbridge-amd-pi-00730F01-northbridge.c-Disable-Gu.patch
+0169-nb-amd-pi-00730F01-northbridge.c-Enable-GNB-IOAPIC-i.patch
+0170-src-mainboard-pcengines-apu2-mainboard.c-Assign-INTB.patch
+0171-src-mainboard-pcengines-apu2-mainboard.c-Clear-the-r.patch
+0172-src-northbridge-amd-pi-00730F01-northbridge.c-Add-PC.patch
+0173-src-northbridge-amd-pi-00730F01-northbridge.c-Rework.patch
+0174-northbridge-amd-pi-00730F01-northbridge.c-Fix-CC6-sav.patch
+0175-nb-amd-pi-00730F01-Set-IoapicSbFeatureEn-from-_PIC-h.patch

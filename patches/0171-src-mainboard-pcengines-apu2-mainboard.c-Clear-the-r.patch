@@ -1,0 +1,25 @@
+From 6986e35a39b9b7507ea268b2d9520679ec3f51d0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 23 Nov 2024 10:53:13 +0100
+Subject: [PATCH] src/mainboard/pcengines/apu2/mainboard.c: Clear the
+ right bits in ECC register
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index 3766867eec..a0e11f11a9 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -425,7 +425,7 @@ static void mainboard_final(void *chip_info)
+ 	 * doesn't work when these bits are set.
+ 	 */
+ 	val = pci_read_config32(D18F3, 0xB8);
+-	val &= 0xF000003F;
++	val &= 0xF00003FF;
+ 	pci_write_config32(D18F3, 0xB8, val);
+ 
+ 	/* Disable ECC exclusion range */

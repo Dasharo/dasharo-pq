@@ -1,0 +1,53 @@
+From d3c3fff0fc373be0eca417c8124e01265489c2f5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 23 Nov 2024 10:51:02 +0100
+Subject: [PATCH] nb/amd/pi/00730F01/northbridge.c: Enable GNB IOAPIC in
+ northbridge_init
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Move the GNB IOAPIC enabling to northbridge init where the IOAPIC is
+initialized.
+
+Remove the comment about IoapicSbFeatureEn, this bit is not touched
+here.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
+index cd4359e97e82..7abc1a5de785 100644
+--- a/src/northbridge/amd/pi/00730F01/northbridge.c
++++ b/src/northbridge/amd/pi/00730F01/northbridge.c
+@@ -132,8 +132,18 @@ static void iommu_disable_guest_avic(void)
+ 
+ static void northbridge_init(struct device *dev)
+ {
++	struct device *nb = pcidev_on_root(0, 0);
++
++	/* Enable GNB IOAPIC extended IDs */
++	pci_write_config32(nb, 0xF8, 0);
++	pci_or_config32(nb, 0xFC, 1 << 2);
++
+ 	ioapic_setup(IO_APIC2_ADDR);
+ 
++	/* Enable GNB IOAPIC */
++	pci_write_config32(nb, 0xF8, 0);
++	pci_or_config32(nb, 0xFC, 1);
++
+ 	/*
+ 	 * Guest AVIC seems not to be supported on this HW, but the IOMMU
+ 	 * guest AVIC capability is exposed by default.
+@@ -646,10 +656,7 @@ struct device_operations amd_pi_northbridge_ops = {
+ static void fam16_finalize(void *chip_info)
+ {
+ 	struct device *dev;
+-	dev = pcidev_on_root(0, 0); /* clear IoapicSbFeatureEn */
+-
+-	pci_write_config32(dev, 0xF8, 0);
+-	pci_write_config32(dev, 0xFC, 5); /* TODO: move it to dsdt.asl */
++	dev = pcidev_on_root(0, 0);
+ 
+ 	/*
+ 	 * Currently it is impossible to enable ACS with AGESA by setting the

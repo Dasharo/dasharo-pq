@@ -1,0 +1,36 @@
+From 30d9513250997abeafa15ce945343b21dd303f3d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 23 Nov 2024 10:46:21 +0100
+Subject: [PATCH] northbridge/amd/pi/00730F01/acpi/northbridge.asl: Add
+ IOMMU device
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
+index c5f60b94ff86..5cecbfb9f163 100644
+--- a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
++++ b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
+@@ -35,6 +35,19 @@ Device(PCSD) { /* Processor configuration space devices */
+ 	Name(_ADR, 0x00180000)	/* Dev# = BSP Dev#, Func# = 0 */
+ }
+ 
++Device(IOMU) {
++	Name(_ADR, 0x00000002)
++
++	Method(_PRT,0, NotSerialized)
++	{
++		If(PICM)
++		{
++			Return(APR0)	/* APIC mode */
++		}
++		Return (PR0)		/* PIC Mode */
++	}
++} /* end AMRT */
++
+ /* Gpp 0 */
+ Device(PBR4) {
+ 	Name(_ADR, 0x00020001)

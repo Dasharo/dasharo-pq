@@ -1,0 +1,36 @@
+From e6353d99791c94ba0fe5a95ce47403a38dd842de Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 23 Nov 2024 10:47:17 +0100
+Subject: [PATCH] src/mainboard/pcengines/apu2/acpi/routing.asl: Add PCI
+ INT routing for IOMMU
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/mainboard/pcengines/apu2/acpi/routing.asl b/src/mainboard/pcengines/apu2/acpi/routing.asl
+index 106259d0a9..81211123a7 100644
+--- a/src/mainboard/pcengines/apu2/acpi/routing.asl
++++ b/src/mainboard/pcengines/apu2/acpi/routing.asl
+@@ -3,7 +3,8 @@
+ /* Routing is in System Bus scope */
+ Name(PR0, Package(){
+ 	/* NB devices */
+-	/* Bus 0, Dev 0 - F16 Host Controller */
++	/* Bus 0, Dev 0 - F0:F16 Host Controller/F2:IOMMU */
++	Package(){0x0000FFFF, 0, INTA, 0 },
+ 
+ 	/* Bus 0, Dev 1 - PCI Bridge for Internal Graphics(IGP) */
+ 	/* Bus 0, Dev 1, Func 1 - HDMI Audio Controller */
+@@ -46,7 +47,8 @@ Name(PR0, Package(){
+ 
+ Name(APR0, Package(){
+ 	/* NB devices in APIC mode */
+-	/* Bus 0, Dev 0 - F15 Host Controller */
++	/* Bus 0, Dev 0 - F0:F16 Host Controller/F2:IOMMU */
++	Package(){0x0000FFFF, 0, 0, 16 },
+ 
+ 	/* Bus 0, Dev 1 - PCI Bridge for Internal Graphics(IGP) */
+ 	Package(){0x0001FFFF, 0, 0, 44 },

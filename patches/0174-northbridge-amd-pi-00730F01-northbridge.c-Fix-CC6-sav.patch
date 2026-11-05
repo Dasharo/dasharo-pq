@@ -1,0 +1,53 @@
+From 97ab6bb15664caf685bd8b38731c8e2c29f1971f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Sat, 23 Nov 2024 15:00:49 +0100
+Subject: [PATCH] northbridge/amd/pi/00730F01/northbridge.c: Fix CC6 save
+ state area location
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Per BKDG, the CC6 save state area occupies the last 16MB of DRAM, below
+the DRAM system limit (D18F1x124). It was reserved above the DRAM limit
+of node 0 instead. Reserve the area at the correct location.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
+index f93d1ff79606..563882804019 100644
+--- a/src/northbridge/amd/pi/00730F01/northbridge.c
++++ b/src/northbridge/amd/pi/00730F01/northbridge.c
+@@ -54,6 +54,16 @@ static int get_dram_base_limit(resource_t *basek, resource_t *limitk)
+ 	return 1;
+ }
+ 
++static void get_dram_limit_sys(resource_t *limitk)
++{
++	u32 temp = pci_read_config32(DEV_PTR(ht_1), 0x124); //[47:27] at [20:0]
++	/* BKDG address[47:0] <= {DramLimitAddr[47:27], 7FF_FFFFh} */
++	*limitk = (resource_t)(temp & 0x1fffff) << 27;
++	*limitk |= 0x7ffffff;
++	*limitk += 1; // round up last byte
++	*limitk = *limitk >> 10;
++}
++
+ static void add_fixed_resources(struct device *dev, int index)
+ {
+ 	/* Reserve everything between A segment and 1MB:
+@@ -66,11 +76,10 @@ static void add_fixed_resources(struct device *dev, int index)
+ 
+ 	/* Check if CC6 save area is enabled (bit 18 CC6SaveEn)  */
+ 	if (pci_read_config32(DEV_PTR(ht_2), 0x118) & (1 << 18)) {
+-		/* Add CC6 DRAM UC resource residing at DRAM Limit of size 16MB as per BKDG */
+-		resource_t basek, limitk;
+-		if (!get_dram_base_limit(&basek, &limitk))
+-			return;
+-		mmio_resource_kb(dev, index++, limitk, 16 * 1024);
++		/* Add CC6 DRAM UC resource residing at DRAM Sys Limit - 16MB as per BKDG */
++		resource_t limitk;
++		get_dram_limit_sys(&limitk);
++		mmio_resource_kb(dev, index++, limitk - 16 * 1024, 16 * 1024);
+ 	}
+ }
+ 

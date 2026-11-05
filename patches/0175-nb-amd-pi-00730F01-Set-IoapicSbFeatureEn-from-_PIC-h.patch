@@ -1,0 +1,70 @@
+From e4edecadfc5491baf0453469072a88fab035c52f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Wed, 27 Nov 2024 00:13:07 +0100
+Subject: [PATCH] nb/amd/pi/00730F01: Set IoapicSbFeatureEn from _PIC hook
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Per family 16h models 30h-3fh BKDG the IoapicSbFeatureEn must be
+configured according to the interrupt routing mode selected by OS.
+If OS chose APIC mode, the IoapicSbFeatureEn must be cleared.
+Otherwise, it must be set, meaning PIC mode is used.
+
+ACPI specification says that _PIC method is optional and can be
+called by OSPM to provide the interrupt routing mode information to
+the firmware. However, if the method is not called, the firmware
+must assume PIC mode is used. AGESA sets the IoapicSbFeatureEn
+already to be compliant with ACPI. Previously, coreboot cleared the
+bit unconditionally and left a comment to move that part to DSDT.
+
+Implement the \_SB.NAPE hook, which the common _PIC method calls after
+storing the OS choice in PICM, to set or clear IoapicSbFeatureEn
+accordingly.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+
+diff --git a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
+index 5cecbfb9f163..8abc4c8b3224 100644
+--- a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
++++ b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
+@@ -6,6 +6,38 @@ External (TOM2)
+ Name(_HID, EISAID("PNP0A08"))	/* PCI Express Root Bridge */
+ Name(_CID, EISAID("PNP0A03"))	/* PCI Root Bridge */
+ 
++OperationRegion (NAPC, PCI_Config, 0xF8, 0x08)
++Field (NAPC, DWordAcc, NoLock, Preserve)
++{
++	NAPX,   32,	/* Northbridge IOAPIC Index */
++	NAPD,   32	/* Northbridge IOAPIC Data */
++}
++
++IndexField (NAPX, NAPD, DWordAcc, NoLock, Preserve)
++{
++	NAFC,   32	/* Northbridge IOAPIC Feature Control */
++}
++
++Mutex (NAPM, 0x00)
++
++/* Called from _PIC after PICM is updated with the OS' IRQ routing choice */
++Method (\_SB.NAPE, 0, NotSerialized)
++{
++	Acquire (\_SB.PCI0.NAPM, 0xFFFF)
++
++	Local0 = \_SB.PCI0.NAFC
++	Local0 &= 0xFFFFFFEF /* Clear IoapicSbFeatureEn for APIC mode */
++
++	/* Set IoapicSbFeatureEn if OS chose to use PIC mode */
++	If (PICM == 0) {
++		Local0 |= (1 << 4)
++	}
++
++	\_SB.PCI0.NAFC = Local0
++
++	Release (\_SB.PCI0.NAPM)
++}
++
+ /* Describe the Northbridge devices */
+ 
+ Method(_BBN, 0, NotSerialized)	/* Bus number = 0 */
