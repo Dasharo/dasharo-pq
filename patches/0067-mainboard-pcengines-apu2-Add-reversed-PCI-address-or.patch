@@ -7,7 +7,7 @@ Subject: [PATCH 67/88] mainboard/pcengines/apu2/: Add reversed PCI address
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index ad23370637af..d868850ff90e 100644
+index b548e6f6da05..5bb389a52c87 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
 @@ -133,6 +133,132 @@ static const PCIe_PORT_DESCRIPTOR PortList[] = {

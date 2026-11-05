@@ -8,17 +8,39 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Enable or disable the IOMMU according to the option set in the setup
-(sortbootorder). Also pass the IOMMU device state to AGESA InitEnv,
-so that AGESA does not enable the IOMMU when it is disabled in the
-devicetree. Without that the IOMMU stays visible in the OS.
+(sortbootorder). Also pass the option to AGESA in the AmdInitEnv hook,
+which runs before mainboard_enable(), so that AGESA does not enable
+the IOMMU when it is disabled. Without that the IOMMU stays visible
+in the OS.
 
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
+index 95af6ef92d56..ac18b25c1a58 100644
+--- a/src/mainboard/pcengines/apu2/OemCustomize.c
++++ b/src/mainboard/pcengines/apu2/OemCustomize.c
+@@ -2,6 +2,7 @@
+ 
+ #include <AGESA.h>
+ #include <northbridge/amd/agesa/state_machine.h>
++#include "bios_knobs.h"
+ 
+ #include "gpio_ftns.h"
+ 
+@@ -94,3 +95,8 @@ void board_BeforeInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
+ 	else
+ 		Post->MemConfig.EnableEccFeature = FALSE;
+ }
++
++void board_BeforeInitEnv(struct sysinfo *cb, AMD_ENV_PARAMS *Env)
++{
++	Env->GnbEnvConfiguration.IommuSupport = check_iommu();
++}
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 6b4efe956fa0..d4d751ee6d49 100644
+index fa502c5e93bf..cd416347a412 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -358,6 +358,17 @@ static void mainboard_enable(struct device *dev)
+@@ -361,6 +361,17 @@ static void mainboard_enable(struct device *dev)
  
  	/* Initialize the PIRQ data structures for consumption */
  	pirq_setup();
@@ -36,19 +58,3 @@ index 6b4efe956fa0..d4d751ee6d49 100644
  #if CONFIG(GENERATE_SMBIOS_TABLES)
  	dev->ops->get_smbios_data = mainboard_smbios_data;
  #endif
-diff --git a/src/northbridge/amd/pi/00730F01/state_machine.c b/src/northbridge/amd/pi/00730F01/state_machine.c
-index a05e9e04e814..980e06769e70 100644
---- a/src/northbridge/amd/pi/00730F01/state_machine.c
-+++ b/src/northbridge/amd/pi/00730F01/state_machine.c
-@@ -40,7 +40,11 @@ void platform_AfterInitPost(struct sysinfo *cb, AMD_POST_PARAMS *Post)
- 
- void platform_BeforeInitEnv(struct sysinfo *cb, AMD_ENV_PARAMS *Env)
- {
-+	const struct device *iommu_dev = pcidev_on_root(0, 2);
-+
- 	EmptyHeap();
-+
-+	Env->GnbEnvConfiguration.IommuSupport = iommu_dev && iommu_dev->enabled;
- }
- 
- void platform_AfterInitEnv(struct sysinfo *cb, AMD_ENV_PARAMS *Env)

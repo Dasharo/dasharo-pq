@@ -10,18 +10,10 @@ Content-Transfer-Encoding: 8bit
 Upstream-Status: Inappropriate [Should utilize existing option backend]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/src/mainboard/pcengines/apu2/OemCustomize.c b/src/mainboard/pcengines/apu2/OemCustomize.c
-index 95af6ef92d56..0a2b68529f4b 100644
+index ac18b25c1a58..0b4eddebc39a 100644
 --- a/src/mainboard/pcengines/apu2/OemCustomize.c
 +++ b/src/mainboard/pcengines/apu2/OemCustomize.c
-@@ -2,6 +2,7 @@
- 
- #include <AGESA.h>
- #include <northbridge/amd/agesa/state_machine.h>
-+#include "bios_knobs.h"
- 
- #include "gpio_ftns.h"
- 
-@@ -77,8 +78,10 @@ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
+@@ -78,8 +78,10 @@ static const PCIe_COMPLEX_DESCRIPTOR PcieComplex = {
  void board_BeforeInitEarly(struct sysinfo *cb, AMD_EARLY_PARAMS *InitEarly)
  {
  	InitEarly->GnbConfig.PcieComplexList = &PcieComplex;
