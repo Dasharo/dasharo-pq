@@ -1,0 +1,27 @@
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 5 Nov 2026 12:00:00 +0100
+Subject: [PATCH] payloads/external/iPXE: Restore general.h before checkout
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The config target modifies src/config/general.h in the iPXE tree with
+sed. If the build stops before the file is restored, the next build
+fails to check out the iPXE revision because of the local changes.
+Restore general.h before the checkout, so that the image can be
+rebuilt.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+diff --git a/payloads/external/iPXE/Makefile b/payloads/external/iPXE/Makefile
+index d1a65d0a4d9c..c0dbf1b8f263 100644
+--- a/payloads/external/iPXE/Makefile
++++ b/payloads/external/iPXE/Makefile
+@@ -47,6 +47,7 @@ fetch: $(project_dir)
+ checkout: fetch
+ 	echo "    Checking out $(project_name) revision $(TAG-y)"
+ 	cd  $(project_dir); \
++		git checkout -- src/config/general.h; \
+ 		git checkout master; \
+ 		git branch -D coreboot 2>/dev/null; \
+ 		git checkout -b coreboot $(TAG-y)

@@ -165,3 +165,4 @@
 0173-src-northbridge-amd-pi-00730F01-northbridge.c-Rework.patch
 0174-northbridge-amd-pi-00730F01-northbridge.c-Fix-CC6-sav.patch
 0175-nb-amd-pi-00730F01-Set-IoapicSbFeatureEn-from-_PIC-h.patch
+0176-payloads-external-iPXE-Restore-general.h-before-chec.patch
