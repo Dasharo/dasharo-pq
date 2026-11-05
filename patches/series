@@ -153,3 +153,5 @@
 0161-sb-amd-pi-hudson-src-sbom-share-one-tag-id-among-the.patch
 0162-sb-amd-pi-hudson-add-SBOM-files-describing-the-xHCI-.patch
 0163-configs-pcengines_seabios_apu-use-external-xHCI-and-.patch
+0164-payloads-external-SeaBIOS-allow-CBMEM-only-debug-out.patch
+0165-configs-pcengines_seabios_apu-log-SeaBIOS-debug-to-CB.patch

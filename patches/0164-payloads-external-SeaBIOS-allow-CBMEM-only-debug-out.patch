@@ -1,0 +1,89 @@
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Thu, 5 Nov 2026 12:00:00 +0100
+Subject: [PATCH] payloads/external/SeaBIOS: allow CBMEM only debug output
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add the SEABIOS_DEBUG_SERIAL option to control whether SeaBIOS sends
+debug messages to the serial port. It defaults to enabled when the
+debug level is not 0, which keeps the previous behavior.
+
+Also pass CONSOLE_CBMEM to the SeaBIOS build and enable SeaBIOS
+logging to the CBMEM console when it is selected. This allows to keep
+the SeaBIOS debug log in CBMEM without printing it on the serial port.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+diff --git a/payloads/external/Makefile.mk b/payloads/external/Makefile.mk
+index fd11dfb99d9f..1e34afb725a4 100644
+--- a/payloads/external/Makefile.mk
++++ b/payloads/external/Makefile.mk
+@@ -84,11 +84,13 @@ $(SEABIOS_TARGET_PATH): $(DOTCONFIG)
+ 			CONFIG_CONSOLE_SERIAL=$(CONFIG_CONSOLE_SERIAL) \
+ 			CONFIG_TTYS0_BASE=$(CONFIG_TTYS0_BASE) \
+ 			CONFIG_SEABIOS_DEBUG_LEVEL=$(CONFIG_SEABIOS_DEBUG_LEVEL) \
++			CONFIG_SEABIOS_DEBUG_SERIAL=$(CONFIG_SEABIOS_DEBUG_SERIAL) \
+ 			CONFIG_DRIVERS_UART_8250MEM_32=$(CONFIG_DRIVERS_UART_8250MEM_32) \
+ 			CONFIG_ENABLE_HSUART=$(CONFIG_ENABLE_HSUART) \
+ 			CONFIG_CONSOLE_UART_BASE_ADDRESS=$(CONFIG_CONSOLE_UART_BASE_ADDRESS) \
+ 			CONFIG_SEABIOS_HARDWARE_IRQ=$(CONFIG_SEABIOS_HARDWARE_IRQ) \
+-			CONFIG_VENDOR_EMULATION=$(CONFIG_VENDOR_EMULATION)
++			CONFIG_VENDOR_EMULATION=$(CONFIG_VENDOR_EMULATION) \
++			CONFIG_CONSOLE_CBMEM=$(CONFIG_CONSOLE_CBMEM)
+ 
+ payloads/external/SeaBIOS/seabios/out/vgabios.bin: $(SEABIOS_TARGET_PATH)
+ payloads/external/SeaBIOS/seabios/.config: $(SEABIOS_TARGET_PATH)
+diff --git a/payloads/external/SeaBIOS/Kconfig b/payloads/external/SeaBIOS/Kconfig
+index be8013e2c676..7da16157811c 100644
+--- a/payloads/external/SeaBIOS/Kconfig
++++ b/payloads/external/SeaBIOS/Kconfig
+@@ -80,6 +80,18 @@ config SEABIOS_HARDWARE_IRQ
+ 	  boards which would otherwise hang at the boot menu (eg,
+ 	  google/rambi).
+ 
++config SEABIOS_DEBUG_SERIAL
++	prompt "Serial port debug"
++	depends on CONSOLE_SERIAL
++	default y if SEABIOS_DEBUG_LEVEL != 0
++	default n
++	bool
++	help
++	  Enable debugging on the serial port. Debugging on serial port
++	  is optional, since SeaBIOS will also put the debug messages to
++	  cbmem console if CONSOLE_CBMEM is enabled. The port base address
++	  is taken from other coreboot Kconfig options.
++
+ config SEABIOS_VGA_COREBOOT
+ 	prompt "Include generated option rom that implements legacy VGA BIOS compatibility"
+ 	default y if !VENDOR_EMULATION
+diff --git a/payloads/external/SeaBIOS/Makefile b/payloads/external/SeaBIOS/Makefile
+index 1d4d8ffe78b2..cb0e5e9f7d52 100644
+--- a/payloads/external/SeaBIOS/Makefile
++++ b/payloads/external/SeaBIOS/Makefile
+@@ -39,6 +39,8 @@ checkout: fetch
+ config: checkout
+ 	echo "    CONFIG     SeaBIOS $(TAG-y)"
+ 	echo "CONFIG_COREBOOT=y" > seabios/.config
++ifneq ($(CONFIG_SEABIOS_DEBUG_LEVEL),0)
++ifeq ($(CONFIG_SEABIOS_DEBUG_SERIAL),y)
+ ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250IO),yy)
+ 	echo "CONFIG_DEBUG_SERIAL=y" >> seabios/.config
+ 	echo "CONFIG_DEBUG_SERIAL_PORT=$(CONFIG_TTYS0_BASE)" >> seabios/.config
+@@ -54,6 +56,16 @@ else ifeq ($(CONFIG_CONSOLE_SERIAL)$(CONFIG_DRIVERS_UART_8250MEM_32),yy)
+ else
+ 	echo "# CONFIG_DEBUG_SERIAL is not set" >> seabios/.config
+ endif
++else
++	echo "# CONFIG_DEBUG_SERIAL is not set" >> seabios/.config
++endif
++ifeq ($(CONFIG_CONSOLE_CBMEM),y)
++	echo "CONFIG_DEBUG_COREBOOT=y" >> seabios/.config
++else
++	echo "# CONFIG_DEBUG_COREBOOT is not set" >> seabios/.config
++endif
++endif
++
+ ifneq ($(CONFIG_SEABIOS_THREAD_OPTIONROMS),y)
+ 	echo "# CONFIG_THREAD_OPTIONROMS is not set" >> seabios/.config
+ endif
