@@ -11,7 +11,7 @@ Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
 diff --git a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
-index c5f60b94ff86..5cecbfb9f163 100644
+index c5f60b94ff86..e6dd08d07ebc 100644
 --- a/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
 +++ b/src/northbridge/amd/pi/00730F01/acpi/northbridge.asl
 @@ -35,6 +35,19 @@ Device(PCSD) { /* Processor configuration space devices */
@@ -29,7 +29,7 @@ index c5f60b94ff86..5cecbfb9f163 100644
 +		}
 +		Return (PR0)		/* PIC Mode */
 +	}
-+} /* end AMRT */
++} /* end IOMU */
 +
  /* Gpp 0 */
  Device(PBR4) {

@@ -7,18 +7,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+The northbridge does not support guest virtual APIC, but the IOMMU
+advertises the GA and GAM support by default. Clear the GA support
+(bit 7) and GAM support (bits 23:21) in the IOMMU PCI config register
+0x80, which are mirrored to the IOMMU EFR register, the same way as
+upstream commit "nb/amd/pi/00730F01: remove unsupported GA & GAM
+support bit" (CB:95284). Also disable the guest AVIC feature in the
+IOMMU control register if it was enabled.
+
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
 diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
-index a86a216dcbef..cd4359e97e82 100644
+index a86a216dcbef..6310345a16f6 100644
 --- a/src/northbridge/amd/pi/00730F01/northbridge.c
 +++ b/src/northbridge/amd/pi/00730F01/northbridge.c
-@@ -89,9 +89,59 @@ static void nb_read_resources(struct device *dev)
+@@ -89,9 +89,61 @@ static void nb_read_resources(struct device *dev)
  	add_fixed_resources(dev, 0);
  }
  
 +#define IOMMU_MMIO_CONTROL_REG			0x80
++#define   IOMMU_MMIO_CONTROL_GA_SUP		(1 << 7)
 +#define   IOMMU_MMIO_CONTROL_GAM_SUP_MASK	(7 << 21)
 +#define IOMMU_CONTROL_REG			0x18
 +#define   IOMMU_CONTROL_GA_EN_MASK		(7 << 25)
@@ -44,7 +53,8 @@ index a86a216dcbef..cd4359e97e82 100644
 +		return;
 +
 +	printk(BIOS_DEBUG, "IOMMU: hiding Guest AVIC capability\n");
-+	pci_and_config32(iommu, IOMMU_MMIO_CONTROL_REG, ~IOMMU_MMIO_CONTROL_GAM_SUP_MASK);
++	pci_and_config32(iommu, IOMMU_MMIO_CONTROL_REG,
++			 ~(IOMMU_MMIO_CONTROL_GA_SUP | IOMMU_MMIO_CONTROL_GAM_SUP_MASK));
 +
 +	res = find_resource(iommu, 0x44);
 +	if (!res)
@@ -74,7 +84,7 @@ index a86a216dcbef..cd4359e97e82 100644
  }
  
  uintptr_t acpi_soc_fill_hest(acpi_hest_t *hest, uintptr_t current, void *log_mem)
-@@ -261,9 +311,6 @@ static void add_ivhd_device_entries(struct device *parent, struct device *dev,
+@@ -261,9 +313,6 @@ static void add_ivhd_device_entries(struct device *parent, struct device *dev,
  	free(root_level);
  }
  
