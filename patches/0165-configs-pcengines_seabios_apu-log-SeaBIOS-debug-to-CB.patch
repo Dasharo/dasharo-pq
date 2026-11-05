@@ -8,15 +8,24 @@ Content-Transfer-Encoding: 8bit
 
 Set the SeaBIOS debug level to 7 and disable SeaBIOS serial debug in
 all PC Engines apu SeaBIOS configs. SeaBIOS logs go to the CBMEM
-console only, so the serial output stays unchanged.
+console only, so the serial output stays unchanged. Increase the CBMEM
+console size to 1M, so that the SeaBIOS logs do not fill it up.
 
 Upstream-Status: Inappropriate [Platform specific configuration]
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 diff --git a/configs/config.pcengines_seabios_apu2 b/configs/config.pcengines_seabios_apu2
-index 0a664222cc35..87fdbbcca852 100644
+index 0a664222cc35..9fb5ffc5206b 100644
 --- a/configs/config.pcengines_seabios_apu2
 +++ b/configs/config.pcengines_seabios_apu2
-@@ -27,7 +27,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
+@@ -20,6 +20,7 @@ CONFIG_TPM_MEASURED_BOOT=y
+ CONFIG_NO_GFX_INIT=y
+ CONFIG_TPM1=y
+ CONFIG_TPM2=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x100000
+ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ # CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
+@@ -27,7 +28,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.2"
  CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
@@ -27,10 +36,18 @@ index 0a664222cc35..87fdbbcca852 100644
  CONFIG_BUILD_IPXE=y
  # CONFIG_IPXE_SERIAL_CONSOLE is not set
 diff --git a/configs/config.pcengines_seabios_apu3 b/configs/config.pcengines_seabios_apu3
-index 9d7ff6fb3c3c..2fd1fff603b6 100644
+index 9d7ff6fb3c3c..55d8f2e0b491 100644
 --- a/configs/config.pcengines_seabios_apu3
 +++ b/configs/config.pcengines_seabios_apu3
-@@ -28,7 +28,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
+@@ -21,6 +21,7 @@ CONFIG_TPM_MEASURED_BOOT=y
+ CONFIG_NO_GFX_INIT=y
+ CONFIG_TPM1=y
+ CONFIG_TPM2=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x100000
+ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ # CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
+@@ -28,7 +29,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.2"
  CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
@@ -41,10 +58,18 @@ index 9d7ff6fb3c3c..2fd1fff603b6 100644
  CONFIG_BUILD_IPXE=y
  # CONFIG_IPXE_SERIAL_CONSOLE is not set
 diff --git a/configs/config.pcengines_seabios_apu4 b/configs/config.pcengines_seabios_apu4
-index 53c648b33795..c99432002003 100644
+index 53c648b33795..46f324bc19b6 100644
 --- a/configs/config.pcengines_seabios_apu4
 +++ b/configs/config.pcengines_seabios_apu4
-@@ -28,7 +28,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
+@@ -21,6 +21,7 @@ CONFIG_TPM_MEASURED_BOOT=y
+ CONFIG_NO_GFX_INIT=y
+ CONFIG_TPM1=y
+ CONFIG_TPM2=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x100000
+ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ # CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
+@@ -28,7 +29,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.2"
  CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
@@ -55,10 +80,18 @@ index 53c648b33795..c99432002003 100644
  CONFIG_BUILD_IPXE=y
  # CONFIG_IPXE_SERIAL_CONSOLE is not set
 diff --git a/configs/config.pcengines_seabios_apu6 b/configs/config.pcengines_seabios_apu6
-index bfbab00ddd04..d5cdc26ca072 100644
+index bfbab00ddd04..08798d164b04 100644
 --- a/configs/config.pcengines_seabios_apu6
 +++ b/configs/config.pcengines_seabios_apu6
-@@ -28,7 +28,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
+@@ -21,6 +21,7 @@ CONFIG_TPM_MEASURED_BOOT=y
+ CONFIG_NO_GFX_INIT=y
+ CONFIG_TPM1=y
+ CONFIG_TPM2=y
++CONFIG_CONSOLE_CBMEM_BUFFER_SIZE=0x100000
+ CONFIG_DEFAULT_CONSOLE_LOGLEVEL_1=y
+ # CONFIG_CONSOLE_USE_LOGLEVEL_PREFIX is not set
+ # CONFIG_CONSOLE_USE_ANSI_ESCAPES is not set
+@@ -28,7 +29,8 @@ CONFIG_SEABIOS_BOOTORDER_FILE="$(top)/src/mainboard/$(MAINBOARDDIR)/variants/$(C
  CONFIG_SEABIOS_REVISION=y
  CONFIG_SEABIOS_REVISION_ID="rel-1.16.3.2"
  CONFIG_SEABIOS_BOOTORDER_IN_FMAP=y
