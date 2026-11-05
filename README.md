@@ -73,6 +73,15 @@ Initialize guilt:
 guilt init
 ```
 
+To make the final git history deterministic, do:
+
+```bash
+export TZ=UTC
+export GIT_COMMITTER_NAME="Dasharo builder" GIT_COMMITTER_EMAIL="builder@dasharo.com"
+T=$(git -C .git/patches log -1 --format=%ct)
+touch -d @"$T" .git/patches/patches/*.patch
+```
+
 Push All Patches Using Guilt:
 
 ```bash
@@ -111,8 +120,8 @@ Check if patchqueue was applied:
 guilt applied
 ```
 
-Tag repository, otherwise hash of the build will not match since coreboot use
-tag during build process:
+Tag the repository using the version you are trying to build, otherwise hash
+of the build will not match since coreboot use tag during build process:
 
 ```sh
 git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
@@ -125,8 +134,8 @@ git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 After applying all patches binaries for all platforms can be build:
 
 ```sh
-export BUILD_TIMELESS=1 && ./build.sh seabios_apu2 && ./build.sh seabios_apu3\
-&& ./build.sh seabios_apu4 && ./build.sh seabios_apu6
+BUILD_TIMELESS=0 ./build.sh seabios_apu2 && ./build.sh seabios_apu3 && \
+    ./build.sh seabios_apu4 && ./build.sh seabios_apu6
 ```
 
 ## Development

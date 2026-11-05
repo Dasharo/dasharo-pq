@@ -44,6 +44,9 @@ jobs:
       - name: Apply Patches Using Guilt
         run: |
           cd $GITHUB_WORKSPACE/coreboot
+          export TZ=UTC
+          T=$(git -C .git/patches log -1 --format=%ct)
+          touch -d @"$T" .git/patches/patches/*.patch
           guilt push -a
       - name: Checkout coreboot submodules and add annoted tag
         run: |
@@ -56,7 +59,7 @@ jobs:
           cd $GITHUB_WORKSPACE/coreboot
           cp configs/config.${{ matrix.vendor }}_${{ matrix.payload }}_${{ matrix.model }} .config
           make olddefconfig
-          make BUILD_TIMELESS=1
+          make BUILD_TIMELESS=0
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -115,7 +118,7 @@ jobs:
           cd $GITHUB_WORKSPACE/coreboot
           cp configs/config.${{ matrix.vendor }}_${{ matrix.model }}_${{ matrix.payload }} .config
           make olddefconfig
-          make BUILD_TIMELESS=1
+          make BUILD_TIMELESS=0
           mv build/coreboot.rom build/qemu_q35_${VERSION}.rom
           sha256sum build/qemu_q35_${VERSION}.rom > build/qemu_q35_${VERSION}.rom.sha256
       - name: Save artifacts
