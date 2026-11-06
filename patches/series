@@ -167,3 +167,4 @@
 0175-nb-amd-pi-00730F01-Set-IoapicSbFeatureEn-from-_PIC-h.patch
 0176-payloads-external-iPXE-Restore-general.h-before-chec.patch
 0177-util-amdfwtool-sbom.c-Read-version-of-legacy-SMU-fir.patch
+0178-util-amdfwtool-sbom.c-Describe-the-Mullins-SMU-SCS-d.patch
