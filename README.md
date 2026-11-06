@@ -29,7 +29,7 @@ cd coreboot
 Checkout branch on tag on which you would like to apply patchqueue:
 
 ```bash
-git checkout 24.08 -b patchqueue
+git checkout 26.09 -b patchqueue
 ```
 
 Clone this repo:
@@ -44,11 +44,11 @@ Go to `.git/patches` and checkout correct patchqueue version:
 cd .git/patches
 ```
 
-In this case re plan to build Dasharo (coreboot+SeaBIOS) v24.08.00.01 for PC
+In this case re plan to build Dasharo (coreboot+SeaBIOS) v26.09.00.01 for PC
 Engines:
 
 ```bash
-git checkout 24.08.00.01
+git checkout 26.09.00.01
 ```
 
 Get back to coreboot main directory:
@@ -124,7 +124,7 @@ Tag the repository using the version you are trying to build, otherwise hash
 of the build will not match since coreboot use tag during build process:
 
 ```sh
-git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
+git tag -a v26.09.00.01 -m "Some annotation which conten really doesn't matter"
 ```
 
 **NOTE:** It has to be annotated tag, coreboot does not pick others.
