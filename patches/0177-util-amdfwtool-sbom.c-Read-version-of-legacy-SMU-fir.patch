@@ -1,0 +1,75 @@
+From: =?UTF-8?q?Micha=C5=82=20=C5=BBygowski?= <michal.zygowski@3mdeb.com>
+Date: Fri, 6 Nov 2026 11:51:05 +0100
+Subject: [PATCH] util/amdfwtool/sbom.c: Read version of legacy SMU firmware
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+SMU firmware (type 0x08) on Mullins uses a different header than other
+PSP firmware. There is no $PS1 magic, the header ends with 0x55aa55aa
+magic at offset 0xfc and the version is stored at offset 0x15 (minor)
+and 0x16 (major). Version at offset 0x60 is zero, so the SBOM reported
+00.00.00.00 for the SMU firmware.
+
+Detect the legacy SMU header by the magic at the end of the header and
+report the version as "major.minor" in decimal, the same way PSPTool
+does.
+
+Upstream-Status: Pending
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
+---
+ util/amdfwtool/sbom.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/util/amdfwtool/sbom.c b/util/amdfwtool/sbom.c
+index fc52f81242..81d0b1920e 100644
+--- a/util/amdfwtool/sbom.c
++++ b/util/amdfwtool/sbom.c
+@@ -350,9 +350,30 @@ static const char *bios_fw_type_name(struct amd_bios_entry *entry)
+ 	}
+ }
+ 
++/*
++ * Older SMU firmware (e.g. type 0x08 on Mullins) uses a different 256-byte
++ * header: there is no $PS1 magic, the header ends with 0x55aa55aa magic at
++ * offset 0xfc and the version is stored at offset 0x15 (minor) and 0x16
++ * (major).
++ */
++#define LEGACY_SMU_MAGIC_OFFSET		0xfc
++#define LEGACY_SMU_VERSION_OFFSET	0x15
++
++static bool is_legacy_smu_header(const struct amd_fw_header *hdr)
++{
++	static const uint8_t magic[] = { 0x55, 0xaa, 0x55, 0xaa };
++	const uint8_t *raw = (const uint8_t *)hdr;
++
++	_Static_assert(sizeof(*hdr) >= LEGACY_SMU_MAGIC_OFFSET + sizeof(magic),
++		       "amd_fw_header too small for legacy SMU magic");
++
++	return !memcmp(raw + LEGACY_SMU_MAGIC_OFFSET, magic, sizeof(magic));
++}
++
+ /*
+  * Read the 4-byte version from the AMD firmware header at offset 0x60 and
+- * format it as "MM.mm.pp.bb" (major.minor.patch.build in hex).
++ * format it as "MM.mm.pp.bb" (major.minor.patch.build in hex). For legacy
++ * SMU firmware headers format it as "major.minor" in decimal.
+  */
+ static bool read_fw_version(const char *filename, sbom_fw_class_t class, char *buf,
+ 			    size_t bufsize)
+@@ -387,6 +408,15 @@ static bool read_fw_version(const char *filename, sbom_fw_class_t class, char *b
+ 		return true;
+ 	}
+ 
++	if (is_legacy_smu_header(&hdr)) {
++		const uint8_t *raw = (const uint8_t *)&hdr;
++
++		snprintf(buf, bufsize, "%u.%u",
++			 raw[LEGACY_SMU_VERSION_OFFSET + 1],
++			 raw[LEGACY_SMU_VERSION_OFFSET]);
++		return true;
++	}
++
+ 	snprintf(buf, bufsize, "%02x.%02x.%02x.%02x",
+ 		 hdr.version[3], hdr.version[2],
+ 		 hdr.version[1], hdr.version[0]);
