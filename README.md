@@ -129,6 +129,13 @@ git tag -a v24.08.00.01 -m "Some annotation which conten really doesn't matter"
 
 **NOTE:** It has to be annotated tag, coreboot does not pick others.
 
+Initialize submodules:
+
+```bash
+git submodule sync
+git submodule update --init --checkout
+```
+
 ## Release process notes
 
 After applying all patches binaries for all platforms can be build:
