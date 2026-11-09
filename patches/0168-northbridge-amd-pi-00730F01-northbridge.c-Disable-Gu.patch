@@ -13,16 +13,18 @@ advertises the GA and GAM support by default. Clear the GA support
 0x80, which are mirrored to the IOMMU EFR register, the same way as
 upstream commit "nb/amd/pi/00730F01: remove unsupported GA & GAM
 support bit" (CB:95284). Also disable the guest AVIC feature in the
-IOMMU control register if it was enabled.
+IOMMU control register if it was enabled. Do it before the IVRS table
+is generated, so that the EFR reported in IVRS matches the register
+content.
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
 diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
-index a86a216dcbef..6310345a16f6 100644
+index a86a216dcbef..7593516d79e1 100644
 --- a/src/northbridge/amd/pi/00730F01/northbridge.c
 +++ b/src/northbridge/amd/pi/00730F01/northbridge.c
-@@ -89,9 +89,61 @@ static void nb_read_resources(struct device *dev)
+@@ -89,6 +89,49 @@ static void nb_read_resources(struct device *dev)
  	add_fixed_resources(dev, 0);
  }
  
@@ -72,19 +74,7 @@ index a86a216dcbef..6310345a16f6 100644
  static void northbridge_init(struct device *dev)
  {
  	ioapic_setup(IO_APIC2_ADDR);
-+
-+	/*
-+	 * Guest AVIC seems not to be supported on this HW, but the IOMMU
-+	 * guest AVIC capability is exposed by default.
-+	 * Also the CPUID reports AVIC as not supported by default.
-+	 * Disable IOMMU gueast AVIC support so Linux won't complain.
-+	 */
-+	if (!(cpuid_edx(0x8000000A) & BIT(13)))
-+		iommu_disable_guest_avic();
- }
- 
- uintptr_t acpi_soc_fill_hest(acpi_hest_t *hest, uintptr_t current, void *log_mem)
-@@ -261,9 +313,6 @@ static void add_ivhd_device_entries(struct device *parent, struct device *dev,
+@@ -261,9 +304,6 @@ static void add_ivhd_device_entries(struct device *parent, struct device *dev,
  	free(root_level);
  }
  
@@ -94,3 +84,21 @@ index a86a216dcbef..6310345a16f6 100644
  static unsigned long acpi_fill_ivrs11(unsigned long current, acpi_ivrs_t *ivrs_agesa)
  {
  	acpi_ivrs_ivhd11_t *ivhd_11;
+@@ -508,6 +548,17 @@ static unsigned long agesa_write_acpi_tables(const struct device *device,
+ 	acpi_ivrs_t *ivrs;
+ 	acpi_drtm_t *drtm;
+ 
++	/*
++	 * Guest AVIC seems not to be supported on this HW, but the IOMMU
++	 * guest AVIC capability is exposed by default.
++	 * Also the CPUID reports AVIC as not supported by default.
++	 * Disable IOMMU guest AVIC support so Linux won't complain.
++	 * Must be done before IVRS generation, so that reported EFR matches
++	 * register content.
++	 */
++	if (!(cpuid_edx(0x8000000A) & BIT(13)))
++		iommu_disable_guest_avic();
++
+ 	/* IVRS */
+ 	if (is_dev_enabled(DEV_PTR(iommu))) {
+ 		current = ALIGN_UP(current, 8);

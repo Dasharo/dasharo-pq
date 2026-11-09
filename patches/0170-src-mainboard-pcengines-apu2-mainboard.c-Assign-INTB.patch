@@ -9,12 +9,11 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 11f6526c20..3766867eec 100644
+index e316ff5fad16..6a5e5b830759 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -64,7 +64,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
+@@ -80,7 +80,7 @@ static const u8 mainboard_picr_data[FCH_INT_TABLE_SIZE] = {
  static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
  	[0 ... FCH_INT_TABLE_SIZE-1] = 0x1F,
  	/* INTA# - INTH# */

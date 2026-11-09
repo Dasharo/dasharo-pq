@@ -13,9 +13,8 @@ of node 0 instead. Reserve the area at the correct location.
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
-
 diff --git a/src/northbridge/amd/pi/00730F01/northbridge.c b/src/northbridge/amd/pi/00730F01/northbridge.c
-index f93d1ff79606..563882804019 100644
+index 48e3360b5856..1c6621ab311b 100644
 --- a/src/northbridge/amd/pi/00730F01/northbridge.c
 +++ b/src/northbridge/amd/pi/00730F01/northbridge.c
 @@ -54,6 +54,16 @@ static int get_dram_base_limit(resource_t *basek, resource_t *limitk)

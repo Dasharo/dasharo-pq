@@ -9,12 +9,11 @@ Content-Transfer-Encoding: 8bit
 
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
-
 diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
-index 3766867eec..a0e11f11a9 100644
+index 6a5e5b830759..8e6b984037e8 100644
 --- a/src/mainboard/pcengines/apu2/mainboard.c
 +++ b/src/mainboard/pcengines/apu2/mainboard.c
-@@ -425,7 +425,7 @@ static void mainboard_final(void *chip_info)
+@@ -407,7 +407,7 @@ static void mainboard_final(void *chip_info)
  	 * doesn't work when these bits are set.
  	 */
  	val = pci_read_config32(D18F3, 0xB8);

@@ -7,11 +7,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Add the IOMMU (00.2) to the PCI interrupt routing in ACPI and to the
+PIRQ table of the mainboard, so that the IOMMU INTA# is routed to
+PIRQ A.
+
 Upstream-Status: Pending
 Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 
 diff --git a/src/mainboard/pcengines/apu2/acpi/routing.asl b/src/mainboard/pcengines/apu2/acpi/routing.asl
-index 106259d0a9..81211123a7 100644
+index 106259d0a990..81211123a7a1 100644
 --- a/src/mainboard/pcengines/apu2/acpi/routing.asl
 +++ b/src/mainboard/pcengines/apu2/acpi/routing.asl
 @@ -3,7 +3,8 @@
@@ -34,3 +38,15 @@ index 106259d0a9..81211123a7 100644
  
  	/* Bus 0, Dev 1 - PCI Bridge for Internal Graphics(IGP) */
  	Package(){0x0001FFFF, 0, 0, 44 },
+diff --git a/src/mainboard/pcengines/apu2/mainboard.c b/src/mainboard/pcengines/apu2/mainboard.c
+index a7e1416ee195..e316ff5fad16 100644
+--- a/src/mainboard/pcengines/apu2/mainboard.c
++++ b/src/mainboard/pcengines/apu2/mainboard.c
+@@ -112,6 +112,7 @@ static const u8 mainboard_intr_data[FCH_INT_TABLE_SIZE] = {
+  */
+ static const struct pirq_struct mainboard_pirq_data[] = {
+ 	/* {PCI_devfn,	{PIN A, PIN B, PIN C, PIN D}}, */
++	{IOMMU_DEVFN,	{PIRQ_A, PIRQ_NC, PIRQ_NC, PIRQ_NC}},		/* IOMMU:	00.2 */
+ 	{GFX_DEVFN,	{PIRQ_A, PIRQ_NC, PIRQ_NC, PIRQ_NC}},		/* VGA:		01.0 */
+ 	{ACTL_DEVFN,	{PIRQ_NC, PIRQ_B, PIRQ_NC, PIRQ_NC}},		/* Audio:	01.1 */
+ 	{NB_PCIE_PORT1_DEVFN,	{PIRQ_A, PIRQ_B, PIRQ_C, PIRQ_D}},	/* mPCIe/NIC:	02.1 */
